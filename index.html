@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Paletom" />
+  <title>Paletom</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --bg: #0f0f1a;
+      --bg2: #1a1a2e;
+      --bg3: #16213e;
+      --accent: #e8b84b;
+      --accent2: #f0c060;
+      --text: #f0f0f0;
+      --text2: #a0a0b8;
+      --border: rgba(255,255,255,0.08);
+      --purple: #7c6fcd;
+      --blue: #4a90d9;
+      --green: #4caf82;
+      --red: #e05c5c;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      max-width: 480px;
+      margin: 0 auto;
+      padding-bottom: 90px;
+    }
+
+    /* HEADER */
+    .header {
+      background: var(--bg2);
+      padding: 52px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-logo .icon { font-size: 26px; }
+    .header-title { font-size: 22px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }
+    .header-sub { font-size: 12px; color: var(--text2); margin-top: 1px; }
+    .header-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--accent); display: flex; align-items: center;
+      justify-content: center; font-weight: 700; font-size: 15px; color: var(--bg);
+    }
+
+    /* PAGE CONTENT */
+    .page { display: none; padding: 20px; }
+    .page.active { display: block; }
+
+    /* BOUTON NOUVELLE PARTIE */
+    .new-game-btn {
+      width: 100%;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: var(--radius);
+      padding: 18px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      transition: transform 0.1s, opacity 0.1s;
+    }
+    .new-game-btn:active { transform: scale(0.97); opacity: 0.9; }
+    .new-game-btn .btn-icon { font-size: 20px; }
+
+    /* SECTION TITLE */
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    /* CARDS FORMAT */
+    .format-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .format-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 14px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.1s;
+      text-align: center;
+    }
+    .format-card:active { transform: scale(0.97); }
+    .format-card.purple { border-top: 3px solid var(--purple); }
+    .format-card.blue   { border-top: 3px solid var(--blue); }
+    .format-card.gray   { border-top: 3px solid var(--text2); opacity: 0.5; cursor: default; }
+    .format-card .fc-icon { font-size: 28px; margin-bottom: 8px; }
+    .format-card .fc-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .format-card .fc-sub { font-size: 12px; color: var(--text2); }
+
+    /* STATS RAPIDES */
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 10px;
+      text-align: center;
+    }
+    .stat-card .sv { font-size: 22px; font-weight: 700; color: var(--accent); }
+    .stat-card .sl { font-size: 11px; color: var(--text2); margin-top: 3px; }
+
+    /* DERNIÈRES PARTIES */
+    .match-list { display: flex; flex-direction: column; gap: 10px; }
+    .match-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .match-players { font-size: 14px; font-weight: 600; }
+    .match-players span { color: var(--text2); font-weight: 400; }
+    .match-score { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+    .match-score .win { color: var(--green); }
+    .match-score .lose { color: var(--red); }
+    .match-date { font-size: 11px; color: var(--text2); margin-top: 3px; }
+    .match-badge {
+      font-size: 10px; font-weight: 600; padding: 3px 8px;
+      border-radius: 20px; margin-top: 4px; display: inline-block;
+    }
+    .match-badge.v1 { background: rgba(124,111,205,0.2); color: var(--purple); }
+    .match-badge.v2 { background: rgba(74,144,217,0.2); color: var(--blue); }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text2);
+    }
+    .empty-state .es-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-state .es-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .empty-state .es-sub { font-size: 13px; line-height: 1.5; }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      display: flex;
+      padding: 8px 0 20px;
+      z-index: 100;
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      padding: 6px 0;
+      transition: opacity 0.2s;
+    }
+    .nav-item .nav-icon { font-size: 22px; }
+    .nav-item .nav-label { font-size: 10px; color: var(--text2); font-weight: 500; }
+    .nav-item.active .nav-label { color: var(--accent); }
+    .nav-item.active .nav-icon { filter: none; }
+
+    /* PAGE CLASSEMENT */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .tab {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text2);
+      transition: all 0.2s;
+    }
+    .tab.active {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+
+    .ranking-list { display: flex; flex-direction: column; gap: 10px; }
+    .ranking-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .rank-pos {
+      font-size: 18px; font-weight: 700; width: 28px;
+      text-align: center; color: var(--text2);
+    }
+    .rank-pos.gold { color: #f0c040; }
+    .rank-pos.silver { color: #b0b8c8; }
+    .rank-pos.bronze { color: #cd8040; }
+    .rank-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--bg3); display: flex; align-items: center;
+      justify-content: center; font-size: 18px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .rank-info { flex: 1; }
+    .rank-name { font-size: 15px; font-weight: 600; }
+    .rank-stats { font-size: 12px; color: var(--text2); margin-top: 2px; }
+    .rank-pct { font-size: 18px; font-weight: 700; color: var(--accent); }
+
+    /* PAGE JOUEURS */
+    .player-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .player-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .player-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700; flex-shrink: 0;
+    }
+    .player-info { flex: 1; }
+    .player-name { font-size: 15px; font-weight: 600; }
+    .player-stats { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+    .add-player-btn {
+      width: 100%;
+      background: transparent;
+      color: var(--accent);
+      border: 1.5px dashed var(--accent);
+      border-radius: var(--radius);
+      padding: 16px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+    .add-player-btn:active { background: rgba(232,184,75,0.1); }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 200;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg2);
+      border-radius: 24px 24px 0 0;
+      padding: 24px 20px 40px;
+      width: 100%; max-width: 480px;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+    .modal-handle {
+      width: 40px; height: 4px; border-radius: 2px;
+      background: var(--border); margin: 0 auto 20px;
+    }
+    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+    .modal-options { display: flex; flex-direction: column; gap: 10px; }
+    .modal-option {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: border-color 0.2s;
+    }
+    .modal-option:active { border-color: var(--accent); }
+    .modal-option .mo-icon { font-size: 28px; }
+    .modal-option .mo-title { font-size: 16px; font-weight: 600; }
+    .modal-option .mo-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+    .modal-option.purple { border-left: 3px solid var(--purple); }
+    .modal-option.blue   { border-left: 3px solid var(--blue); }
+    .modal-option.gray   { opacity: 0.4; cursor: default; }
+
+    /* INPUT */
+    .input-group { margin-bottom: 16px; }
+    .input-label { font-size: 13px; color: var(--text2); margin-bottom: 6px; display: block; }
+    .input-field {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      font-size: 16px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .input-field:focus { border-color: var(--accent); }
+    .btn-primary {
+      width: 100%;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .btn-primary:active { opacity: 0.85; }
+    .btn-cancel {
+      width: 100%; background: transparent;
+      color: var(--text2); border: none;
+      padding: 12px; font-size: 14px;
+      cursor: pointer; margin-top: 4px;
+    }
+
+    /* COLORS PICKER */
+    .color-picker { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+    .color-dot {
+      width: 32px; height: 32px; border-radius: 50%;
+      cursor: pointer; border: 2px solid transparent;
+      transition: border-color 0.2s, transform 0.1s;
+    }
+    .color-dot.selected { border-color: white; transform: scale(1.15); }
+
+    /* FIREBASE LOADING */
+    .firebase-status {
+      text-align: center; padding: 60px 20px;
+      color: var(--text2); font-size: 14px;
+    }
+    .firebase-status .fs-icon { font-size: 40px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-logo">
+      <span class="icon">🎯</span>
+      <div>
+        <div class="header-title">Paletom</div>
+        <div class="header-sub">Palet Vendéen</div>
+      </div>
+    </div>
+    <div class="header-avatar" id="userAvatar">?</div>
+  </div>
+
+  <!-- PAGE ACCUEIL -->
+  <div class="page active" id="page-home">
+    <br>
+    <button class="new-game-btn" onclick="openNewGameModal()">
+      <span class="btn-icon">➕</span> Nouvelle partie
+    </button>
+
+    <div class="section-title">Sections</div>
+    <div class="format-cards">
+      <div class="format-card purple" onclick="showPage('page-ranking'); setTab('1v1')">
+        <div class="fc-icon">🥊</div>
+        <div class="fc-title">1 vs 1</div>
+        <div class="fc-sub">Classement individuel</div>
+      </div>
+      <div class="format-card blue" onclick="showPage('page-ranking'); setTab('2v2')">
+        <div class="fc-icon">🤝</div>
+        <div class="fc-title">2 vs 2</div>
+        <div class="fc-sub">Classement équipes</div>
+      </div>
+      <div class="format-card gray">
+        <div class="fc-icon">👥</div>
+        <div class="fc-title">3 vs 3</div>
+        <div class="fc-sub">Bientôt disponible</div>
+      </div>
+      <div class="format-card gray">
+        <div class="fc-icon">🎳</div>
+        <div class="fc-title">Pétanque</div>
+        <div class="fc-sub">Bientôt disponible</div>
+      </div>
+    </div>
+
+    <div class="section-title">Dernières parties</div>
+    <div id="recent-matches">
+      <div class="empty-state">
+        <div class="es-icon">🎯</div>
+        <div class="es-title">Aucune partie pour l'instant</div>
+        <div class="es-sub">Lance ta première partie avec le bouton "Nouvelle partie" !</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE CLASSEMENT -->
+  <div class="page" id="page-ranking">
+    <br>
+    <div class="tabs">
+      <button class="tab active" id="tab-1v1" onclick="setTab('1v1')">1 vs 1</button>
+      <button class="tab" id="tab-2v2" onclick="setTab('2v2')">2 vs 2</button>
+    </div>
+
+    <div id="ranking-content">
+      <div class="empty-state">
+        <div class="es-icon">🏆</div>
+        <div class="es-title">Classement vide</div>
+        <div class="es-sub">Jouez des parties pour voir apparaître le classement ici !</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE JOUEURS -->
+  <div class="page" id="page-players">
+    <br>
+    <div class="section-title">Joueurs enregistrés</div>
+    <div class="player-list" id="player-list">
+      <div class="empty-state">
+        <div class="es-icon">👤</div>
+        <div class="es-title">Aucun joueur</div>
+        <div class="es-sub">Ajoute les joueurs de ton groupe pour commencer !</div>
+      </div>
+    </div>
+    <button class="add-player-btn" onclick="openAddPlayerModal()">
+      ➕ Ajouter un joueur
+    </button>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" id="nav-home" onclick="showPage('page-home')">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Accueil</span>
+    </div>
+    <div class="nav-item" id="nav-ranking" onclick="showPage('page-ranking')">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label">Classement</span>
+    </div>
+    <div class="nav-item" id="nav-players" onclick="showPage('page-players')">
+      <span class="nav-icon">👥</span>
+      <span class="nav-label">Joueurs</span>
+    </div>
+  </nav>
+
+  <!-- MODAL NOUVELLE PARTIE -->
+  <div class="modal-overlay" id="modal-new-game" onclick="closeModal('modal-new-game')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Choisir le format</div>
+      <div class="modal-options">
+        <div class="modal-option purple" onclick="closeModal('modal-new-game')">
+          <span class="mo-icon">🥊</span>
+          <div>
+            <div class="mo-title">1 vs 1</div>
+            <div class="mo-sub">Deux joueurs face à face · jusqu'à 13 pts</div>
+          </div>
+        </div>
+        <div class="modal-option blue" onclick="closeModal('modal-new-game')">
+          <span class="mo-icon">🤝</span>
+          <div>
+            <div class="mo-title">2 vs 2</div>
+            <div class="mo-sub">Deux équipes de deux · jusqu'à 13 pts</div>
+          </div>
+        </div>
+        <div class="modal-option gray">
+          <span class="mo-icon">👥</span>
+          <div>
+            <div class="mo-title">3 vs 3</div>
+            <div class="mo-sub">Bientôt disponible</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL AJOUTER JOUEUR -->
+  <div class="modal-overlay" id="modal-add-player" onclick="closeModal('modal-add-player')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Ajouter un joueur</div>
+      <div class="input-group">
+        <label class="input-label">Pseudo</label>
+        <input class="input-field" id="input-player-name" type="text" placeholder="ex: Thomas, Nico, Ju..." maxlength="20" />
+      </div>
+      <div class="input-group">
+        <label class="input-label">Couleur du profil</label>
+        <div class="color-picker" id="color-picker"></div>
+      </div>
+      <button class="btn-primary" onclick="savePlayer()">Ajouter le joueur</button>
+      <button class="btn-cancel" onclick="closeModal('modal-add-player')">Annuler</button>
+    </div>
+  </div>
+
+  <!-- FIREBASE SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, onSnapshot, doc, setDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBLyQ_M-zGZBJ2N1ATeXnkAinV3dOBxBBU",
+      authDomain: "paletom-f0fbf.firebaseapp.com",
+      projectId: "paletom-f0fbf",
+      storageBucket: "paletom-f0fbf.firebasestorage.app",
+      messagingSenderId: "850183113952",
+      appId: "1:850183113952:web:42720d8d34febd30931485"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    window._db = db;
+    window._col = collection;
+    window._addDoc = addDoc;
+    window._getDocs = getDocs;
+    window._onSnapshot = onSnapshot;
+    window._doc = doc;
+    window._setDoc = setDoc;
+    window._query = query;
+    window._orderBy = orderBy;
+
+    // Charger les joueurs en temps réel
+    onSnapshot(collection(db, "joueurs"), (snapshot) => {
+      window._players = [];
+      snapshot.forEach(d => window._players.push({ id: d.id, ...d.data() }));
+      renderPlayers();
+    });
+
+    // Charger les parties en temps réel
+    onSnapshot(collection(db, "parties"), (snapshot) => {
+      window._matches = [];
+      snapshot.forEach(d => window._matches.push({ id: d.id, ...d.data() }));
+      renderRecentMatches();
+      renderRanking();
+    });
+  </script>
+
+  <script>
+    // COULEURS DISPONIBLES
+    const COLORS = ['#e8b84b','#7c6fcd','#4a90d9','#4caf82','#e05c5c','#e0825c','#5cc4e0','#c05ce0'];
+    let selectedColor = COLORS[0];
+    window._players = [];
+    window._matches = [];
+
+    // Init color picker
+    const cp = document.getElementById('color-picker');
+    COLORS.forEach((c, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'color-dot' + (i === 0 ? ' selected' : '');
+      dot.style.background = c;
+      dot.onclick = () => {
+        selectedColor = c;
+        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
+        dot.classList.add('selected');
+      };
+      cp.appendChild(dot);
+    });
+
+    // NAVIGATION
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      const navMap = { 'page-home': 'nav-home', 'page-ranking': 'nav-ranking', 'page-players': 'nav-players' };
+      if (navMap[pageId]) document.getElementById(navMap[pageId]).classList.add('active');
+    }
+    window.showPage = showPage;
+
+    // TABS CLASSEMENT
+    function setTab(tab) {
+      document.getElementById('tab-1v1').classList.toggle('active', tab === '1v1');
+      document.getElementById('tab-2v2').classList.toggle('active', tab === '2v2');
+      window._currentTab = tab;
+      renderRanking();
+    }
+    window.setTab = setTab;
+    window._currentTab = '1v1';
+
+    // MODALS
+    function openNewGameModal() { document.getElementById('modal-new-game').classList.add('open'); }
+    function openAddPlayerModal() {
+      document.getElementById('input-player-name').value = '';
+      document.getElementById('modal-add-player').classList.add('open');
+      setTimeout(() => document.getElementById('input-player-name').focus(), 300);
+    }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    window.openNewGameModal = openNewGameModal;
+    window.openAddPlayerModal = openAddPlayerModal;
+    window.closeModal = closeModal;
+
+    // SAUVEGARDER JOUEUR
+    async function savePlayer() {
+      const name = document.getElementById('input-player-name').value.trim();
+      if (!name) { alert('Entre un pseudo !'); return; }
+      if (!window._db) { alert('Connexion Firebase en cours...'); return; }
+      try {
+        await window._addDoc(window._col(window._db, 'joueurs'), {
+          nom: name, couleur: selectedColor, createdAt: Date.now()
+        });
+        closeModal('modal-add-player');
+      } catch(e) { alert('Erreur : ' + e.message); }
+    }
+    window.savePlayer = savePlayer;
+
+    // RENDER JOUEURS
+    function renderPlayers() {
+      const list = document.getElementById('player-list');
+      if (!window._players.length) {
+        list.innerHTML = `<div class="empty-state"><div class="es-icon">👤</div><div class="es-title">Aucun joueur</div><div class="es-sub">Ajoute les joueurs de ton groupe pour commencer !</div></div>`;
+        return;
+      }
+      list.innerHTML = window._players.map(p => {
+        const initials = p.nom.substring(0,2).toUpperCase();
+        const stats = getPlayerStats(p.id);
+        return `<div class="player-item">
+          <div class="player-avatar" style="background:${p.couleur}20; color:${p.couleur}">${initials}</div>
+          <div class="player-info">
+            <div class="player-name">${p.nom}</div>
+            <div class="player-stats">${stats.played} partie${stats.played > 1 ? 's' : ''} · ${stats.winPct}% victoires</div>
+          </div>
+        </div>`;
+      }).join('');
+      document.getElementById('userAvatar').textContent = window._players.length > 0 ? window._players[0].nom.substring(0,1).toUpperCase() : '?';
+    }
+
+    // STATS JOUEUR
+    function getPlayerStats(playerId) {
+      const matches = (window._matches || []).filter(m => m.format === '1v1' && (m.joueur1Id === playerId || m.joueur2Id === playerId));
+      const played = matches.length;
+      const wins = matches.filter(m => m.gagnantId === playerId).length;
+      const winPct = played > 0 ? Math.round((wins / played) * 100) : 0;
+      return { played, wins, winPct };
+    }
+
+    // RENDER DERNIÈRES PARTIES
+    function renderRecentMatches() {
+      const container = document.getElementById('recent-matches');
+      const recent = [...(window._matches || [])].sort((a,b) => (b.date||0) - (a.date||0)).slice(0, 5);
+      if (!recent.length) {
+        container.innerHTML = `<div class="empty-state"><div class="es-icon">🎯</div><div class="es-title">Aucune partie pour l'instant</div><div class="es-sub">Lance ta première partie avec le bouton "Nouvelle partie" !</div></div>`;
+        return;
+      }
+      container.innerHTML = `<div class="match-list">${recent.map(m => {
+        const j1 = (window._players||[]).find(p => p.id === m.joueur1Id);
+        const j2 = (window._players||[]).find(p => p.id === m.joueur2Id);
+        const n1 = j1 ? j1.nom : '?'; const n2 = j2 ? j2.nom : '?';
+        const d = m.date ? new Date(m.date).toLocaleDateString('fr-FR') : '';
+        const s1class = m.gagnantId === m.joueur1Id ? 'win' : 'lose';
+        const s2class = m.gagnantId === m.joueur2Id ? 'win' : 'lose';
+        return `<div class="match-item">
+          <div><div class="match-players">${n1} <span>vs</span> ${n2}</div><div class="match-date">${d}</div><span class="match-badge v1">1v1</span></div>
+          <div class="match-score"><span class="${s1class}">${m.score1}</span> - <span class="${s2class}">${m.score2}</span></div>
+        </div>`;
+      }).join('')}</div>`;
+    }
+
+    // RENDER CLASSEMENT
+    function renderRanking() {
+      const tab = window._currentTab || '1v1';
+      const container = document.getElementById('ranking-content');
+      if (tab === '1v1') {
+        const players = (window._players || []).map(p => {
+          const matches = (window._matches || []).filter(m => m.format === '1v1' && (m.joueur1Id === p.id || m.joueur2Id === p.id));
+          const played = matches.length;
+          const wins = matches.filter(m => m.gagnantId === p.id).length;
+          const winPct = played > 0 ? Math.round((wins / played) * 100) : 0;
+          let pointsDiff = 0;
+          matches.forEach(m => {
+            if (m.joueur1Id === p.id) pointsDiff += (m.score1 - m.score2);
+            else pointsDiff += (m.score2 - m.score1);
+          });
+          return { ...p, played, wins, winPct, pointsDiff };
+        }).sort((a, b) => b.winPct - a.winPct || b.pointsDiff - a.pointsDiff);
+
+        if (!players.length || players.every(p => p.played === 0)) {
+          container.innerHTML = `<div class="empty-state"><div class="es-icon">🏆</div><div class="es-title">Classement vide</div><div class="es-sub">Jouez des parties pour voir apparaître le classement ici !</div></div>`;
+          return;
+        }
+        const posClass = (i) => i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+        container.innerHTML = `<div class="ranking-list">${players.map((p, i) => `
+          <div class="ranking-item">
+            <div class="rank-pos ${posClass(i)}">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i+1}</div>
+            <div class="rank-avatar" style="background:${p.couleur}20; color:${p.couleur}">${p.nom.substring(0,2).toUpperCase()}</div>
+            <div class="rank-info">
+              <div class="rank-name">${p.nom}</div>
+              <div class="rank-stats">${p.played} partie${p.played>1?'s':''} · diff. ${p.pointsDiff > 0 ? '+' : ''}${p.pointsDiff} pts</div>
+            </div>
+            <div class="rank-pct">${p.winPct}%</div>
+          </div>`).join('')}
+        </div>`;
+      } else {
+        container.innerHTML = `<div class="empty-state"><div class="es-icon">🤝</div><div class="es-title">2v2 bientôt</div><div class="es-sub">La section 2v2 arrive dans la prochaine étape !</div></div>`;
+      }
+    }
+
+    // INPUT ENTER key
+    document.getElementById('input-player-name').addEventListener('keydown', e => {
+      if (e.key === 'Enter') savePlayer();
+    });
+  </script>
+</body>
+</html>
