@@ -289,6 +289,76 @@
     .photo-btn:active { background: var(--bg); }
     #file-input { display: none; }
 
+    /* DUELS */
+    .duel-selector {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px; margin-bottom: 16px;
+    }
+    .duel-selector-row {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .duel-selector-row select { flex: 1; }
+    .duel-sep-label {
+      font-size: 13px; font-weight: 700; color: var(--text2); flex-shrink: 0;
+    }
+    .duel-bilan {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 14px;
+    }
+    .duel-bilan-header {
+      background: var(--accent); color: #fff;
+      padding: 12px 16px; font-size: 13px; font-weight: 700;
+      text-align: center; letter-spacing: 0.3px;
+    }
+    .duel-bilan-body {
+      display: flex; align-items: stretch;
+    }
+    .duel-bilan-side {
+      flex: 1; padding: 16px 12px; text-align: center;
+    }
+    .duel-bilan-side.winner { background: rgba(45,122,79,0.06); }
+    .duel-bilan-side.loser  { background: rgba(192,57,43,0.04); }
+    .duel-bilan-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--bg3); display: flex; align-items: center;
+      justify-content: center; font-size: 18px; font-weight: 700;
+      margin: 0 auto 8px; overflow: hidden; border: 1px solid var(--border);
+      color: var(--text2);
+    }
+    .duel-bilan-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .duel-bilan-name { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+    .duel-bilan-wins { font-size: 32px; font-weight: 700; line-height: 1; }
+    .duel-bilan-wins.green { color: var(--green); }
+    .duel-bilan-wins.red   { color: var(--red); }
+    .duel-bilan-wins.gray  { color: var(--text2); }
+    .duel-bilan-pct { font-size: 13px; color: var(--text2); margin-top: 4px; }
+    .duel-bilan-diff { font-size: 12px; margin-top: 4px; font-weight: 600; }
+    .duel-bilan-diff.pos { color: var(--green); }
+    .duel-bilan-diff.neg { color: var(--red); }
+    .duel-bilan-mid {
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 6px; flex-direction: column; gap: 4px;
+    }
+    .duel-bilan-vs { font-size: 11px; font-weight: 700; color: var(--text2); }
+    .duel-bilan-total { font-size: 11px; color: var(--text2); }
+
+    .duel-history-title {
+      font-size: 11px; font-weight: 700; color: var(--text2);
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+    }
+    .duel-match-list { display: flex; flex-direction: column; gap: 8px; }
+    .duel-match-item {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 11px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .duel-match-left { display: flex; flex-direction: column; gap: 2px; }
+    .duel-match-winner { font-size: 13px; font-weight: 700; color: var(--green); }
+    .duel-match-date { font-size: 11px; color: var(--text2); }
+    .duel-match-score { font-size: 20px; font-weight: 700; }
+    .duel-match-score .win  { color: var(--green); }
+    .duel-match-score .lose { color: var(--red); }
+
     /* SAISIE SCORE */
     #page-saisie { padding: 0; }
     .saisie-header {
@@ -403,6 +473,7 @@
     <br>
     <div class="tabs">
       <button class="tab active" id="tab-1v1" onclick="setTab('1v1')">1 vs 1</button>
+      <button class="tab" id="tab-duels" onclick="setTab('duels')">Duels</button>
       <button class="tab" id="tab-2v2" onclick="setTab('2v2')">2 vs 2</button>
     </div>
     <div id="ranking-content">
@@ -622,6 +693,7 @@
 
     function setTab(tab) {
       document.getElementById('tab-1v1').classList.toggle('active', tab === '1v1');
+      document.getElementById('tab-duels').classList.toggle('active', tab === 'duels');
       document.getElementById('tab-2v2').classList.toggle('active', tab === '2v2');
       window._currentTab = tab;
       renderRanking();
@@ -841,10 +913,18 @@
     function renderRanking() {
       const tab = window._currentTab||'1v1';
       const container = document.getElementById('ranking-content');
+
       if (tab==='2v2') {
         container.innerHTML = `<div class="empty-state"><div class="es-icon">🤝</div><div class="es-title">2v2 bientôt</div><div class="es-sub">La section 2v2 arrive dans la prochaine étape !</div></div>`;
         return;
       }
+
+      if (tab==='duels') {
+        renderDuels(container);
+        return;
+      }
+
+      // 1v1 classement
       const players = (window._players||[]).map(p => ({ ...p, ...getPlayerStats(p.id) }))
         .sort((a,b) => b.winPct-a.winPct || b.diff-a.diff);
 
@@ -879,6 +959,124 @@
         ${rows}
       </div>`;
     }
+
+    function renderDuels(container) {
+      const players = window._players || [];
+      if (players.length < 2) {
+        container.innerHTML = `<div class="empty-state"><div class="es-icon">🥊</div><div class="es-title">Pas assez de joueurs</div><div class="es-sub">Il faut au moins 2 joueurs pour consulter les duels.</div></div>`;
+        return;
+      }
+
+      const j1id = window._duelJ1 || '';
+      const j2id = window._duelJ2 || '';
+
+      const options = (selected) => players.map(p =>
+        `<option value="${p.id}" ${p.id===selected?'selected':''}>${p.nom}</option>`
+      ).join('');
+
+      let bilanHtml = '';
+      let historyHtml = '';
+
+      if (j1id && j2id && j1id !== j2id) {
+        const j1 = players.find(p=>p.id===j1id);
+        const j2 = players.find(p=>p.id===j2id);
+        const matches = (window._matches||[])
+          .filter(m => m.format==='1v1' &&
+            ((m.joueur1Id===j1id && m.joueur2Id===j2id) ||
+             (m.joueur1Id===j2id && m.joueur2Id===j1id)))
+          .sort((a,b) => (b.date||0)-(a.date||0));
+
+        const total = matches.length;
+        const j1wins = matches.filter(m=>m.gagnantId===j1id).length;
+        const j2wins = matches.filter(m=>m.gagnantId===j2id).length;
+        const j1pct = total>0 ? Math.round((j1wins/total)*100) : 0;
+        const j2pct = total>0 ? Math.round((j2wins/total)*100) : 0;
+        let j1diff=0, j2diff=0;
+        matches.forEach(m => {
+          if (m.joueur1Id===j1id) { j1diff+=(m.score1-m.score2); j2diff+=(m.score2-m.score1); }
+          else { j1diff+=(m.score2-m.score1); j2diff+=(m.score1-m.score2); }
+        });
+
+        const av = (p) => p && p.photo
+          ? `<div class="duel-bilan-avatar"><img src="${p.photo}"/></div>`
+          : `<div class="duel-bilan-avatar">${p?p.nom.substring(0,2).toUpperCase():'?'}</div>`;
+
+        const winClass = (w,l) => w>l?'green':w<l?'red':'gray';
+        const diffCls = (d) => d>0?'pos':d<0?'neg':'';
+        const diffS = (d) => d>0?'+'+d:d.toString();
+        const sideClass = (w,l) => w>l?'winner':w<l?'loser':'';
+
+        bilanHtml = `<div class="duel-bilan">
+          <div class="duel-bilan-header">${j1?j1.nom:'?'} vs ${j2?j2.nom:'?'}</div>
+          <div class="duel-bilan-body">
+            <div class="duel-bilan-side ${sideClass(j1wins,j2wins)}">
+              ${av(j1)}
+              <div class="duel-bilan-name">${j1?j1.nom:'?'}</div>
+              <div class="duel-bilan-wins ${winClass(j1wins,j2wins)}">${j1wins}</div>
+              <div class="duel-bilan-pct">${j1pct}% victoires</div>
+              <div class="duel-bilan-diff ${diffCls(j1diff)}">diff. ${diffS(j1diff)} pts</div>
+            </div>
+            <div class="duel-bilan-mid">
+              <div class="duel-bilan-vs">VS</div>
+              <div class="duel-bilan-total">${total} partie${total!==1?'s':''}</div>
+            </div>
+            <div class="duel-bilan-side ${sideClass(j2wins,j1wins)}">
+              ${av(j2)}
+              <div class="duel-bilan-name">${j2?j2.nom:'?'}</div>
+              <div class="duel-bilan-wins ${winClass(j2wins,j1wins)}">${j2wins}</div>
+              <div class="duel-bilan-pct">${j2pct}% victoires</div>
+              <div class="duel-bilan-diff ${diffCls(j2diff)}">diff. ${diffS(j2diff)} pts</div>
+            </div>
+          </div>
+        </div>`;
+
+        if (total === 0) {
+          historyHtml = `<div class="empty-state" style="padding:20px"><div class="es-icon">🎯</div><div class="es-title">Aucune confrontation</div><div class="es-sub">Ces deux joueurs ne se sont pas encore affrontés !</div></div>`;
+        } else {
+          const rows = matches.map(m => {
+            const winner = players.find(p=>p.id===m.gagnantId);
+            const d = m.date ? new Date(m.date).toLocaleDateString('fr-FR') : '';
+            let s1, s2, s1c, s2c;
+            if (m.joueur1Id===j1id) { s1=m.score1; s2=m.score2; }
+            else { s1=m.score2; s2=m.score1; }
+            s1c = m.gagnantId===j1id?'win':'lose';
+            s2c = m.gagnantId===j2id?'win':'lose';
+            return `<div class="duel-match-item">
+              <div class="duel-match-left">
+                <div class="duel-match-winner">🏆 ${winner?winner.nom:'?'}</div>
+                <div class="duel-match-date">${d}</div>
+              </div>
+              <div class="duel-match-score"><span class="${s1c}">${s1}</span>–<span class="${s2c}">${s2}</span></div>
+            </div>`;
+          }).join('');
+          historyHtml = `<div class="duel-history-title">Historique des confrontations</div>
+            <div class="duel-match-list">${rows}</div>`;
+        }
+      }
+
+      container.innerHTML = `
+        <div class="duel-selector">
+          <div class="duel-selector-row">
+            <select class="input-field" id="duel-select-j1" onchange="onDuelChange()">
+              <option value="">— Joueur 1 —</option>${options(j1id)}
+            </select>
+            <span class="duel-sep-label">vs</span>
+            <select class="input-field" id="duel-select-j2" onchange="onDuelChange()">
+              <option value="">— Joueur 2 —</option>${options(j2id)}
+            </select>
+          </div>
+        </div>
+        ${bilanHtml}
+        ${historyHtml}
+      `;
+    }
+
+    function onDuelChange() {
+      window._duelJ1 = document.getElementById('duel-select-j1').value;
+      window._duelJ2 = document.getElementById('duel-select-j2').value;
+      renderRanking();
+    }
+    window.onDuelChange = onDuelChange;
 
     document.getElementById('input-player-name').addEventListener('keydown', e => {
       if (e.key==='Enter') savePlayer();
