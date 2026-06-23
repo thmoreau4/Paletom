@@ -359,6 +359,15 @@
     .duel-match-score .win  { color: var(--green); }
     .duel-match-score .lose { color: var(--red); }
 
+    .player-edit-btn {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--bg3); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 14px; flex-shrink: 0;
+      color: var(--text2);
+    }
+    .player-edit-btn:active { background: var(--bg); }
+
     /* SAISIE SCORE */
     #page-saisie { padding: 0; }
     .saisie-header {
@@ -437,7 +446,7 @@
         <div class="header-sub">Palet Vendéen</div>
       </div>
     </div>
-    <div class="header-avatar" id="userAvatar">?</div>
+
   </div>
 
   <!-- ACCUEIL -->
@@ -607,6 +616,31 @@
       </div>
       <button class="btn-primary" onclick="savePlayer()">Ajouter le joueur</button>
       <button class="btn-cancel" onclick="closeModal('modal-add-player')">Annuler</button>
+    </div>
+  </div>
+
+  <!-- MODAL MODIFIER JOUEUR -->
+  <div class="modal-overlay" id="modal-edit-player" onclick="closeModal('modal-edit-player')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Modifier le joueur</div>
+      <div class="input-group">
+        <label class="input-label">Pseudo</label>
+        <input class="input-field" id="edit-player-name" type="text" maxlength="20" />
+      </div>
+      <div class="input-group">
+        <label class="input-label">Photo de profil</label>
+        <div class="photo-picker-area">
+          <div class="photo-preview" id="edit-photo-preview" onclick="document.getElementById('edit-file-input').click()">👤</div>
+          <div class="photo-picker-btns">
+            <div class="photo-btn" onclick="document.getElementById('edit-file-input').click()">📷 Changer la photo</div>
+            <div class="photo-btn" onclick="removeEditPhoto()">✕ Supprimer la photo</div>
+          </div>
+        </div>
+        <input type="file" id="edit-file-input" accept="image/*" onchange="handleEditPhotoSelect(event)" />
+      </div>
+      <button class="btn-primary" onclick="updatePlayer()">✅ Enregistrer</button>
+      <button class="btn-cancel" onclick="closeModal('modal-edit-player')">Annuler</button>
     </div>
   </div>
 
@@ -859,6 +893,55 @@
       return { played, wins, losses, winPct, diff };
     }
 
+    // EDIT JOUEUR
+    let editPhotoBase64 = null;
+    let editingPlayerId = null;
+
+    function handleEditPhotoSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        editPhotoBase64 = ev.target.result;
+        document.getElementById('edit-photo-preview').innerHTML = `<img src="${editPhotoBase64}" />`;
+      };
+      reader.readAsDataURL(file);
+    }
+    function removeEditPhoto() {
+      editPhotoBase64 = '';
+      document.getElementById('edit-photo-preview').innerHTML = '👤';
+      document.getElementById('edit-file-input').value = '';
+    }
+    function openEditPlayerModal(playerId) {
+      const p = (window._players||[]).find(pl=>pl.id===playerId);
+      if (!p) return;
+      editingPlayerId = playerId;
+      editPhotoBase64 = p.photo || null;
+      document.getElementById('edit-player-name').value = p.nom;
+      document.getElementById('edit-photo-preview').innerHTML = p.photo ? `<img src="${p.photo}" />` : '👤';
+      document.getElementById('modal-edit-player').classList.add('open');
+      setTimeout(() => document.getElementById('edit-player-name').focus(), 300);
+    }
+    async function updatePlayer() {
+      const name = document.getElementById('edit-player-name').value.trim();
+      if (!name) { showToast('Entre un pseudo !'); return; }
+      const exists = (window._players||[]).find(p => p.nom.toLowerCase()===name.toLowerCase() && p.id!==editingPlayerId);
+      if (exists) { showToast('Ce pseudo existe déjà !'); return; }
+      try {
+        const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+        const original = window._players.find(p=>p.id===editingPlayerId) || {};
+        const data = { nom: name, createdAt: original.createdAt || Date.now() };
+        if (editPhotoBase64) data.photo = editPhotoBase64;
+        await setDoc(doc(window._db, 'joueurs', editingPlayerId), data);
+        closeModal('modal-edit-player');
+        showToast('✅ Joueur modifié !');
+      } catch(e) { showToast('Erreur : ' + e.message); }
+    }
+    window.handleEditPhotoSelect = handleEditPhotoSelect;
+    window.removeEditPhoto = removeEditPhoto;
+    window.openEditPlayerModal = openEditPlayerModal;
+    window.updatePlayer = updatePlayer;
+
     function renderPlayers() {
       const list = document.getElementById('player-list');
       const players = window._players || [];
@@ -875,17 +958,10 @@
           <div class="player-info">
             <div class="player-name">${p.nom}</div>
             <div class="player-stats">${s.played} partie${s.played!==1?'s':''} · ${s.winPct}% victoires · diff. ${s.diff>0?'+':''}${s.diff}</div>
-          </div></div>`;
+          </div>
+          <div class="player-edit-btn" onclick="openEditPlayerModal('${p.id}')">✏️</div>
+        </div>`;
       }).join('');
-
-      // Avatar header = premier joueur
-      const first = players[0];
-      const av = document.getElementById('userAvatar');
-      if (first && first.photo) {
-        av.innerHTML = `<img src="${first.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
-      } else if (first) {
-        av.textContent = first.nom.substring(0,1).toUpperCase();
-      }
     }
 
     function renderRecentMatches() {
