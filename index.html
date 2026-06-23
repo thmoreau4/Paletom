@@ -3,441 +3,473 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f5f0e8" />
+  <meta name="theme-color" content="#ffffff" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Paletom" />
   <title>Paletom</title>
   <link rel="manifest" href="manifest.json" />
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
     :root {
-      --bg: #f5f0e8;
+      --bg: #f4f6f9;
       --bg2: #ffffff;
-      --bg3: #ede8df;
-      --accent: #2c2c2c;
-      --accent2: #444444;
-      --text: #1a1a1a;
-      --text2: #777770;
-      --border: rgba(0,0,0,0.10);
-      --border2: rgba(0,0,0,0.18);
-      --green: #2d7a4f;
+      --bg3: #eef1f6;
+      --navy: #1a2e4a;
+      --navy2: #243d61;
+      --green: #1a7a4a;
+      --green-light: #e8f5ee;
       --red: #c0392b;
-      --gold: #b8860b;
-      --silver: #888;
-      --bronze: #a0522d;
+      --red-light: #fdecea;
+      --gold: #c9910a;
+      --silver: #7a8a9a;
+      --bronze: #9a5a2a;
+      --text: #1a1a2e;
+      --text2: #6b7a8d;
+      --border: rgba(26,46,74,0.10);
+      --border2: rgba(26,46,74,0.18);
       --radius: 14px;
       --radius-sm: 10px;
+      --shadow: 0 2px 8px rgba(26,46,74,0.08);
     }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      max-width: 480px;
-      margin: 0 auto;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; max-width: 480px; margin: 0 auto;
       padding-bottom: 90px;
     }
 
+    /* HEADER */
     .header {
-      background: var(--bg2);
-      padding: 52px 20px 16px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .header-logo { display: flex; align-items: center; gap: 10px; }
-    .header-logo .icon { font-size: 26px; }
-    .header-title { font-size: 22px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }
-    .header-sub { font-size: 12px; color: var(--text2); margin-top: 1px; }
-    .header-avatar {
-      width: 38px; height: 38px; border-radius: 50%;
-      background: var(--accent); display: flex; align-items: center;
-      justify-content: center; font-weight: 700; font-size: 15px; color: var(--bg2);
-      overflow: hidden; flex-shrink: 0;
-    }
-    .header-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-    .page { display: none; padding: 20px; }
-    .page.active { display: block; }
-
-    .new-game-btn {
-      width: 100%; background: var(--accent); color: #fff;
-      border: none; border-radius: var(--radius); padding: 17px;
-      font-size: 16px; font-weight: 700; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      margin-bottom: 24px; transition: transform 0.1s, opacity 0.1s;
-      letter-spacing: 0.2px;
-    }
-    .new-game-btn:active { transform: scale(0.97); opacity: 0.85; }
-
-    .section-title {
-      font-size: 11px; font-weight: 700; color: var(--text2);
-      text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 10px;
-    }
-
-    .format-cards {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 10px; margin-bottom: 24px;
-    }
-    .format-card {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 16px 12px;
-      cursor: pointer; transition: transform 0.1s; text-align: center;
-    }
-    .format-card:active { transform: scale(0.97); }
-    .format-card.active-card { border: 1.5px solid var(--accent); }
-    .format-card.gray { opacity: 0.45; cursor: default; }
-    .format-card .fc-icon { font-size: 26px; margin-bottom: 6px; }
-    .format-card .fc-title { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
-    .format-card .fc-sub { font-size: 11px; color: var(--text2); }
-
-    .match-list { display: flex; flex-direction: column; gap: 8px; }
-    .match-item {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: 12px 14px;
+      background: var(--navy);
+      padding: 52px 20px 14px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .match-players { font-size: 14px; font-weight: 600; }
-    .match-players span { color: var(--text2); font-weight: 400; }
-    .match-score { font-size: 19px; font-weight: 700; letter-spacing: 1px; }
-    .match-score .win { color: var(--green); }
-    .match-score .lose { color: var(--red); }
-    .match-date { font-size: 11px; color: var(--text2); margin-top: 2px; }
+    .header-logo { display:flex; align-items:center; gap:10px; }
+    .header-logo .icon { font-size:24px; }
+    .header-title { font-size:21px; font-weight:800; color:#fff; letter-spacing:-0.3px; }
+    .header-sub { font-size:11px; color:rgba(255,255,255,0.6); margin-top:1px; }
+    .header-settings {
+      width:36px; height:36px; border-radius:50%;
+      background:rgba(255,255,255,0.12); display:flex; align-items:center;
+      justify-content:center; cursor:pointer; font-size:18px; flex-shrink:0;
+    }
+    .header-settings:active { background:rgba(255,255,255,0.22); }
+
+    /* PAGES */
+    .page { display:none; padding:16px; }
+    .page.active { display:block; }
+
+    /* BOUTON PRINCIPALE */
+    .new-game-btn {
+      width:100%; background:var(--navy); color:#fff;
+      border:none; border-radius:var(--radius); padding:16px;
+      font-size:15px; font-weight:700; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      margin-bottom:20px; box-shadow:var(--shadow);
+      transition:transform 0.1s, opacity 0.1s;
+    }
+    .new-game-btn:active { transform:scale(0.97); opacity:0.88; }
+
+    .section-title {
+      font-size:11px; font-weight:700; color:var(--text2);
+      text-transform:uppercase; letter-spacing:1.2px; margin-bottom:10px;
+    }
+
+    /* CARDS FORMAT */
+    .format-cards { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+    .format-card {
+      background:var(--bg2); border:1.5px solid var(--border);
+      border-radius:var(--radius); padding:16px 12px;
+      cursor:pointer; text-align:center; box-shadow:var(--shadow);
+      transition:transform 0.1s, border-color 0.2s;
+    }
+    .format-card:active { transform:scale(0.97); }
+    .format-card.navy { border-top:3px solid var(--navy); }
+    .format-card.green-card { border-top:3px solid var(--green); }
+    .format-card .fc-icon { font-size:24px; margin-bottom:6px; }
+    .format-card .fc-title { font-size:15px; font-weight:700; margin-bottom:3px; }
+    .format-card .fc-sub { font-size:11px; color:var(--text2); }
+
+    /* MATCH LIST */
+    .match-list { display:flex; flex-direction:column; gap:8px; }
+    .match-item {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:12px 14px;
+      display:flex; align-items:center; justify-content:space-between;
+      box-shadow:var(--shadow);
+    }
+    .match-players { font-size:14px; font-weight:600; }
+    .match-players span { color:var(--text2); font-weight:400; }
+    .match-score { font-size:19px; font-weight:700; }
+    .match-score .win { color:var(--green); }
+    .match-score .lose { color:var(--red); }
+    .match-date { font-size:11px; color:var(--text2); margin-top:2px; }
     .match-badge {
-      font-size: 10px; font-weight: 600; padding: 2px 7px;
-      border-radius: 20px; margin-top: 3px; display: inline-block;
-      background: rgba(44,44,44,0.08); color: var(--accent2);
+      font-size:10px; font-weight:700; padding:2px 7px;
+      border-radius:20px; margin-top:3px; display:inline-block;
+      background:var(--bg3); color:var(--text2);
     }
+    .match-badge.b1v1 { background:#e8edf5; color:var(--navy); }
+    .match-badge.b2v2 { background:var(--green-light); color:var(--green); }
 
-    .empty-state {
-      text-align: center; padding: 36px 20px; color: var(--text2);
-    }
-    .empty-state .es-icon { font-size: 44px; margin-bottom: 10px; }
-    .empty-state .es-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
-    .empty-state .es-sub { font-size: 13px; line-height: 1.5; }
+    /* EMPTY STATE */
+    .empty-state { text-align:center; padding:36px 20px; color:var(--text2); }
+    .empty-state .es-icon { font-size:44px; margin-bottom:10px; }
+    .empty-state .es-title { font-size:15px; font-weight:600; color:var(--text); margin-bottom:5px; }
+    .empty-state .es-sub { font-size:13px; line-height:1.5; }
 
+    /* BOTTOM NAV */
     .bottom-nav {
-      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-      width: 100%; max-width: 480px;
-      background: var(--bg2); border-top: 1px solid var(--border);
-      display: flex; padding: 8px 0 20px; z-index: 100;
+      position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+      width:100%; max-width:480px;
+      background:var(--bg2); border-top:1px solid var(--border);
+      display:flex; padding:8px 0 20px; z-index:100;
+      box-shadow:0 -2px 10px rgba(26,46,74,0.08);
     }
     .nav-item {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; gap: 3px; cursor: pointer; padding: 6px 0;
+      flex:1; display:flex; flex-direction:column;
+      align-items:center; gap:3px; cursor:pointer; padding:6px 0;
     }
-    .nav-item .nav-icon { font-size: 21px; }
-    .nav-item .nav-label { font-size: 10px; color: var(--text2); font-weight: 500; }
-    .nav-item.active .nav-label { color: var(--accent); font-weight: 700; }
+    .nav-item .nav-icon { font-size:20px; }
+    .nav-item .nav-label { font-size:10px; color:var(--text2); font-weight:500; }
+    .nav-item.active .nav-label { color:var(--navy); font-weight:700; }
+    .nav-item.active .nav-icon { filter:none; }
 
     /* TABS */
-    .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tabs { display:flex; gap:6px; margin-bottom:14px; overflow-x:auto; padding-bottom:2px; }
+    .tabs::-webkit-scrollbar { display:none; }
     .tab {
-      padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
-      cursor: pointer; border: 1px solid var(--border2);
-      background: transparent; color: var(--text2); transition: all 0.2s;
+      padding:7px 14px; border-radius:20px; font-size:12px; font-weight:600;
+      cursor:pointer; border:1.5px solid var(--border2);
+      background:transparent; color:var(--text2); white-space:nowrap; flex-shrink:0;
     }
-    .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tab.active { background:var(--navy); color:#fff; border-color:var(--navy); }
 
-    /* TABLEAU CLASSEMENT STYLE FOOT */
+    /* TABLEAU CLASSEMENT */
     .ranking-table {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: var(--radius); overflow: hidden;
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
     }
     .ranking-table-header {
-      display: grid;
-      grid-template-columns: 32px 1fr 44px 32px 32px 44px;
-      gap: 0; padding: 10px 12px;
-      background: var(--accent); color: #fff;
-      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
-      align-items: center;
+      display:grid; grid-template-columns:32px 1fr 44px 32px 32px 44px;
+      padding:10px 12px; background:var(--navy); color:#fff;
+      font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px;
+      align-items:center;
     }
-    .ranking-table-header span:not(:first-child) { text-align: center; }
+    .ranking-table-header span:not(:first-child) { text-align:center; }
     .ranking-row {
-      display: grid;
-      grid-template-columns: 32px 1fr 44px 32px 32px 44px;
-      gap: 0; padding: 11px 12px;
-      align-items: center;
-      border-top: 1px solid var(--border);
-      transition: background 0.15s;
+      display:grid; grid-template-columns:32px 1fr 44px 32px 32px 44px;
+      padding:11px 12px; align-items:center;
+      border-top:1px solid var(--border); cursor:pointer;
+      transition:background 0.15s;
     }
-    .ranking-row:first-of-type { border-top: none; }
-    .ranking-row:active { background: var(--bg3); }
-    .rank-pos-cell { font-size: 14px; font-weight: 700; text-align: center; }
-    .rank-pos-cell.gold { color: var(--gold); }
-    .rank-pos-cell.silver { color: var(--silver); }
-    .rank-pos-cell.bronze { color: var(--bronze); }
-    .rank-player-cell { display: flex; align-items: center; gap: 9px; }
+    .ranking-row:active { background:var(--bg3); }
+    .rank-pos-cell { font-size:14px; font-weight:700; text-align:center; color:var(--text2); }
+    .rank-pos-cell.gold { color:var(--gold); }
+    .rank-pos-cell.silver { color:var(--silver); }
+    .rank-pos-cell.bronze { color:var(--bronze); }
+    .rank-player-cell { display:flex; align-items:center; gap:8px; }
     .rank-avatar-sm {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--bg3); display: flex; align-items: center;
-      justify-content: center; font-size: 12px; font-weight: 700;
-      flex-shrink: 0; overflow: hidden; border: 1px solid var(--border);
+      width:30px; height:30px; border-radius:50%;
+      background:var(--bg3); display:flex; align-items:center;
+      justify-content:center; font-size:11px; font-weight:700;
+      flex-shrink:0; overflow:hidden; border:1px solid var(--border); color:var(--text2);
     }
-    .rank-avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
-    .rank-name-cell { font-size: 14px; font-weight: 600; }
-    .rank-cell { text-align: center; font-size: 13px; font-weight: 500; }
-    .rank-cell.pct { font-weight: 700; font-size: 14px; }
-    .rank-cell.win { color: var(--green); }
-    .rank-cell.lose { color: var(--red); }
-    .rank-cell.diff-pos { color: var(--green); font-weight: 700; }
-    .rank-cell.diff-neg { color: var(--red); font-weight: 700; }
-    .rank-cell.diff-zero { color: var(--text2); }
+    .rank-avatar-sm img { width:100%; height:100%; object-fit:cover; }
+    .rank-name-cell { font-size:13px; font-weight:600; }
+    .rank-cell { text-align:center; font-size:13px; font-weight:500; }
+    .rank-cell.pct { font-weight:700; font-size:14px; color:var(--navy); }
+    .rank-cell.win { color:var(--green); font-weight:700; }
+    .rank-cell.lose { color:var(--red); }
+    .rank-cell.diff-pos { color:var(--green); font-weight:700; }
+    .rank-cell.diff-neg { color:var(--red); font-weight:700; }
+    .rank-cell.diff-zero { color:var(--text2); }
 
-    /* JOUEURS */
-    .player-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    /* PAGE JOUEUR */
+    .player-page-header {
+      background:var(--navy); padding:52px 16px 20px;
+      display:flex; align-items:center; gap:14px;
+    }
+    .player-page-back {
+      width:34px; height:34px; border-radius:50%;
+      background:rgba(255,255,255,0.15); display:flex; align-items:center;
+      justify-content:center; cursor:pointer; font-size:16px; color:#fff; flex-shrink:0;
+    }
+    .player-page-avatar {
+      width:56px; height:56px; border-radius:50%;
+      background:rgba(255,255,255,0.2); display:flex; align-items:center;
+      justify-content:center; font-size:22px; font-weight:700; color:#fff;
+      overflow:hidden; border:2px solid rgba(255,255,255,0.3); flex-shrink:0;
+    }
+    .player-page-avatar img { width:100%; height:100%; object-fit:cover; }
+    .player-page-name { font-size:20px; font-weight:800; color:#fff; }
+    .player-page-sub { font-size:12px; color:rgba(255,255,255,0.65); margin-top:2px; }
+
+    .stats-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px;
+    }
+    .stat-card {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:14px 10px; text-align:center;
+      box-shadow:var(--shadow);
+    }
+    .stat-card .sv { font-size:22px; font-weight:800; color:var(--navy); }
+    .stat-card .sv.green { color:var(--green); }
+    .stat-card .sv.red { color:var(--red); }
+    .stat-card .sl { font-size:10px; color:var(--text2); margin-top:3px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+
+    /* JOUEURS LIST */
+    .player-list { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
     .player-item {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: 12px 14px;
-      display: flex; align-items: center; gap: 12px;
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:12px 14px;
+      display:flex; align-items:center; gap:12px; box-shadow:var(--shadow);
+      cursor:pointer; transition:background 0.15s;
     }
+    .player-item:active { background:var(--bg3); }
     .player-avatar-lg {
-      width: 48px; height: 48px; border-radius: 50%;
-      background: var(--bg3); display: flex; align-items: center;
-      justify-content: center; font-size: 18px; font-weight: 700;
-      flex-shrink: 0; overflow: hidden; border: 1px solid var(--border);
-      color: var(--text2);
+      width:46px; height:46px; border-radius:50%;
+      background:var(--bg3); display:flex; align-items:center;
+      justify-content:center; font-size:16px; font-weight:700;
+      flex-shrink:0; overflow:hidden; border:1px solid var(--border); color:var(--text2);
     }
-    .player-avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
-    .player-info { flex: 1; min-width: 0; }
-    .player-name { font-size: 15px; font-weight: 600; }
-    .player-stats { font-size: 12px; color: var(--text2); margin-top: 2px; }
-
+    .player-avatar-lg img { width:100%; height:100%; object-fit:cover; }
+    .player-info { flex:1; min-width:0; }
+    .player-name { font-size:15px; font-weight:700; }
+    .player-stats { font-size:12px; color:var(--text2); margin-top:2px; }
+    .player-edit-btn {
+      width:30px; height:30px; border-radius:50%;
+      background:var(--bg3); border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; font-size:13px; flex-shrink:0;
+    }
     .add-player-btn {
-      width: 100%; background: transparent; color: var(--accent);
-      border: 1.5px dashed var(--border2); border-radius: var(--radius);
-      padding: 14px; font-size: 14px; font-weight: 600; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width:100%; background:transparent; color:var(--navy);
+      border:1.5px dashed var(--border2); border-radius:var(--radius);
+      padding:14px; font-size:14px; font-weight:600; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:8px;
     }
-    .add-player-btn:active { background: var(--bg3); }
-
-    /* MODALS */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.45); z-index: 200;
-      align-items: flex-end; justify-content: center;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--bg2); border-radius: 22px 22px 0 0;
-      padding: 20px 20px 40px; width: 100%; max-width: 480px;
-      animation: slideUp 0.25s ease;
-    }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .modal-handle {
-      width: 36px; height: 4px; border-radius: 2px;
-      background: var(--border2); margin: 0 auto 18px;
-    }
-    .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 16px; }
-    .modal-options { display: flex; flex-direction: column; gap: 8px; }
-    .modal-option {
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: 14px; cursor: pointer;
-      display: flex; align-items: center; gap: 12px;
-    }
-    .modal-option:active { background: var(--bg); }
-    .modal-option .mo-icon { font-size: 26px; }
-    .modal-option .mo-title { font-size: 15px; font-weight: 600; }
-    .modal-option .mo-sub { font-size: 12px; color: var(--text2); margin-top: 1px; }
-    .modal-option.gray { opacity: 0.4; cursor: default; }
-
-    .input-group { margin-bottom: 14px; }
-    .input-label { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.6px; }
-    .input-field {
-      width: 100%; background: var(--bg3); border: 1px solid var(--border2);
-      border-radius: var(--radius-sm); padding: 13px 14px;
-      font-size: 16px; color: var(--text); outline: none; transition: border-color 0.2s;
-    }
-    .input-field:focus { border-color: var(--accent); }
-    select.input-field { appearance: none; -webkit-appearance: none; cursor: pointer; }
-
-    .btn-primary {
-      width: 100%; background: var(--accent); color: #fff;
-      border: none; border-radius: var(--radius-sm); padding: 15px;
-      font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px;
-      letter-spacing: 0.2px;
-    }
-    .btn-primary:active { opacity: 0.82; }
-    .btn-primary:disabled { opacity: 0.35; cursor: default; }
-    .btn-cancel {
-      width: 100%; background: transparent; color: var(--text2);
-      border: none; padding: 12px; font-size: 14px; cursor: pointer; margin-top: 2px;
-    }
-
-    /* PHOTO PICKER */
-    .photo-picker-area {
-      display: flex; align-items: center; gap: 16px; margin-bottom: 6px;
-    }
-    .photo-preview {
-      width: 64px; height: 64px; border-radius: 50%;
-      background: var(--bg3); border: 1.5px dashed var(--border2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 26px; overflow: hidden; flex-shrink: 0; cursor: pointer;
-    }
-    .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
-    .photo-picker-btns { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-    .photo-btn {
-      background: var(--bg3); border: 1px solid var(--border2);
-      border-radius: var(--radius-sm); padding: 10px 14px;
-      font-size: 13px; font-weight: 600; color: var(--text);
-      cursor: pointer; text-align: center;
-    }
-    .photo-btn:active { background: var(--bg); }
-    #file-input { display: none; }
+    .add-player-btn:active { background:var(--bg3); }
 
     /* DUELS */
     .duel-selector {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 16px; margin-bottom: 16px;
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:var(--radius); padding:14px; margin-bottom:14px;
+      box-shadow:var(--shadow);
     }
-    .duel-selector-row {
-      display: flex; align-items: center; gap: 10px;
-    }
-    .duel-selector-row select { flex: 1; }
-    .duel-sep-label {
-      font-size: 13px; font-weight: 700; color: var(--text2); flex-shrink: 0;
-    }
+    .duel-selector-row { display:flex; align-items:center; gap:8px; }
+    .duel-selector-row select { flex:1; }
+    .duel-sep-label { font-size:12px; font-weight:700; color:var(--text2); flex-shrink:0; }
     .duel-bilan {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: var(--radius); overflow: hidden; margin-bottom: 14px;
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:var(--radius); overflow:hidden; margin-bottom:14px;
+      box-shadow:var(--shadow);
     }
     .duel-bilan-header {
-      background: var(--accent); color: #fff;
-      padding: 12px 16px; font-size: 13px; font-weight: 700;
-      text-align: center; letter-spacing: 0.3px;
+      background:var(--navy); color:#fff;
+      padding:11px 16px; font-size:13px; font-weight:700; text-align:center;
     }
-    .duel-bilan-body {
-      display: flex; align-items: stretch;
-    }
-    .duel-bilan-side {
-      flex: 1; padding: 16px 12px; text-align: center;
-    }
-    .duel-bilan-side.winner { background: rgba(45,122,79,0.06); }
-    .duel-bilan-side.loser  { background: rgba(192,57,43,0.04); }
+    .duel-bilan-body { display:flex; align-items:stretch; }
+    .duel-bilan-side { flex:1; padding:16px 10px; text-align:center; }
+    .duel-bilan-side.winner { background:var(--green-light); }
+    .duel-bilan-side.loser { background:var(--red-light); }
     .duel-bilan-avatar {
-      width: 52px; height: 52px; border-radius: 50%;
-      background: var(--bg3); display: flex; align-items: center;
-      justify-content: center; font-size: 18px; font-weight: 700;
-      margin: 0 auto 8px; overflow: hidden; border: 1px solid var(--border);
-      color: var(--text2);
+      width:48px; height:48px; border-radius:50%;
+      background:var(--bg3); display:flex; align-items:center;
+      justify-content:center; font-size:17px; font-weight:700;
+      margin:0 auto 8px; overflow:hidden; border:1px solid var(--border); color:var(--text2);
     }
-    .duel-bilan-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .duel-bilan-name { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
-    .duel-bilan-wins { font-size: 32px; font-weight: 700; line-height: 1; }
-    .duel-bilan-wins.green { color: var(--green); }
-    .duel-bilan-wins.red   { color: var(--red); }
-    .duel-bilan-wins.gray  { color: var(--text2); }
-    .duel-bilan-pct { font-size: 13px; color: var(--text2); margin-top: 4px; }
-    .duel-bilan-diff { font-size: 12px; margin-top: 4px; font-weight: 600; }
-    .duel-bilan-diff.pos { color: var(--green); }
-    .duel-bilan-diff.neg { color: var(--red); }
-    .duel-bilan-mid {
-      display: flex; align-items: center; justify-content: center;
-      padding: 0 6px; flex-direction: column; gap: 4px;
-    }
-    .duel-bilan-vs { font-size: 11px; font-weight: 700; color: var(--text2); }
-    .duel-bilan-total { font-size: 11px; color: var(--text2); }
-
-    .duel-history-title {
-      font-size: 11px; font-weight: 700; color: var(--text2);
-      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
-    }
-    .duel-match-list { display: flex; flex-direction: column; gap: 8px; }
+    .duel-bilan-avatar img { width:100%; height:100%; object-fit:cover; }
+    .duel-bilan-name { font-size:13px; font-weight:700; margin-bottom:8px; }
+    .duel-bilan-wins { font-size:30px; font-weight:800; line-height:1; }
+    .duel-bilan-wins.green { color:var(--green); }
+    .duel-bilan-wins.red { color:var(--red); }
+    .duel-bilan-wins.gray { color:var(--text2); }
+    .duel-bilan-pct { font-size:12px; color:var(--text2); margin-top:4px; }
+    .duel-bilan-diff { font-size:12px; margin-top:3px; font-weight:600; }
+    .duel-bilan-diff.pos { color:var(--green); }
+    .duel-bilan-diff.neg { color:var(--red); }
+    .duel-bilan-mid { display:flex; align-items:center; justify-content:center; padding:0 4px; flex-direction:column; gap:4px; }
+    .duel-bilan-vs { font-size:11px; font-weight:700; color:var(--text2); }
+    .duel-bilan-total { font-size:11px; color:var(--text2); }
+    .duel-history-title { font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+    .duel-match-list { display:flex; flex-direction:column; gap:7px; }
     .duel-match-item {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: 11px 14px;
-      display: flex; align-items: center; justify-content: space-between;
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:10px 14px;
+      display:flex; align-items:center; justify-content:space-between;
+      box-shadow:var(--shadow);
     }
-    .duel-match-left { display: flex; flex-direction: column; gap: 2px; }
-    .duel-match-winner { font-size: 13px; font-weight: 700; color: var(--green); }
-    .duel-match-date { font-size: 11px; color: var(--text2); }
-    .duel-match-score { font-size: 20px; font-weight: 700; }
-    .duel-match-score .win  { color: var(--green); }
-    .duel-match-score .lose { color: var(--red); }
+    .duel-match-winner { font-size:13px; font-weight:700; color:var(--green); }
+    .duel-match-date { font-size:11px; color:var(--text2); }
+    .duel-match-score { font-size:19px; font-weight:700; }
+    .duel-match-score .win { color:var(--green); }
+    .duel-match-score .lose { color:var(--red); }
 
-    .player-edit-btn {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--bg3); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 14px; flex-shrink: 0;
-      color: var(--text2);
+    /* MODALS */
+    .modal-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,0.45); z-index:200;
+      align-items:flex-end; justify-content:center;
     }
-    .player-edit-btn:active { background: var(--bg); }
+    .modal-overlay.open { display:flex; }
+    .modal {
+      background:var(--bg2); border-radius:22px 22px 0 0;
+      padding:20px 20px 40px; width:100%; max-width:480px;
+      animation:slideUp 0.25s ease; max-height:90vh; overflow-y:auto;
+    }
+    @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+    .modal-handle { width:36px; height:4px; border-radius:2px; background:var(--border2); margin:0 auto 18px; }
+    .modal-title { font-size:17px; font-weight:800; margin-bottom:16px; color:var(--navy); }
+    .modal-options { display:flex; flex-direction:column; gap:8px; }
+    .modal-option {
+      background:var(--bg3); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:14px; cursor:pointer;
+      display:flex; align-items:center; gap:12px;
+    }
+    .modal-option:active { background:var(--bg); }
+    .modal-option .mo-icon { font-size:24px; }
+    .modal-option .mo-title { font-size:15px; font-weight:700; }
+    .modal-option .mo-sub { font-size:12px; color:var(--text2); margin-top:1px; }
 
-    /* SAISIE SCORE */
-    #page-saisie { padding: 0; }
+    /* INPUTS */
+    .input-group { margin-bottom:14px; }
+    .input-label { font-size:11px; font-weight:700; color:var(--text2); margin-bottom:5px; display:block; text-transform:uppercase; letter-spacing:0.6px; }
+    .input-field {
+      width:100%; background:var(--bg3); border:1.5px solid var(--border2);
+      border-radius:var(--radius-sm); padding:12px 14px;
+      font-size:15px; color:var(--text); outline:none; transition:border-color 0.2s;
+    }
+    .input-field:focus { border-color:var(--navy); }
+    select.input-field { appearance:none; -webkit-appearance:none; cursor:pointer; }
+    .btn-primary {
+      width:100%; background:var(--navy); color:#fff;
+      border:none; border-radius:var(--radius-sm); padding:15px;
+      font-size:15px; font-weight:700; cursor:pointer; margin-top:8px;
+    }
+    .btn-primary:active { opacity:0.82; }
+    .btn-primary:disabled { opacity:0.35; cursor:default; }
+    .btn-danger {
+      width:100%; background:var(--red); color:#fff;
+      border:none; border-radius:var(--radius-sm); padding:13px;
+      font-size:14px; font-weight:700; cursor:pointer; margin-top:8px;
+    }
+    .btn-danger:active { opacity:0.82; }
+    .btn-cancel {
+      width:100%; background:transparent; color:var(--text2);
+      border:none; padding:12px; font-size:14px; cursor:pointer; margin-top:2px;
+    }
+
+    /* PHOTO PICKER */
+    .photo-picker-area { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+    .photo-preview {
+      width:60px; height:60px; border-radius:50%;
+      background:var(--bg3); border:1.5px dashed var(--border2);
+      display:flex; align-items:center; justify-content:center;
+      font-size:24px; overflow:hidden; flex-shrink:0; cursor:pointer;
+    }
+    .photo-preview img { width:100%; height:100%; object-fit:cover; }
+    .photo-picker-btns { display:flex; flex-direction:column; gap:7px; flex:1; }
+    .photo-btn {
+      background:var(--bg3); border:1px solid var(--border2);
+      border-radius:var(--radius-sm); padding:9px 12px;
+      font-size:13px; font-weight:600; cursor:pointer; text-align:center; color:var(--text);
+    }
+    #file-input, #edit-file-input { display:none; }
+
+    /* SAISIE */
+    #page-saisie { padding:0; }
     .saisie-header {
-      background: var(--bg2); padding: 52px 20px 16px;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 14px;
+      background:var(--navy); padding:52px 16px 14px;
+      display:flex; align-items:center; gap:12px;
     }
     .back-btn {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: var(--bg3); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 16px; flex-shrink: 0;
-      color: var(--text);
+      width:34px; height:34px; border-radius:50%;
+      background:rgba(255,255,255,0.15); display:flex; align-items:center;
+      justify-content:center; cursor:pointer; font-size:16px; color:#fff; flex-shrink:0;
     }
-    .saisie-title { font-size: 17px; font-weight: 700; }
-    .saisie-sub { font-size: 12px; color: var(--text2); margin-top: 1px; }
-    .saisie-body { padding: 22px 20px; }
-
-    .step { display: none; }
-    .step.active { display: block; }
-    .step-title { font-size: 14px; font-weight: 600; margin-bottom: 14px; color: var(--text2); }
+    .saisie-title { font-size:17px; font-weight:800; color:#fff; }
+    .saisie-sub { font-size:12px; color:rgba(255,255,255,0.65); margin-top:1px; }
+    .saisie-body { padding:20px 16px; }
+    .step { display:none; }
+    .step.active { display:block; }
+    .step-title { font-size:13px; font-weight:700; margin-bottom:12px; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px; }
 
     .score-vs-row {
-      display: flex; align-items: stretch; gap: 0;
-      background: var(--bg2); border-radius: var(--radius); overflow: hidden;
-      border: 1px solid var(--border); margin-bottom: 16px;
+      display:flex; align-items:stretch;
+      background:var(--bg2); border-radius:var(--radius); overflow:hidden;
+      border:1px solid var(--border); margin-bottom:14px; box-shadow:var(--shadow);
     }
-    .score-player { flex: 1; padding: 18px 14px; text-align: center; }
+    .score-player { flex:1; padding:16px 12px; text-align:center; }
     .score-player-name {
-      font-size: 12px; font-weight: 700; color: var(--text2);
-      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-size:11px; font-weight:700; color:var(--text2);
+      text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
     .score-avatar {
-      width: 52px; height: 52px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; font-weight: 700; margin: 0 auto 12px;
-      background: var(--bg3); overflow: hidden; border: 1px solid var(--border);
-      color: var(--text2);
+      width:48px; height:48px; border-radius:50%;
+      background:var(--bg3); display:flex; align-items:center;
+      justify-content:center; font-size:18px; font-weight:700;
+      margin:0 auto 10px; overflow:hidden; border:1px solid var(--border); color:var(--text2);
     }
-    .score-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .score-avatar img { width:100%; height:100%; object-fit:cover; }
     .score-input {
-      width: 100%; background: var(--bg3); border: 1.5px solid var(--border2);
-      border-radius: var(--radius-sm); padding: 12px 6px;
-      font-size: 38px; font-weight: 700; color: var(--text);
-      text-align: center; outline: none; transition: border-color 0.2s;
-      -moz-appearance: textfield;
+      width:100%; background:var(--bg3); border:1.5px solid var(--border2);
+      border-radius:var(--radius-sm); padding:10px 6px;
+      font-size:36px; font-weight:800; color:var(--navy);
+      text-align:center; outline:none; transition:border-color 0.2s;
+      -moz-appearance:textfield;
     }
     .score-input::-webkit-inner-spin-button,
-    .score-input::-webkit-outer-spin-button { -webkit-appearance: none; }
-    .score-input:focus { border-color: var(--accent); }
-    .score-sep {
-      display: flex; align-items: center; justify-content: center;
-      padding: 0 4px; font-size: 20px; font-weight: 700; color: var(--text2);
-      background: var(--bg2);
-    }
-    .score-error { color: var(--red); font-size: 13px; text-align: center; margin-bottom: 10px; min-height: 20px; }
-    .score-info { font-size: 12px; color: var(--text2); text-align: center; margin-bottom: 14px; }
+    .score-input::-webkit-outer-spin-button { -webkit-appearance:none; }
+    .score-input:focus { border-color:var(--navy); }
+    .score-sep { display:flex; align-items:center; justify-content:center; padding:0 4px; font-size:18px; font-weight:700; color:var(--text2); }
+    .score-error { color:var(--red); font-size:13px; text-align:center; margin-bottom:10px; min-height:18px; }
+    .score-info { font-size:12px; color:var(--text2); text-align:center; margin-bottom:12px; }
 
-    .toast {
-      position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
-      background: var(--accent); color: #fff; padding: 11px 22px;
-      border-radius: 22px; font-size: 14px; font-weight: 600;
-      z-index: 300; opacity: 0; transition: opacity 0.3s; white-space: nowrap;
+    /* PARAMÈTRES */
+    .settings-section { margin-bottom:20px; }
+    .settings-item {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:14px 16px;
+      display:flex; align-items:center; gap:12px;
+      cursor:pointer; margin-bottom:8px; box-shadow:var(--shadow);
+      transition:background 0.15s;
     }
-    .toast.show { opacity: 1; }
+    .settings-item:active { background:var(--bg3); }
+    .settings-item .si-icon { font-size:22px; width:36px; text-align:center; flex-shrink:0; }
+    .settings-item .si-label { font-size:14px; font-weight:600; flex:1; }
+    .settings-item .si-arrow { color:var(--text2); font-size:14px; }
+    .settings-item.coming { opacity:0.45; cursor:default; }
+
+    .rules-content {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:var(--radius); padding:16px; box-shadow:var(--shadow);
+    }
+    .rules-content h3 { font-size:14px; font-weight:700; color:var(--navy); margin-bottom:8px; margin-top:14px; }
+    .rules-content h3:first-child { margin-top:0; }
+    .rules-content p { font-size:13px; color:var(--text2); line-height:1.6; margin-bottom:6px; }
+
+    /* PAGE PARAMÈTRES header */
+    .settings-header {
+      background:var(--navy); padding:52px 16px 14px;
+      display:flex; align-items:center; gap:12px;
+    }
+
+    /* TOAST */
+    .toast {
+      position:fixed; bottom:100px; left:50%; transform:translateX(-50%);
+      background:var(--navy); color:#fff; padding:11px 22px;
+      border-radius:22px; font-size:14px; font-weight:600;
+      z-index:300; opacity:0; transition:opacity 0.3s; white-space:nowrap;
+    }
+    .toast.show { opacity:1; }
   </style>
 </head>
 <body>
 
+  <!-- HEADER -->
   <div class="header" id="main-header">
     <div class="header-logo">
       <span class="icon">🎯</span>
@@ -446,26 +478,24 @@
         <div class="header-sub">Palet Vendéen</div>
       </div>
     </div>
-
+    <div class="header-settings" onclick="showPage('page-settings')">⚙️</div>
   </div>
 
   <!-- ACCUEIL -->
   <div class="page active" id="page-home">
-    <br>
     <button class="new-game-btn" onclick="openNewGameModal()">➕ Nouvelle partie</button>
     <div class="section-title">Sections</div>
     <div class="format-cards">
-      <div class="format-card active-card" onclick="showPage('page-ranking'); setTab('1v1')">
+      <div class="format-card navy" onclick="showPage('page-ranking'); setTab('1v1')">
         <div class="fc-icon">🥊</div>
         <div class="fc-title">1 vs 1</div>
         <div class="fc-sub">Classement individuel</div>
       </div>
-      <div class="format-card" onclick="showPage('page-ranking'); setTab('2v2')">
+      <div class="format-card green-card" onclick="showPage('page-ranking'); setTab('2v2')">
         <div class="fc-icon">🤝</div>
         <div class="fc-title">2 vs 2</div>
         <div class="fc-sub">Classement équipes</div>
       </div>
-
     </div>
     <div class="section-title">Dernières parties</div>
     <div id="recent-matches">
@@ -479,32 +509,102 @@
 
   <!-- CLASSEMENT -->
   <div class="page" id="page-ranking">
-    <br>
     <div class="tabs">
       <button class="tab active" id="tab-1v1" onclick="setTab('1v1')">1 vs 1</button>
-      <button class="tab" id="tab-duels" onclick="setTab('duels')">Duels</button>
+      <button class="tab" id="tab-duels" onclick="setTab('duels')">Duels 1v1</button>
       <button class="tab" id="tab-2v2" onclick="setTab('2v2')">2 vs 2</button>
+      <button class="tab" id="tab-duels2v2" onclick="setTab('duels2v2')">Duels 2v2</button>
     </div>
-    <div id="ranking-content">
-      <div class="empty-state">
-        <div class="es-icon">🏆</div>
-        <div class="es-title">Classement vide</div>
-        <div class="es-sub">Jouez des parties pour voir le classement !</div>
+    <div id="ranking-content"></div>
+  </div>
+
+  <!-- PAGE JOUEUR (fiche individuelle) -->
+  <div class="page" id="page-joueur">
+    <div class="player-page-header">
+      <div class="player-page-back" onclick="history.back(); showPage(window._prevPage||'page-ranking')">←</div>
+      <div class="player-page-avatar" id="pp-avatar">?</div>
+      <div>
+        <div class="player-page-name" id="pp-name">Joueur</div>
+        <div class="player-page-sub" id="pp-sub">Stats 1v1</div>
+      </div>
+    </div>
+    <div style="padding:16px" id="pp-content"></div>
+  </div>
+
+  <!-- PARAMÈTRES -->
+  <div class="page" id="page-settings">
+    <div class="settings-header" style="background:var(--navy);padding:52px 16px 14px;display:flex;align-items:center;gap:12px;margin:-16px -16px 16px;">
+      <div class="back-btn" style="background:rgba(255,255,255,0.15);color:#fff" onclick="showPage('page-home')">←</div>
+      <div>
+        <div style="font-size:17px;font-weight:800;color:#fff">Paramètres</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.65)">Paletom</div>
+      </div>
+    </div>
+
+    <div class="section-title">Joueurs</div>
+    <div class="settings-section">
+      <div class="settings-item" onclick="showPage('page-players')">
+        <span class="si-icon">👥</span>
+        <span class="si-label">Gérer les joueurs</span>
+        <span class="si-arrow">›</span>
+      </div>
+    </div>
+
+    <div class="section-title">Règles du jeu</div>
+    <div class="settings-section">
+      <div class="settings-item" onclick="showPage('page-rules')">
+        <span class="si-icon">📖</span>
+        <span class="si-label">Règles du Palet Vendéen</span>
+        <span class="si-arrow">›</span>
+      </div>
+    </div>
+
+    <div class="section-title">À venir</div>
+    <div class="settings-section">
+      <div class="settings-item coming">
+        <span class="si-icon">🏆</span>
+        <span class="si-label">Saisons & tournois</span>
+        <span class="si-arrow">›</span>
+      </div>
+      <div class="settings-item coming">
+        <span class="si-icon">🔑</span>
+        <span class="si-label">Ligues & codes d'accès</span>
+        <span class="si-arrow">›</span>
+      </div>
+      <div class="settings-item coming">
+        <span class="si-icon">🎳</span>
+        <span class="si-label">Pétanque & Fléchettes</span>
+        <span class="si-arrow">›</span>
       </div>
     </div>
   </div>
 
-  <!-- JOUEURS -->
-  <div class="page" id="page-players">
-    <br>
-    <div class="section-title">Joueurs enregistrés</div>
-    <div class="player-list" id="player-list">
-      <div class="empty-state">
-        <div class="es-icon">👤</div>
-        <div class="es-title">Aucun joueur</div>
-        <div class="es-sub">Ajoute les joueurs de ton groupe !</div>
-      </div>
+  <!-- RÈGLES -->
+  <div class="page" id="page-rules">
+    <div style="background:var(--navy);padding:52px 16px 14px;display:flex;align-items:center;gap:12px;margin:-16px -16px 16px;">
+      <div class="back-btn" style="background:rgba(255,255,255,0.15);color:#fff" onclick="showPage('page-settings')">←</div>
+      <div style="font-size:17px;font-weight:800;color:#fff">Règles du Palet Vendéen</div>
     </div>
+    <div class="rules-content">
+      <h3>🎯 Le jeu</h3>
+      <p>Le palet vendéen se joue avec des palets en laiton qu'on lance sur une plaque de plomb (ou "maître"). L'objectif est de placer ses palets le plus près possible du centre de la plaque.</p>
+      <h3>👥 Joueurs</h3>
+      <p>Se joue en 1v1, 2v2 ou à plusieurs. Chaque joueur ou équipe dispose d'un nombre de palets défini en début de partie.</p>
+      <h3>🏆 Score</h3>
+      <p>Une partie se joue en 13 points. Seul le joueur ou l'équipe dont le palet est le plus proche du centre marque des points à chaque manche. Le nombre de points marqués correspond au nombre de palets plus proches que le meilleur palet adverse.</p>
+      <h3>🥇 Victoire</h3>
+      <p>Le premier joueur ou la première équipe à atteindre 13 points remporte la partie. En cas d'égalité pendant la partie, on rejoue la manche.</p>
+    </div>
+  </div>
+
+  <!-- JOUEURS (gestion) -->
+  <div class="page" id="page-players">
+    <div style="background:var(--navy);padding:52px 16px 14px;display:flex;align-items:center;gap:12px;margin:-16px -16px 16px;">
+      <div class="back-btn" style="background:rgba(255,255,255,0.15);color:#fff" onclick="showPage('page-settings')">←</div>
+      <div style="font-size:17px;font-weight:800;color:#fff">Joueurs</div>
+    </div>
+    <br>
+    <div class="player-list" id="player-list"></div>
     <button class="add-player-btn" onclick="openAddPlayerModal()">➕ Ajouter un joueur</button>
   </div>
 
@@ -514,63 +614,150 @@
       <div class="back-btn" onclick="showPage('page-home')">←</div>
       <div>
         <div class="saisie-title">Nouvelle partie</div>
-        <div class="saisie-sub">1 vs 1 · Palet Vendéen</div>
+        <div class="saisie-sub" id="saisie-sub">1 vs 1 · Palet Vendéen</div>
       </div>
     </div>
     <div class="saisie-body">
+      <!-- 1v1 joueurs -->
       <div class="step active" id="step-joueurs">
         <div class="step-title">Choisis les deux joueurs</div>
         <div class="input-group">
           <label class="input-label">Joueur 1</label>
-          <select class="input-field" id="select-j1" onchange="checkJoueurs()">
-            <option value="">— Sélectionner —</option>
-          </select>
+          <select class="input-field" id="select-j1" onchange="checkJoueurs()"><option value="">— Sélectionner —</option></select>
         </div>
         <div class="input-group">
           <label class="input-label">Joueur 2</label>
-          <select class="input-field" id="select-j2" onchange="checkJoueurs()">
-            <option value="">— Sélectionner —</option>
-          </select>
+          <select class="input-field" id="select-j2" onchange="checkJoueurs()"><option value="">— Sélectionner —</option></select>
         </div>
         <div class="score-error" id="joueurs-error"></div>
         <button class="btn-primary" id="btn-next-joueurs" onclick="goToScore()" disabled>Continuer →</button>
       </div>
-
+      <!-- 1v1 score -->
       <div class="step" id="step-score">
         <div class="step-title">Score final</div>
         <div class="score-vs-row">
           <div class="score-player">
             <div class="score-avatar" id="score-avatar-j1">?</div>
-            <div class="score-player-name" id="score-name-j1">Joueur 1</div>
-            <input class="score-input" id="input-score-j1" type="number" min="0" max="13"
-              placeholder="0" inputmode="numeric" oninput="onScoreInput()" />
+            <div class="score-player-name" id="score-name-j1">J1</div>
+            <input class="score-input" id="input-score-j1" type="number" min="0" max="13" placeholder="0" inputmode="numeric" oninput="onScoreInput()" />
           </div>
           <div class="score-sep">–</div>
           <div class="score-player">
             <div class="score-avatar" id="score-avatar-j2">?</div>
-            <div class="score-player-name" id="score-name-j2">Joueur 2</div>
-            <input class="score-input" id="input-score-j2" type="number" min="0" max="13"
-              placeholder="0" inputmode="numeric" oninput="onScoreInput()" />
+            <div class="score-player-name" id="score-name-j2">J2</div>
+            <input class="score-input" id="input-score-j2" type="number" min="0" max="13" placeholder="0" inputmode="numeric" oninput="onScoreInput()" />
           </div>
         </div>
-        <div class="score-info">Score max : 13 points · Palet Vendéen</div>
+        <div class="score-info">Score max : 13 pts</div>
         <div class="score-error" id="score-error"></div>
-        <button class="btn-primary" id="btn-save-score" onclick="saveMatch()" disabled>✅ Enregistrer la partie</button>
+        <button class="btn-primary" id="btn-save-score" onclick="saveMatch()" disabled>✅ Enregistrer</button>
         <button class="btn-cancel" onclick="goBackToJoueurs()">← Changer les joueurs</button>
+      </div>
+      <!-- 2v2 joueurs -->
+      <div class="step" id="step-joueurs-2v2">
+        <div class="step-title">Équipe 1</div>
+        <div class="input-group">
+          <label class="input-label">Joueur A</label>
+          <select class="input-field" id="select-2v2-j1" onchange="check2v2Joueurs()"><option value="">— Sélectionner —</option></select>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Joueur B</label>
+          <select class="input-field" id="select-2v2-j2" onchange="check2v2Joueurs()"><option value="">— Sélectionner —</option></select>
+        </div>
+        <div class="step-title" style="margin-top:14px">Équipe 2</div>
+        <div class="input-group">
+          <label class="input-label">Joueur C</label>
+          <select class="input-field" id="select-2v2-j3" onchange="check2v2Joueurs()"><option value="">— Sélectionner —</option></select>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Joueur D</label>
+          <select class="input-field" id="select-2v2-j4" onchange="check2v2Joueurs()"><option value="">— Sélectionner —</option></select>
+        </div>
+        <div class="score-error" id="joueurs-2v2-error"></div>
+        <button class="btn-primary" id="btn-next-joueurs-2v2" onclick="goToScore2v2()" disabled>Continuer →</button>
+      </div>
+      <!-- 2v2 score -->
+      <div class="step" id="step-score-2v2">
+        <div class="step-title">Score final</div>
+        <div class="score-vs-row">
+          <div class="score-player">
+            <div class="score-player-name" id="score-name-eq1">Équipe 1</div>
+            <div style="display:flex;justify-content:center;gap:5px;margin-bottom:10px">
+              <div class="score-avatar" id="score-avatar-2v2-j1" style="width:34px;height:34px;font-size:12px">?</div>
+              <div class="score-avatar" id="score-avatar-2v2-j2" style="width:34px;height:34px;font-size:12px">?</div>
+            </div>
+            <input class="score-input" id="input-score-eq1" type="number" min="0" max="13" placeholder="0" inputmode="numeric" oninput="onScoreInput2v2()" />
+          </div>
+          <div class="score-sep">–</div>
+          <div class="score-player">
+            <div class="score-player-name" id="score-name-eq2">Équipe 2</div>
+            <div style="display:flex;justify-content:center;gap:5px;margin-bottom:10px">
+              <div class="score-avatar" id="score-avatar-2v2-j3" style="width:34px;height:34px;font-size:12px">?</div>
+              <div class="score-avatar" id="score-avatar-2v2-j4" style="width:34px;height:34px;font-size:12px">?</div>
+            </div>
+            <input class="score-input" id="input-score-eq2" type="number" min="0" max="13" placeholder="0" inputmode="numeric" oninput="onScoreInput2v2()" />
+          </div>
+        </div>
+        <div class="score-info">Score max : 13 pts</div>
+        <div class="score-error" id="score-2v2-error"></div>
+        <button class="btn-primary" id="btn-save-score-2v2" onclick="saveMatch2v2()" disabled>✅ Enregistrer</button>
+        <button class="btn-cancel" onclick="goBackTo2v2Joueurs()">← Changer les joueurs</button>
+      </div>
+      <!-- 1v1v1 joueurs -->
+      <div class="step" id="step-joueurs-1v1v1">
+        <div class="step-title">Choisis les trois joueurs</div>
+        <div class="input-group">
+          <label class="input-label">Joueur 1</label>
+          <select class="input-field" id="select-1v1v1-j1" onchange="check1v1v1Joueurs()"><option value="">— Sélectionner —</option></select>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Joueur 2</label>
+          <select class="input-field" id="select-1v1v1-j2" onchange="check1v1v1Joueurs()"><option value="">— Sélectionner —</option></select>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Joueur 3</label>
+          <select class="input-field" id="select-1v1v1-j3" onchange="check1v1v1Joueurs()"><option value="">— Sélectionner —</option></select>
+        </div>
+        <div class="score-error" id="joueurs-1v1v1-error"></div>
+        <button class="btn-primary" id="btn-next-joueurs-1v1v1" onclick="goToScore1v1v1()" disabled>Continuer →</button>
+      </div>
+      <!-- 1v1v1 score -->
+      <div class="step" id="step-score-1v1v1">
+        <div class="step-title">Score final des 3 joueurs</div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:14px">
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)">
+            <div class="score-avatar" id="score-avatar-1v1v1-j1" style="width:40px;height:40px;font-size:14px;flex-shrink:0">?</div>
+            <div style="font-size:14px;font-weight:700;flex:1" id="score-1v1v1-name-j1">J1</div>
+            <input class="score-input" id="input-score-1v1v1-j1" type="number" min="0" max="13" placeholder="0" inputmode="numeric" oninput="onScoreInput1v1v1()" style="width:80px;font-size:28px;padding:8px 6px"/>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)">
+            <div class="score-avatar" id="score-avatar-1v1v1-j2" style="width:40px;height:40px;font-size:14px;flex-shrink:0">?</div>
+            <div style="font-size:14px;font-weight:700;flex:1" id="score-1v1v1-name-j2">J2</div>
+            <input class="score-input" id="input-score-1v1v1-j2" type="number" min="0" max="13" placeholder="0" inputmode="numeric" oninput="onScoreInput1v1v1()" style="width:80px;font-size:28px;padding:8px 6px"/>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)">
+            <div class="score-avatar" id="score-avatar-1v1v1-j3" style="width:40px;height:40px;font-size:14px;flex-shrink:0">?</div>
+            <div style="font-size:14px;font-weight:700;flex:1" id="score-1v1v1-name-j3">J3</div>
+            <input class="score-input" id="input-score-1v1v1-j3" type="number" min="0" max="13" placeholder="0" inputmode="numeric" oninput="onScoreInput1v1v1()" style="width:80px;font-size:28px;padding:8px 6px"/>
+          </div>
+        </div>
+        <div class="score-info">Un seul gagnant · score le plus élevé</div>
+        <div class="score-error" id="score-1v1v1-error"></div>
+        <button class="btn-primary" id="btn-save-score-1v1v1" onclick="saveMatch1v1v1()" disabled>✅ Enregistrer</button>
+        <button class="btn-cancel" onclick="goBackTo1v1v1Joueurs()">← Changer les joueurs</button>
       </div>
     </div>
   </div>
 
-  <!-- BOTTOM NAV -->
   <nav class="bottom-nav" id="bottom-nav">
     <div class="nav-item active" id="nav-home" onclick="showPage('page-home')">
-      <span class="nav-icon">🏠</span><span class="nav-label">Accueil</span>
+      <span class="nav-icon">➕</span><span class="nav-label">Nouvelle partie</span>
     </div>
     <div class="nav-item" id="nav-ranking" onclick="showPage('page-ranking')">
       <span class="nav-icon">🏆</span><span class="nav-label">Classement</span>
     </div>
-    <div class="nav-item" id="nav-players" onclick="showPage('page-players')">
-      <span class="nav-icon">👥</span><span class="nav-label">Joueurs</span>
+    <div class="nav-item" id="nav-players-nav" onclick="showPage('page-settings')">
+      <span class="nav-icon">⚙️</span><span class="nav-label">Paramètres</span>
     </div>
   </nav>
 
@@ -578,18 +765,30 @@
   <div class="modal-overlay" id="modal-new-game" onclick="closeModal('modal-new-game')">
     <div class="modal" onclick="event.stopPropagation()">
       <div class="modal-handle"></div>
-      <div class="modal-title">Choisir le format</div>
+      <div class="modal-title">Nouvelle partie</div>
       <div class="modal-options">
         <div class="modal-option" onclick="startNewGame('1v1')">
           <span class="mo-icon">🥊</span>
           <div><div class="mo-title">1 vs 1</div><div class="mo-sub">Deux joueurs · jusqu'à 13 pts</div></div>
         </div>
+        <div class="modal-option" onclick="startNewGame('1v1v1')">
+          <span class="mo-icon">⚡</span>
+          <div><div class="mo-title">1 vs 1 vs 1</div><div class="mo-sub">Trois joueurs · 3 scores séparés</div></div>
+        </div>
         <div class="modal-option" onclick="startNewGame('2v2')">
           <span class="mo-icon">🤝</span>
           <div><div class="mo-title">2 vs 2</div><div class="mo-sub">Deux équipes · jusqu'à 13 pts</div></div>
         </div>
-
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL MODIFIER MATCH -->
+  <div class="modal-overlay" id="modal-edit-match" onclick="closeModal('modal-edit-match')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="edit-match-title">Modifier la partie</div>
+      <div id="edit-match-body"></div>
     </div>
   </div>
 
@@ -600,8 +799,7 @@
       <div class="modal-title">Ajouter un joueur</div>
       <div class="input-group">
         <label class="input-label">Pseudo</label>
-        <input class="input-field" id="input-player-name" type="text"
-          placeholder="ex: Thomas, Nico, Ju..." maxlength="20" />
+        <input class="input-field" id="input-player-name" type="text" placeholder="ex: Thomas, Nico..." maxlength="20" />
       </div>
       <div class="input-group">
         <label class="input-label">Photo de profil</label>
@@ -609,7 +807,7 @@
           <div class="photo-preview" id="photo-preview" onclick="document.getElementById('file-input').click()">👤</div>
           <div class="photo-picker-btns">
             <div class="photo-btn" onclick="document.getElementById('file-input').click()">📷 Choisir une photo</div>
-            <div class="photo-btn" onclick="removePhoto()">✕ Supprimer la photo</div>
+            <div class="photo-btn" onclick="removePhoto()">✕ Supprimer</div>
           </div>
         </div>
         <input type="file" id="file-input" accept="image/*" onchange="handlePhotoSelect(event)" />
@@ -633,8 +831,8 @@
         <div class="photo-picker-area">
           <div class="photo-preview" id="edit-photo-preview" onclick="document.getElementById('edit-file-input').click()">👤</div>
           <div class="photo-picker-btns">
-            <div class="photo-btn" onclick="document.getElementById('edit-file-input').click()">📷 Changer la photo</div>
-            <div class="photo-btn" onclick="removeEditPhoto()">✕ Supprimer la photo</div>
+            <div class="photo-btn" onclick="document.getElementById('edit-file-input').click()">📷 Changer</div>
+            <div class="photo-btn" onclick="removeEditPhoto()">✕ Supprimer</div>
           </div>
         </div>
         <input type="file" id="edit-file-input" accept="image/*" onchange="handleEditPhotoSelect(event)" />
@@ -646,10 +844,10 @@
 
   <div class="toast" id="toast"></div>
 
+  <!-- FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
+    import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     const firebaseConfig = {
       apiKey: "AIzaSyBLyQ_M-zGZBJ2N1ATeXnkAinV3dOBxBBU",
       authDomain: "paletom-f0fbf.firebaseapp.com",
@@ -658,13 +856,15 @@
       messagingSenderId: "850183113952",
       appId: "1:850183113952:web:42720d8d34febd30931485"
     };
-
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     window._db = db;
     window._col = collection;
     window._addDoc = addDoc;
-
+    window._doc = doc;
+    window._setDoc = setDoc;
+    window._deleteDoc = deleteDoc;
+    window._updateDoc = updateDoc;
     onSnapshot(collection(db, "joueurs"), (snap) => {
       window._players = [];
       snap.forEach(d => window._players.push({ id: d.id, ...d.data() }));
@@ -680,60 +880,35 @@
   <script>
     window._players = [];
     window._matches = [];
+    window._currentTab = '1v1';
+    window._currentFormat = '1v1';
     let currentPhotoBase64 = null;
-
-    // PHOTO
-    function handlePhotoSelect(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        currentPhotoBase64 = ev.target.result;
-        const prev = document.getElementById('photo-preview');
-        prev.innerHTML = `<img src="${currentPhotoBase64}" />`;
-      };
-      reader.readAsDataURL(file);
-    }
-    function removePhoto() {
-      currentPhotoBase64 = null;
-      document.getElementById('photo-preview').innerHTML = '👤';
-      document.getElementById('file-input').value = '';
-    }
-    window.handlePhotoSelect = handlePhotoSelect;
-    window.removePhoto = removePhoto;
-
-    // AVATAR HTML
-    function avatarHtml(player, size='sm') {
-      const cls = size === 'lg' ? 'player-avatar-lg' : size === 'score' ? 'score-avatar' : 'rank-avatar-sm';
-      if (player && player.photo) {
-        return `<div class="${cls}"><img src="${player.photo}" /></div>`;
-      }
-      const initials = player ? player.nom.substring(0,2).toUpperCase() : '?';
-      return `<div class="${cls}">${initials}</div>`;
-    }
+    let editPhotoBase64 = null;
+    let editingPlayerId = null;
 
     // NAV
+    const FULLSCREEN_PAGES = ['page-saisie','page-joueur','page-settings','page-players','page-rules'];
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
-      const isFullscreen = pageId === 'page-saisie';
+      const isFullscreen = FULLSCREEN_PAGES.includes(pageId);
       document.getElementById('main-header').style.display = isFullscreen ? 'none' : '';
       document.getElementById('bottom-nav').style.display = isFullscreen ? 'none' : '';
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const navMap = {'page-home':'nav-home','page-ranking':'nav-ranking','page-players':'nav-players'};
+      const navMap = {'page-home':'nav-home','page-ranking':'nav-ranking','page-settings':'nav-players-nav'};
       if (navMap[pageId]) document.getElementById(navMap[pageId]).classList.add('active');
+      window.scrollTo(0,0);
     }
     window.showPage = showPage;
 
     function setTab(tab) {
-      document.getElementById('tab-1v1').classList.toggle('active', tab === '1v1');
-      document.getElementById('tab-duels').classList.toggle('active', tab === 'duels');
-      document.getElementById('tab-2v2').classList.toggle('active', tab === '2v2');
+      ['1v1','duels','2v2','duels2v2'].forEach(t => {
+        document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+      });
       window._currentTab = tab;
       renderRanking();
     }
     window.setTab = setTab;
-    window._currentTab = '1v1';
 
     // MODALS
     function openNewGameModal() {
@@ -751,62 +926,94 @@
     window.openAddPlayerModal = openAddPlayerModal;
     window.closeModal = closeModal;
 
+    // PHOTO
+    function handlePhotoSelect(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => { currentPhotoBase64 = ev.target.result; document.getElementById('photo-preview').innerHTML = `<img src="${currentPhotoBase64}"/>`; };
+      reader.readAsDataURL(file);
+    }
+    function removePhoto() { currentPhotoBase64 = null; document.getElementById('photo-preview').innerHTML = '👤'; document.getElementById('file-input').value = ''; }
+    function handleEditPhotoSelect(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => { editPhotoBase64 = ev.target.result; document.getElementById('edit-photo-preview').innerHTML = `<img src="${editPhotoBase64}"/>`; };
+      reader.readAsDataURL(file);
+    }
+    function removeEditPhoto() { editPhotoBase64 = ''; document.getElementById('edit-photo-preview').innerHTML = '👤'; document.getElementById('edit-file-input').value = ''; }
+    window.handlePhotoSelect = handlePhotoSelect;
+    window.removePhoto = removePhoto;
+    window.handleEditPhotoSelect = handleEditPhotoSelect;
+    window.removeEditPhoto = removeEditPhoto;
+
+    // TOAST
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+    window.showToast = showToast;
+
+    // NOUVELLE PARTIE
     function startNewGame(format) {
       closeModal('modal-new-game');
-      if (format === '2v2') { showToast('2v2 bientôt disponible !'); return; }
-      document.getElementById('step-joueurs').classList.add('active');
-      document.getElementById('step-score').classList.remove('active');
-      document.getElementById('select-j1').value = '';
-      document.getElementById('select-j2').value = '';
-      document.getElementById('joueurs-error').textContent = '';
-      document.getElementById('btn-next-joueurs').disabled = true;
+      window._currentFormat = format;
+      const allSteps = ['step-joueurs','step-score','step-joueurs-1v1v1','step-score-1v1v1','step-joueurs-2v2','step-score-2v2'];
+      allSteps.forEach(s => document.getElementById(s).classList.remove('active'));
+      if (format === '2v2') {
+        if (window._players.length < 4) { showToast('⚠️ Ajoute au moins 4 joueurs !'); return; }
+        document.getElementById('saisie-sub').textContent = '2 vs 2 · Palet Vendéen';
+        ['select-2v2-j1','select-2v2-j2','select-2v2-j3','select-2v2-j4'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('joueurs-2v2-error').textContent = '';
+        document.getElementById('btn-next-joueurs-2v2').disabled = true;
+        document.getElementById('step-joueurs-2v2').classList.add('active');
+      } else if (format === '1v1v1') {
+        if (window._players.length < 3) { showToast('⚠️ Ajoute au moins 3 joueurs !'); return; }
+        document.getElementById('saisie-sub').textContent = '1 vs 1 vs 1 · Palet Vendéen';
+        ['select-1v1v1-j1','select-1v1v1-j2','select-1v1v1-j3'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('joueurs-1v1v1-error').textContent = '';
+        document.getElementById('btn-next-joueurs-1v1v1').disabled = true;
+        document.getElementById('step-joueurs-1v1v1').classList.add('active');
+      } else {
+        document.getElementById('saisie-sub').textContent = '1 vs 1 · Palet Vendéen';
+        document.getElementById('select-j1').value = '';
+        document.getElementById('select-j2').value = '';
+        document.getElementById('joueurs-error').textContent = '';
+        document.getElementById('btn-next-joueurs').disabled = true;
+        document.getElementById('step-joueurs').classList.add('active');
+      }
       showPage('page-saisie');
     }
     window.startNewGame = startNewGame;
 
+    // SELECTS
     function refreshPlayerSelects() {
       const players = window._players || [];
-      ['select-j1','select-j2'].forEach(id => {
-        const sel = document.getElementById(id);
+      ['select-j1','select-j2','select-1v1v1-j1','select-1v1v1-j2','select-1v1v1-j3','select-2v2-j1','select-2v2-j2','select-2v2-j3','select-2v2-j4'].forEach(id => {
+        const sel = document.getElementById(id); if (!sel) return;
         const val = sel.value;
         sel.innerHTML = '<option value="">— Sélectionner —</option>';
-        players.forEach(p => {
-          const opt = document.createElement('option');
-          opt.value = p.id; opt.textContent = p.nom;
-          sel.appendChild(opt);
-        });
+        players.forEach(p => { const o = document.createElement('option'); o.value=p.id; o.textContent=p.nom; sel.appendChild(o); });
         sel.value = val;
       });
     }
 
+    // 1V1
     function checkJoueurs() {
       const j1 = document.getElementById('select-j1').value;
       const j2 = document.getElementById('select-j2').value;
       const err = document.getElementById('joueurs-error');
-      if (j1 && j2 && j1 === j2) {
-        err.textContent = 'Les deux joueurs doivent être différents !';
-        document.getElementById('btn-next-joueurs').disabled = true;
-      } else {
-        err.textContent = '';
-        document.getElementById('btn-next-joueurs').disabled = !(j1 && j2);
-      }
+      if (j1 && j2 && j1===j2) { err.textContent='Joueurs différents svp !'; document.getElementById('btn-next-joueurs').disabled=true; }
+      else { err.textContent=''; document.getElementById('btn-next-joueurs').disabled=!(j1&&j2); }
     }
     window.checkJoueurs = checkJoueurs;
 
     function goToScore() {
-      const j1id = document.getElementById('select-j1').value;
-      const j2id = document.getElementById('select-j2').value;
-      const j1 = window._players.find(p => p.id === j1id);
-      const j2 = window._players.find(p => p.id === j2id);
-
+      const j1 = window._players.find(p=>p.id===document.getElementById('select-j1').value);
+      const j2 = window._players.find(p=>p.id===document.getElementById('select-j2').value);
       document.getElementById('score-name-j1').textContent = j1.nom;
       document.getElementById('score-name-j2').textContent = j2.nom;
-
-      const av1 = document.getElementById('score-avatar-j1');
-      const av2 = document.getElementById('score-avatar-j2');
-      av1.outerHTML = avatarHtml(j1, 'score').replace('score-avatar', 'score-avatar" id="score-avatar-j1"');
-      av2.outerHTML = avatarHtml(j2, 'score').replace('score-avatar', 'score-avatar" id="score-avatar-j2"');
-
+      setAvatar('score-avatar-j1', j1); setAvatar('score-avatar-j2', j2);
       document.getElementById('input-score-j1').value = '';
       document.getElementById('input-score-j2').value = '';
       document.getElementById('score-error').textContent = '';
@@ -824,339 +1031,686 @@
     window.goBackToJoueurs = goBackToJoueurs;
 
     function onScoreInput() {
-      const s1 = parseInt(document.getElementById('input-score-j1').value);
-      const s2 = parseInt(document.getElementById('input-score-j2').value);
-      const err = document.getElementById('score-error');
-      const btn = document.getElementById('btn-save-score');
-      if (isNaN(s1) || isNaN(s2)) { err.textContent = ''; btn.disabled = true; return; }
-      if (s1 < 0 || s2 < 0) { err.textContent = 'Score négatif impossible.'; btn.disabled = true; return; }
-      if (s1 > 13 || s2 > 13) { err.textContent = 'Score max : 13 !'; btn.disabled = true; return; }
-      if (s1 === s2) { err.textContent = 'Pas d\'égalité possible !'; btn.disabled = true; return; }
-      if (s1 !== 13 && s2 !== 13) { err.textContent = 'Un joueur doit avoir 13 pts.'; btn.disabled = true; return; }
-      err.textContent = ''; btn.disabled = false;
+      const s1=parseInt(document.getElementById('input-score-j1').value);
+      const s2=parseInt(document.getElementById('input-score-j2').value);
+      const err=document.getElementById('score-error');
+      const btn=document.getElementById('btn-save-score');
+      if(isNaN(s1)||isNaN(s2)){err.textContent='';btn.disabled=true;return;}
+      if(s1<0||s2<0){err.textContent='Score négatif impossible.';btn.disabled=true;return;}
+      if(s1>13||s2>13){err.textContent='Score max : 13 !';btn.disabled=true;return;}
+      if(s1===s2){err.textContent="Pas d'égalité possible !";btn.disabled=true;return;}
+      if(s1!==13&&s2!==13){err.textContent='Un joueur doit avoir 13 pts.';btn.disabled=true;return;}
+      err.textContent='';btn.disabled=false;
     }
     window.onScoreInput = onScoreInput;
 
     async function saveMatch() {
-      const j1id = document.getElementById('select-j1').value;
-      const j2id = document.getElementById('select-j2').value;
-      const s1 = parseInt(document.getElementById('input-score-j1').value);
-      const s2 = parseInt(document.getElementById('input-score-j2').value);
-      const gagnantId = s1 > s2 ? j1id : j2id;
-      document.getElementById('btn-save-score').disabled = true;
-      document.getElementById('btn-save-score').textContent = 'Enregistrement...';
+      const j1id=document.getElementById('select-j1').value;
+      const j2id=document.getElementById('select-j2').value;
+      const s1=parseInt(document.getElementById('input-score-j1').value);
+      const s2=parseInt(document.getElementById('input-score-j2').value);
+      document.getElementById('btn-save-score').disabled=true;
+      document.getElementById('btn-save-score').textContent='Enregistrement...';
       try {
-        await window._addDoc(window._col(window._db, 'parties'), {
-          format: '1v1', joueur1Id: j1id, joueur2Id: j2id,
-          score1: s1, score2: s2, gagnantId, date: Date.now()
+        await window._addDoc(window._col(window._db,'parties'),{
+          format:'1v1',joueur1Id:j1id,joueur2Id:j2id,
+          score1:s1,score2:s2,gagnantId:s1>s2?j1id:j2id,date:Date.now()
         });
-        showPage('page-home');
-        showToast('🎯 Partie enregistrée !');
+        showPage('page-home'); showToast('🎯 Partie enregistrée !');
       } catch(e) {
-        document.getElementById('score-error').textContent = 'Erreur : ' + e.message;
-        document.getElementById('btn-save-score').disabled = false;
-        document.getElementById('btn-save-score').textContent = '✅ Enregistrer la partie';
+        document.getElementById('score-error').textContent='Erreur : '+e.message;
+        document.getElementById('btn-save-score').disabled=false;
+        document.getElementById('btn-save-score').textContent='✅ Enregistrer';
       }
     }
     window.saveMatch = saveMatch;
 
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg; t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2500);
+    // 2V2
+    function check2v2Joueurs() {
+      const ids=['select-2v2-j1','select-2v2-j2','select-2v2-j3','select-2v2-j4'].map(id=>document.getElementById(id).value);
+      const err=document.getElementById('joueurs-2v2-error');
+      const filled=ids.every(id=>id!=='');
+      const unique=new Set(ids.filter(Boolean)).size===ids.filter(Boolean).length;
+      if(filled&&!unique){err.textContent='Un joueur ne peut apparaître deux fois !';document.getElementById('btn-next-joueurs-2v2').disabled=true;}
+      else{err.textContent='';document.getElementById('btn-next-joueurs-2v2').disabled=!filled||!unique;}
     }
-    window.showToast = showToast;
+    window.check2v2Joueurs = check2v2Joueurs;
 
-    async function savePlayer() {
-      const name = document.getElementById('input-player-name').value.trim();
-      if (!name) { showToast('Entre un pseudo !'); return; }
-      const exists = (window._players||[]).find(p => p.nom.toLowerCase() === name.toLowerCase());
-      if (exists) { showToast('Ce pseudo existe déjà !'); return; }
+    function goToScore2v2() {
+      const ids=['select-2v2-j1','select-2v2-j2','select-2v2-j3','select-2v2-j4'].map(id=>document.getElementById(id).value);
+      const [j1,j2,j3,j4]=ids.map(id=>window._players.find(p=>p.id===id));
+      document.getElementById('score-name-eq1').textContent=`${j1.nom} & ${j2.nom}`;
+      document.getElementById('score-name-eq2').textContent=`${j3.nom} & ${j4.nom}`;
+      [[j1,'score-avatar-2v2-j1'],[j2,'score-avatar-2v2-j2'],[j3,'score-avatar-2v2-j3'],[j4,'score-avatar-2v2-j4']].forEach(([p,id])=>setAvatar(id,p));
+      document.getElementById('input-score-eq1').value='';
+      document.getElementById('input-score-eq2').value='';
+      document.getElementById('score-2v2-error').textContent='';
+      document.getElementById('btn-save-score-2v2').disabled=true;
+      document.getElementById('step-joueurs-2v2').classList.remove('active');
+      document.getElementById('step-score-2v2').classList.add('active');
+      setTimeout(()=>document.getElementById('input-score-eq1').focus(),200);
+    }
+    window.goToScore2v2 = goToScore2v2;
+
+    function goBackTo2v2Joueurs() {
+      document.getElementById('step-score-2v2').classList.remove('active');
+      document.getElementById('step-joueurs-2v2').classList.add('active');
+    }
+    window.goBackTo2v2Joueurs = goBackTo2v2Joueurs;
+
+    function onScoreInput2v2() {
+      const s1=parseInt(document.getElementById('input-score-eq1').value);
+      const s2=parseInt(document.getElementById('input-score-eq2').value);
+      const err=document.getElementById('score-2v2-error');
+      const btn=document.getElementById('btn-save-score-2v2');
+      if(isNaN(s1)||isNaN(s2)){err.textContent='';btn.disabled=true;return;}
+      if(s1>13||s2>13){err.textContent='Score max : 13 !';btn.disabled=true;return;}
+      if(s1===s2){err.textContent="Pas d'égalité possible !";btn.disabled=true;return;}
+      if(s1!==13&&s2!==13){err.textContent='Une équipe doit avoir 13 pts.';btn.disabled=true;return;}
+      err.textContent='';btn.disabled=false;
+    }
+    window.onScoreInput2v2 = onScoreInput2v2;
+
+    async function saveMatch2v2() {
+      const [j1id,j2id,j3id,j4id]=['select-2v2-j1','select-2v2-j2','select-2v2-j3','select-2v2-j4'].map(id=>document.getElementById(id).value);
+      const s1=parseInt(document.getElementById('input-score-eq1').value);
+      const s2=parseInt(document.getElementById('input-score-eq2').value);
+      document.getElementById('btn-save-score-2v2').disabled=true;
+      document.getElementById('btn-save-score-2v2').textContent='Enregistrement...';
       try {
-        const data = { nom: name, createdAt: Date.now() };
-        if (currentPhotoBase64) data.photo = currentPhotoBase64;
-        await window._addDoc(window._col(window._db, 'joueurs'), data);
-        closeModal('modal-add-player');
-        showToast('👤 ' + name + ' ajouté !');
-      } catch(e) { showToast('Erreur : ' + e.message); }
+        await window._addDoc(window._col(window._db,'parties'),{
+          format:'2v2',equipe1:[j1id,j2id],equipe2:[j3id,j4id],
+          score1:s1,score2:s2,gagnantEquipe:s1>s2?1:2,date:Date.now()
+        });
+        showPage('page-home'); showToast('🎯 Partie 2v2 enregistrée !');
+      } catch(e) {
+        document.getElementById('score-2v2-error').textContent='Erreur : '+e.message;
+        document.getElementById('btn-save-score-2v2').disabled=false;
+        document.getElementById('btn-save-score-2v2').textContent='✅ Enregistrer';
+      }
     }
-    window.savePlayer = savePlayer;
+    window.saveMatch2v2 = saveMatch2v2;
 
+    // AVATAR HELPER
+    function setAvatar(elId, player) {
+      const el = document.getElementById(elId);
+      if (!el) return;
+      if (player && player.photo) el.innerHTML = `<img src="${player.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;
+      else el.innerHTML = player ? player.nom.substring(0,2).toUpperCase() : '?';
+    }
+    function avatarHtml(player, cls) {
+      if (player && player.photo) return `<div class="${cls}"><img src="${player.photo}"/></div>`;
+      return `<div class="${cls}">${player?player.nom.substring(0,2).toUpperCase():'?'}</div>`;
+    }
+
+    // STATS
     function getPlayerStats(playerId) {
-      const ms = (window._matches||[]).filter(m => m.format==='1v1' && (m.joueur1Id===playerId||m.joueur2Id===playerId));
-      const played = ms.length;
-      const wins = ms.filter(m => m.gagnantId===playerId).length;
-      const losses = played - wins;
-      const winPct = played > 0 ? Math.round((wins/played)*100) : 0;
-      let diff = 0;
-      ms.forEach(m => { diff += m.joueur1Id===playerId ? (m.score1-m.score2) : (m.score2-m.score1); });
-      return { played, wins, losses, winPct, diff };
+      const ms=(window._matches||[]).filter(m=>m.format==='1v1'&&(m.joueur1Id===playerId||m.joueur2Id===playerId));
+      const played=ms.length;
+      const wins=ms.filter(m=>m.gagnantId===playerId).length;
+      const losses=played-wins;
+      const winPct=played>0?Math.round((wins/played)*100):0;
+      let diff=0;
+      ms.forEach(m=>{diff+=m.joueur1Id===playerId?(m.score1-m.score2):(m.score2-m.score1);});
+      return{played,wins,losses,winPct,diff};
     }
 
-    // EDIT JOUEUR
-    let editPhotoBase64 = null;
-    let editingPlayerId = null;
-
-    function handleEditPhotoSelect(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        editPhotoBase64 = ev.target.result;
-        document.getElementById('edit-photo-preview').innerHTML = `<img src="${editPhotoBase64}" />`;
-      };
-      reader.readAsDataURL(file);
-    }
-    function removeEditPhoto() {
-      editPhotoBase64 = '';
-      document.getElementById('edit-photo-preview').innerHTML = '👤';
-      document.getElementById('edit-file-input').value = '';
-    }
-    function openEditPlayerModal(playerId) {
-      const p = (window._players||[]).find(pl=>pl.id===playerId);
-      if (!p) return;
-      editingPlayerId = playerId;
-      editPhotoBase64 = p.photo || null;
-      document.getElementById('edit-player-name').value = p.nom;
-      document.getElementById('edit-photo-preview').innerHTML = p.photo ? `<img src="${p.photo}" />` : '👤';
-      document.getElementById('modal-edit-player').classList.add('open');
-      setTimeout(() => document.getElementById('edit-player-name').focus(), 300);
-    }
-    async function updatePlayer() {
-      const name = document.getElementById('edit-player-name').value.trim();
-      if (!name) { showToast('Entre un pseudo !'); return; }
-      const exists = (window._players||[]).find(p => p.nom.toLowerCase()===name.toLowerCase() && p.id!==editingPlayerId);
-      if (exists) { showToast('Ce pseudo existe déjà !'); return; }
-      try {
-        const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-        const original = window._players.find(p=>p.id===editingPlayerId) || {};
-        const data = { nom: name, createdAt: original.createdAt || Date.now() };
-        if (editPhotoBase64) data.photo = editPhotoBase64;
-        await setDoc(doc(window._db, 'joueurs', editingPlayerId), data);
-        closeModal('modal-edit-player');
-        showToast('✅ Joueur modifié !');
-      } catch(e) { showToast('Erreur : ' + e.message); }
-    }
-    window.handleEditPhotoSelect = handleEditPhotoSelect;
-    window.removeEditPhoto = removeEditPhoto;
-    window.openEditPlayerModal = openEditPlayerModal;
-    window.updatePlayer = updatePlayer;
-
+    // RENDER JOUEURS
     function renderPlayers() {
-      const list = document.getElementById('player-list');
-      const players = window._players || [];
-      if (!players.length) {
-        list.innerHTML = `<div class="empty-state"><div class="es-icon">👤</div><div class="es-title">Aucun joueur</div><div class="es-sub">Ajoute les joueurs de ton groupe !</div></div>`;
+      const list=document.getElementById('player-list');
+      const players=window._players||[];
+      if(!players.length){
+        list.innerHTML=`<div class="empty-state"><div class="es-icon">👤</div><div class="es-title">Aucun joueur</div><div class="es-sub">Ajoute les joueurs de ton groupe !</div></div>`;
         return;
       }
-      list.innerHTML = players.map(p => {
-        const s = getPlayerStats(p.id);
-        const av = p.photo
-          ? `<div class="player-avatar-lg"><img src="${p.photo}" /></div>`
-          : `<div class="player-avatar-lg">${p.nom.substring(0,2).toUpperCase()}</div>`;
-        return `<div class="player-item">${av}
+      list.innerHTML=players.map(p=>{
+        const s=getPlayerStats(p.id);
+        const av=avatarHtml(p,'player-avatar-lg');
+        return `<div class="player-item" onclick="openPlayerPage('${p.id}')">${av}
           <div class="player-info">
             <div class="player-name">${p.nom}</div>
-            <div class="player-stats">${s.played} partie${s.played!==1?'s':''} · ${s.winPct}% victoires · diff. ${s.diff>0?'+':''}${s.diff}</div>
+            <div class="player-stats">${s.played} partie${s.played!==1?'s':''} · ${s.winPct}% victoires</div>
           </div>
-          <div class="player-edit-btn" onclick="openEditPlayerModal('${p.id}')">✏️</div>
+          <div class="player-edit-btn" onclick="event.stopPropagation();openEditPlayerModal('${p.id}')">✏️</div>
         </div>`;
       }).join('');
     }
 
+    // PAGE JOUEUR
+    function openPlayerPage(playerId) {
+      window._prevPage = document.querySelector('.page.active')?.id || 'page-ranking';
+      const p = window._players.find(pl=>pl.id===playerId);
+      if (!p) return;
+      const s = getPlayerStats(playerId);
+
+      // Header
+      const av = document.getElementById('pp-avatar');
+      if (p.photo) av.innerHTML=`<img src="${p.photo}"/>`;
+      else { av.innerHTML=''; av.textContent=p.nom.substring(0,2).toUpperCase(); }
+      document.getElementById('pp-name').textContent = p.nom;
+      document.getElementById('pp-sub').textContent = `${s.played} partie${s.played!==1?'s':''} jouée${s.played!==1?'s':''}`;
+
+      // Contenu
+      const diffStr = d => d>0?'+'+d:d.toString();
+      const ms1v1 = (window._matches||[]).filter(m=>m.format==='1v1'&&(m.joueur1Id===playerId||m.joueur2Id===playerId))
+        .sort((a,b)=>(b.date||0)-(a.date||0));
+
+      const recentRows = ms1v1.slice(0,10).map(m=>{
+        const opp = window._players.find(p2=>p2.id===(m.joueur1Id===playerId?m.joueur2Id:m.joueur1Id));
+        const myScore = m.joueur1Id===playerId?m.score1:m.score2;
+        const oppScore = m.joueur1Id===playerId?m.score2:m.score1;
+        const won = m.gagnantId===playerId;
+        const d = m.date?new Date(m.date).toLocaleDateString('fr-FR'):'';
+        return `<div class="match-item">
+          <div><div class="match-players">vs ${opp?opp.nom:'?'}</div><div class="match-date">${d}</div></div>
+          <div style="text-align:right">
+            <div class="match-score"><span class="${won?'win':'lose'}">${myScore}</span>–<span class="${won?'lose':'win'}">${oppScore}</span></div>
+            <div style="font-size:11px;color:${won?'var(--green)':'var(--red)'};font-weight:700">${won?'Victoire':'Défaite'}</div>
+          </div>
+        </div>`;
+      }).join('');
+
+      document.getElementById('pp-content').innerHTML = `
+        <div class="stats-grid">
+          <div class="stat-card"><div class="sv">${s.played}</div><div class="sl">Parties</div></div>
+          <div class="stat-card"><div class="sv green">${s.wins}</div><div class="sl">Victoires</div></div>
+          <div class="stat-card"><div class="sv red">${s.losses}</div><div class="sl">Défaites</div></div>
+          <div class="stat-card"><div class="sv">${s.winPct}%</div><div class="sl">% Victoires</div></div>
+          <div class="stat-card"><div class="sv ${s.diff>0?'green':s.diff<0?'red':''}">${diffStr(s.diff)}</div><div class="sl">Diff. pts</div></div>
+          <div class="stat-card"><div class="sv">${s.played>0?Math.round(s.wins/s.played*10)/1:'–'}</div><div class="sl">Ratio</div></div>
+        </div>
+        <div class="section-title">Dernières parties 1v1</div>
+        <div class="match-list">${recentRows||'<div class="empty-state"><div class="es-icon">🎯</div><div class="es-title">Aucune partie</div></div>'}</div>
+      `;
+
+      showPage('page-joueur');
+    }
+    window.openPlayerPage = openPlayerPage;
+
+    // RENDER RECENT MATCHES
     function renderRecentMatches() {
-      const container = document.getElementById('recent-matches');
-      const recent = [...(window._matches||[])].sort((a,b)=>(b.date||0)-(a.date||0)).slice(0,5);
-      if (!recent.length) {
-        container.innerHTML = `<div class="empty-state"><div class="es-icon">🎯</div><div class="es-title">Aucune partie pour l'instant</div><div class="es-sub">Lance ta première partie !</div></div>`;
+      const container=document.getElementById('recent-matches');
+      const recent=[...(window._matches||[])].sort((a,b)=>(b.date||0)-(a.date||0)).slice(0,8);
+      if(!recent.length){
+        container.innerHTML=`<div class="empty-state"><div class="es-icon">🎯</div><div class="es-title">Aucune partie</div><div class="es-sub">Lance ta première partie !</div></div>`;
         return;
       }
-      container.innerHTML = `<div class="match-list">${recent.map(m => {
-        const j1 = (window._players||[]).find(p=>p.id===m.joueur1Id);
-        const j2 = (window._players||[]).find(p=>p.id===m.joueur2Id);
-        const n1 = j1?j1.nom:'?'; const n2 = j2?j2.nom:'?';
-        const d = m.date ? new Date(m.date).toLocaleDateString('fr-FR') : '';
-        const s1c = m.gagnantId===m.joueur1Id?'win':'lose';
-        const s2c = m.gagnantId===m.joueur2Id?'win':'lose';
+      container.innerHTML=`<div class="match-list">${recent.map(m=>{
+        const d=m.date?new Date(m.date).toLocaleDateString('fr-FR'):'';
+        const editBtn=`<div onclick="openEditMatch('${m.id}')" style="width:28px;height:28px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;flex-shrink:0">✏️</div>`;
+        if(m.format==='2v2'){
+          const p1=(window._players||[]).find(p=>p.id===m.equipe1?.[0]);
+          const p2=(window._players||[]).find(p=>p.id===m.equipe1?.[1]);
+          const p3=(window._players||[]).find(p=>p.id===m.equipe2?.[0]);
+          const p4=(window._players||[]).find(p=>p.id===m.equipe2?.[1]);
+          const n1=`${p1?p1.nom:'?'} & ${p2?p2.nom:'?'}`;
+          const n2=`${p3?p3.nom:'?'} & ${p4?p4.nom:'?'}`;
+          const s1c=m.gagnantEquipe===1?'win':'lose';
+          const s2c=m.gagnantEquipe===2?'win':'lose';
+          return `<div class="match-item">
+            <div style="flex:1"><div class="match-players" style="font-size:12px">${n1} <span>vs</span> ${n2}</div><div class="match-date">${d}</div><span class="match-badge b2v2">2v2</span></div>
+            <div class="match-score" style="margin-right:8px"><span class="${s1c}">${m.score1}</span>–<span class="${s2c}">${m.score2}</span></div>
+            ${editBtn}
+          </div>`;
+        }
+        if(m.format==='1v1v1'){
+          const joueurs=(m.joueurs||[]).map((id,i)=>{
+            const p=(window._players||[]).find(p=>p.id===id);
+            const won=m.gagnantId===id;
+            return `<span style="color:${won?'var(--green)':'var(--text2)'};font-weight:${won?700:500}">${p?p.nom:'?'}:${m.scores?.[i]??'?'}</span>`;
+          }).join(' · ');
+          return `<div class="match-item">
+            <div style="flex:1"><div class="match-players" style="font-size:12px">${joueurs}</div><div class="match-date">${d}</div><span class="match-badge" style="background:#fff3e0;color:#e65100">1v1v1</span></div>
+            ${editBtn}
+          </div>`;
+        }
+        const j1=(window._players||[]).find(p=>p.id===m.joueur1Id);
+        const j2=(window._players||[]).find(p=>p.id===m.joueur2Id);
+        const s1c=m.gagnantId===m.joueur1Id?'win':'lose';
+        const s2c=m.gagnantId===m.joueur2Id?'win':'lose';
         return `<div class="match-item">
-          <div><div class="match-players">${n1} <span>vs</span> ${n2}</div>
-          <div class="match-date">${d}</div><span class="match-badge">1v1</span></div>
-          <div class="match-score"><span class="${s1c}">${m.score1}</span>–<span class="${s2c}">${m.score2}</span></div>
+          <div style="flex:1"><div class="match-players">${j1?j1.nom:'?'} <span>vs</span> ${j2?j2.nom:'?'}</div><div class="match-date">${d}</div><span class="match-badge b1v1">1v1</span></div>
+          <div class="match-score" style="margin-right:8px"><span class="${s1c}">${m.score1}</span>–<span class="${s2c}">${m.score2}</span></div>
+          ${editBtn}
         </div>`;
       }).join('')}</div>`;
     }
 
+    // CLASSEMENT
     function renderRanking() {
-      const tab = window._currentTab||'1v1';
-      const container = document.getElementById('ranking-content');
+      const tab=window._currentTab||'1v1';
+      const container=document.getElementById('ranking-content');
+      if(tab==='duels') { renderDuels(container); return; }
+      if(tab==='2v2') { render2v2Classement(container); return; }
+      if(tab==='duels2v2') { render2v2Duels(container); return; }
 
-      if (tab==='2v2') {
-        container.innerHTML = `<div class="empty-state"><div class="es-icon">🤝</div><div class="es-title">2v2 bientôt</div><div class="es-sub">La section 2v2 arrive dans la prochaine étape !</div></div>`;
+      const players=(window._players||[]).map(p=>({...p,...getPlayerStats(p.id)}))
+        .sort((a,b)=>b.winPct-a.winPct||b.diff-a.diff);
+      if(!players.length||players.every(p=>p.played===0)){
+        container.innerHTML=`<div class="empty-state"><div class="es-icon">🏆</div><div class="es-title">Classement vide</div><div class="es-sub">Jouez des parties pour voir le classement !</div></div>`;
         return;
       }
-
-      if (tab==='duels') {
-        renderDuels(container);
-        return;
-      }
-
-      // 1v1 classement
-      const players = (window._players||[]).map(p => ({ ...p, ...getPlayerStats(p.id) }))
-        .sort((a,b) => b.winPct-a.winPct || b.diff-a.diff);
-
-      if (!players.length || players.every(p=>p.played===0)) {
-        container.innerHTML = `<div class="empty-state"><div class="es-icon">🏆</div><div class="es-title">Classement vide</div><div class="es-sub">Jouez des parties pour voir le classement !</div></div>`;
-        return;
-      }
-
-      const posLabel = (i) => i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1).toString();
-      const posClass = (i) => i===0?'gold':i===1?'silver':i===2?'bronze':'';
-      const diffClass = (d) => d>0?'diff-pos':d<0?'diff-neg':'diff-zero';
-      const diffStr = (d) => d>0?'+'+d:d.toString();
-
-      const rows = players.map((p,i) => {
-        const av = p.photo
-          ? `<div class="rank-avatar-sm"><img src="${p.photo}" /></div>`
-          : `<div class="rank-avatar-sm">${p.nom.substring(0,2).toUpperCase()}</div>`;
-        return `<div class="ranking-row">
-          <div class="rank-pos-cell ${posClass(i)}">${posLabel(i)}</div>
-          <div class="rank-player-cell">${av}<span class="rank-name-cell">${p.nom}</span></div>
+      const pc=(i)=>i===0?'gold':i===1?'silver':i===2?'bronze':'';
+      const pl=(i)=>i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1).toString();
+      const dc=(d)=>d>0?'diff-pos':d<0?'diff-neg':'diff-zero';
+      const ds=(d)=>d>0?'+'+d:d.toString();
+      container.innerHTML=`<div class="ranking-table">
+        <div class="ranking-table-header"><span>#</span><span>Joueur</span><span>%V</span><span>V</span><span>D</span><span>Diff</span></div>
+        ${players.map((p,i)=>`<div class="ranking-row" onclick="openPlayerPage('${p.id}')">
+          <div class="rank-pos-cell ${pc(i)}">${pl(i)}</div>
+          <div class="rank-player-cell">${avatarHtml(p,'rank-avatar-sm')}<span class="rank-name-cell">${p.nom}</span></div>
           <div class="rank-cell pct">${p.winPct}%</div>
           <div class="rank-cell win">${p.wins}</div>
           <div class="rank-cell lose">${p.losses}</div>
-          <div class="rank-cell ${diffClass(p.diff)}">${diffStr(p.diff)}</div>
-        </div>`;
-      }).join('');
-
-      container.innerHTML = `<div class="ranking-table">
-        <div class="ranking-table-header">
-          <span>#</span><span>Joueur</span><span>%V</span><span>V</span><span>D</span><span>Diff</span>
-        </div>
-        ${rows}
+          <div class="rank-cell ${dc(p.diff)}">${ds(p.diff)}</div>
+        </div>`).join('')}
       </div>`;
     }
 
+    // DUELS 1v1
     function renderDuels(container) {
-      const players = window._players || [];
-      if (players.length < 2) {
-        container.innerHTML = `<div class="empty-state"><div class="es-icon">🥊</div><div class="es-title">Pas assez de joueurs</div><div class="es-sub">Il faut au moins 2 joueurs pour consulter les duels.</div></div>`;
-        return;
-      }
-
-      const j1id = window._duelJ1 || '';
-      const j2id = window._duelJ2 || '';
-
-      const options = (selected) => players.map(p =>
-        `<option value="${p.id}" ${p.id===selected?'selected':''}>${p.nom}</option>`
-      ).join('');
-
-      let bilanHtml = '';
-      let historyHtml = '';
-
-      if (j1id && j2id && j1id !== j2id) {
-        const j1 = players.find(p=>p.id===j1id);
-        const j2 = players.find(p=>p.id===j2id);
-        const matches = (window._matches||[])
-          .filter(m => m.format==='1v1' &&
-            ((m.joueur1Id===j1id && m.joueur2Id===j2id) ||
-             (m.joueur1Id===j2id && m.joueur2Id===j1id)))
-          .sort((a,b) => (b.date||0)-(a.date||0));
-
-        const total = matches.length;
-        const j1wins = matches.filter(m=>m.gagnantId===j1id).length;
-        const j2wins = matches.filter(m=>m.gagnantId===j2id).length;
-        const j1pct = total>0 ? Math.round((j1wins/total)*100) : 0;
-        const j2pct = total>0 ? Math.round((j2wins/total)*100) : 0;
-        let j1diff=0, j2diff=0;
-        matches.forEach(m => {
-          if (m.joueur1Id===j1id) { j1diff+=(m.score1-m.score2); j2diff+=(m.score2-m.score1); }
-          else { j1diff+=(m.score2-m.score1); j2diff+=(m.score1-m.score2); }
-        });
-
-        const av = (p) => p && p.photo
-          ? `<div class="duel-bilan-avatar"><img src="${p.photo}"/></div>`
-          : `<div class="duel-bilan-avatar">${p?p.nom.substring(0,2).toUpperCase():'?'}</div>`;
-
-        const winClass = (w,l) => w>l?'green':w<l?'red':'gray';
-        const diffCls = (d) => d>0?'pos':d<0?'neg':'';
-        const diffS = (d) => d>0?'+'+d:d.toString();
-        const sideClass = (w,l) => w>l?'winner':w<l?'loser':'';
-
-        bilanHtml = `<div class="duel-bilan">
-          <div class="duel-bilan-header">${j1?j1.nom:'?'} vs ${j2?j2.nom:'?'}</div>
-          <div class="duel-bilan-body">
-            <div class="duel-bilan-side ${sideClass(j1wins,j2wins)}">
-              ${av(j1)}
-              <div class="duel-bilan-name">${j1?j1.nom:'?'}</div>
-              <div class="duel-bilan-wins ${winClass(j1wins,j2wins)}">${j1wins}</div>
-              <div class="duel-bilan-pct">${j1pct}% victoires</div>
-              <div class="duel-bilan-diff ${diffCls(j1diff)}">diff. ${diffS(j1diff)} pts</div>
-            </div>
-            <div class="duel-bilan-mid">
-              <div class="duel-bilan-vs">VS</div>
-              <div class="duel-bilan-total">${total} partie${total!==1?'s':''}</div>
-            </div>
-            <div class="duel-bilan-side ${sideClass(j2wins,j1wins)}">
-              ${av(j2)}
-              <div class="duel-bilan-name">${j2?j2.nom:'?'}</div>
-              <div class="duel-bilan-wins ${winClass(j2wins,j1wins)}">${j2wins}</div>
-              <div class="duel-bilan-pct">${j2pct}% victoires</div>
-              <div class="duel-bilan-diff ${diffCls(j2diff)}">diff. ${diffS(j2diff)} pts</div>
-            </div>
-          </div>
-        </div>`;
-
-        if (total === 0) {
-          historyHtml = `<div class="empty-state" style="padding:20px"><div class="es-icon">🎯</div><div class="es-title">Aucune confrontation</div><div class="es-sub">Ces deux joueurs ne se sont pas encore affrontés !</div></div>`;
-        } else {
-          const rows = matches.map(m => {
-            const winner = players.find(p=>p.id===m.gagnantId);
-            const d = m.date ? new Date(m.date).toLocaleDateString('fr-FR') : '';
-            let s1, s2, s1c, s2c;
-            if (m.joueur1Id===j1id) { s1=m.score1; s2=m.score2; }
-            else { s1=m.score2; s2=m.score1; }
-            s1c = m.gagnantId===j1id?'win':'lose';
-            s2c = m.gagnantId===j2id?'win':'lose';
+      const players=window._players||[];
+      if(players.length<2){container.innerHTML=`<div class="empty-state"><div class="es-icon">🥊</div><div class="es-title">Pas assez de joueurs</div></div>`;return;}
+      const j1id=window._duelJ1||'';
+      const j2id=window._duelJ2||'';
+      const opts=(sel)=>players.map(p=>`<option value="${p.id}" ${p.id===sel?'selected':''}>${p.nom}</option>`).join('');
+      let bilanHtml='';
+      if(j1id&&j2id&&j1id!==j2id){
+        const j1=players.find(p=>p.id===j1id);
+        const j2=players.find(p=>p.id===j2id);
+        const ms=(window._matches||[]).filter(m=>m.format==='1v1'&&((m.joueur1Id===j1id&&m.joueur2Id===j2id)||(m.joueur1Id===j2id&&m.joueur2Id===j1id))).sort((a,b)=>(b.date||0)-(a.date||0));
+        const total=ms.length;
+        const j1w=ms.filter(m=>m.gagnantId===j1id).length;
+        const j2w=total-j1w;
+        const j1p=total>0?Math.round(j1w/total*100):0;
+        const j2p=total>0?Math.round(j2w/total*100):0;
+        let j1d=0,j2d=0;
+        ms.forEach(m=>{if(m.joueur1Id===j1id){j1d+=m.score1-m.score2;j2d+=m.score2-m.score1;}else{j1d+=m.score2-m.score1;j2d+=m.score1-m.score2;}});
+        const wc=(w,l)=>w>l?'green':w<l?'red':'gray';
+        const sc=(w,l)=>w>l?'winner':w<l?'loser':'';
+        const dc=(d)=>d>0?'pos':d<0?'neg':'';
+        const ds=(d)=>d>0?'+'+d:d.toString();
+        const histRows=ms.length===0
+          ?`<div class="empty-state" style="padding:20px"><div class="es-icon">🎯</div><div class="es-title">Aucune confrontation</div></div>`
+          :ms.map(m=>{
+            const winner=players.find(p=>p.id===m.gagnantId);
+            const s1=m.joueur1Id===j1id?m.score1:m.score2;
+            const s2=m.joueur1Id===j1id?m.score2:m.score1;
+            const d=m.date?new Date(m.date).toLocaleDateString('fr-FR'):'';
             return `<div class="duel-match-item">
-              <div class="duel-match-left">
-                <div class="duel-match-winner">🏆 ${winner?winner.nom:'?'}</div>
-                <div class="duel-match-date">${d}</div>
-              </div>
-              <div class="duel-match-score"><span class="${s1c}">${s1}</span>–<span class="${s2c}">${s2}</span></div>
+              <div><div class="duel-match-winner">🏆 ${winner?winner.nom:'?'}</div><div class="duel-match-date">${d}</div></div>
+              <div class="duel-match-score"><span class="${s1>s2?'win':'lose'}">${s1}</span>–<span class="${s2>s1?'win':'lose'}">${s2}</span></div>
             </div>`;
           }).join('');
-          historyHtml = `<div class="duel-history-title">Historique des confrontations</div>
-            <div class="duel-match-list">${rows}</div>`;
-        }
-      }
-
-      container.innerHTML = `
-        <div class="duel-selector">
-          <div class="duel-selector-row">
-            <select class="input-field" id="duel-select-j1" onchange="onDuelChange()">
-              <option value="">— Joueur 1 —</option>${options(j1id)}
-            </select>
-            <span class="duel-sep-label">vs</span>
-            <select class="input-field" id="duel-select-j2" onchange="onDuelChange()">
-              <option value="">— Joueur 2 —</option>${options(j2id)}
-            </select>
+        bilanHtml=`<div class="duel-bilan">
+          <div class="duel-bilan-header">${j1?j1.nom:'?'} vs ${j2?j2.nom:'?'}</div>
+          <div class="duel-bilan-body">
+            <div class="duel-bilan-side ${sc(j1w,j2w)}">
+              ${avatarHtml(j1,'duel-bilan-avatar')}
+              <div class="duel-bilan-name">${j1?j1.nom:'?'}</div>
+              <div class="duel-bilan-wins ${wc(j1w,j2w)}">${j1w}</div>
+              <div class="duel-bilan-pct">${j1p}% victoires</div>
+              <div class="duel-bilan-diff ${dc(j1d)}">diff. ${ds(j1d)} pts</div>
+            </div>
+            <div class="duel-bilan-mid"><div class="duel-bilan-vs">VS</div><div class="duel-bilan-total">${total} partie${total!==1?'s':''}</div></div>
+            <div class="duel-bilan-side ${sc(j2w,j1w)}">
+              ${avatarHtml(j2,'duel-bilan-avatar')}
+              <div class="duel-bilan-name">${j2?j2.nom:'?'}</div>
+              <div class="duel-bilan-wins ${wc(j2w,j1w)}">${j2w}</div>
+              <div class="duel-bilan-pct">${j2p}% victoires</div>
+              <div class="duel-bilan-diff ${dc(j2d)}">diff. ${ds(j2d)} pts</div>
+            </div>
           </div>
         </div>
-        ${bilanHtml}
-        ${historyHtml}
-      `;
+        <div class="duel-history-title" style="margin-top:16px">Historique</div>
+        <div class="duel-match-list">${histRows}</div>`;
+      }
+      container.innerHTML=`<div class="duel-selector"><div class="duel-selector-row">
+        <select class="input-field" id="duel-select-j1" onchange="onDuelChange()"><option value="">— Joueur 1 —</option>${opts(j1id)}</select>
+        <span class="duel-sep-label">vs</span>
+        <select class="input-field" id="duel-select-j2" onchange="onDuelChange()"><option value="">— Joueur 2 —</option>${opts(j2id)}</select>
+      </div></div>${bilanHtml}`;
     }
+    function onDuelChange(){window._duelJ1=document.getElementById('duel-select-j1').value;window._duelJ2=document.getElementById('duel-select-j2').value;renderRanking();}
+    window.onDuelChange=onDuelChange;
 
-    function onDuelChange() {
-      window._duelJ1 = document.getElementById('duel-select-j1').value;
-      window._duelJ2 = document.getElementById('duel-select-j2').value;
-      renderRanking();
+    // 2V2 CLASSEMENT
+    function get2v2DuoKey(id1,id2){return[id1,id2].sort().join('_');}
+    function get2v2DuoStats(id1,id2){
+      const key=get2v2DuoKey(id1,id2);
+      const ms=(window._matches||[]).filter(m=>{
+        if(m.format!=='2v2')return false;
+        return get2v2DuoKey(m.equipe1[0],m.equipe1[1])===key||get2v2DuoKey(m.equipe2[0],m.equipe2[1])===key;
+      });
+      const played=ms.length;
+      const wins=ms.filter(m=>{const eq1k=get2v2DuoKey(m.equipe1[0],m.equipe1[1]);return(eq1k===key&&m.gagnantEquipe===1)||(eq1k!==key&&m.gagnantEquipe===2);}).length;
+      const losses=played-wins;
+      const winPct=played>0?Math.round(wins/played*100):0;
+      let diff=0;
+      ms.forEach(m=>{const eq1k=get2v2DuoKey(m.equipe1[0],m.equipe1[1]);if(eq1k===key)diff+=m.score1-m.score2;else diff+=m.score2-m.score1;});
+      return{played,wins,losses,winPct,diff};
     }
-    window.onDuelChange = onDuelChange;
+    function render2v2Classement(container){
+      const ms2v2=(window._matches||[]).filter(m=>m.format==='2v2');
+      if(!ms2v2.length){container.innerHTML=`<div class="empty-state"><div class="es-icon">🤝</div><div class="es-title">Aucune partie 2v2</div><div class="es-sub">Enregistrez votre première partie 2v2 !</div></div>`;return;}
+      const duoMap={};
+      ms2v2.forEach(m=>{
+        const k1=get2v2DuoKey(m.equipe1[0],m.equipe1[1]);
+        const k2=get2v2DuoKey(m.equipe2[0],m.equipe2[1]);
+        if(!duoMap[k1])duoMap[k1]=[m.equipe1[0],m.equipe1[1]];
+        if(!duoMap[k2])duoMap[k2]=[m.equipe2[0],m.equipe2[1]];
+      });
+      const duos=Object.entries(duoMap).map(([key,ids])=>{
+        const p1=(window._players||[]).find(p=>p.id===ids[0]);
+        const p2=(window._players||[]).find(p=>p.id===ids[1]);
+        return{key,ids,p1,p2,...get2v2DuoStats(ids[0],ids[1])};
+      }).sort((a,b)=>b.winPct-a.winPct||b.diff-a.diff);
+      const pc=(i)=>i===0?'gold':i===1?'silver':i===2?'bronze':'';
+      const pl=(i)=>i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1).toString();
+      const dc=(d)=>d>0?'diff-pos':d<0?'diff-neg':'diff-zero';
+      const ds=(d)=>d>0?'+'+d:d.toString();
+      container.innerHTML=`<div class="ranking-table">
+        <div class="ranking-table-header"><span>#</span><span>Duo</span><span>%V</span><span>V</span><span>D</span><span>Diff</span></div>
+        ${duos.map((d,i)=>`<div class="ranking-row">
+          <div class="rank-pos-cell ${pc(i)}">${pl(i)}</div>
+          <div class="rank-player-cell"><span class="rank-name-cell" style="font-size:12px">${d.p1?d.p1.nom:'?'} & ${d.p2?d.p2.nom:'?'}</span></div>
+          <div class="rank-cell pct">${d.winPct}%</div>
+          <div class="rank-cell win">${d.wins}</div>
+          <div class="rank-cell lose">${d.losses}</div>
+          <div class="rank-cell ${dc(d.diff)}">${ds(d.diff)}</div>
+        </div>`).join('')}
+      </div>`;
+    }
+    function render2v2Duels(container){
+      const ms2v2=(window._matches||[]).filter(m=>m.format==='2v2');
+      if(!ms2v2.length){container.innerHTML=`<div class="empty-state"><div class="es-icon">🤝</div><div class="es-title">Aucune partie 2v2</div></div>`;return;}
+      const duoMap={};
+      ms2v2.forEach(m=>{
+        const k1=get2v2DuoKey(m.equipe1[0],m.equipe1[1]);
+        const k2=get2v2DuoKey(m.equipe2[0],m.equipe2[1]);
+        if(!duoMap[k1])duoMap[k1]=[m.equipe1[0],m.equipe1[1]];
+        if(!duoMap[k2])duoMap[k2]=[m.equipe2[0],m.equipe2[1]];
+      });
+      const duos=Object.entries(duoMap).map(([key,ids])=>{
+        const p1=(window._players||[]).find(p=>p.id===ids[0]);
+        const p2=(window._players||[]).find(p=>p.id===ids[1]);
+        return{key,ids,p1,p2};
+      });
+      const d1key=window._duel2v2D1||'';
+      const d2key=window._duel2v2D2||'';
+      const opts=(sel)=>duos.map(d=>`<option value="${d.key}" ${d.key===sel?'selected':''}>${d.p1?d.p1.nom:'?'} & ${d.p2?d.p2.nom:'?'}</option>`).join('');
+      let bilanHtml='';
+      if(d1key&&d2key&&d1key!==d2key){
+        const d1=duos.find(d=>d.key===d1key);
+        const d2=duos.find(d=>d.key===d2key);
+        if(d1&&d2){
+          const ms=ms2v2.filter(m=>{const k1=get2v2DuoKey(m.equipe1[0],m.equipe1[1]);const k2=get2v2DuoKey(m.equipe2[0],m.equipe2[1]);return(k1===d1key&&k2===d2key)||(k1===d2key&&k2===d1key);}).sort((a,b)=>(b.date||0)-(a.date||0));
+          const total=ms.length;
+          const d1w=ms.filter(m=>{const k1=get2v2DuoKey(m.equipe1[0],m.equipe1[1]);return(k1===d1key&&m.gagnantEquipe===1)||(k1!==d1key&&m.gagnantEquipe===2);}).length;
+          const d2w=total-d1w;
+          const n1=`${d1.p1?d1.p1.nom:'?'} & ${d1.p2?d1.p2.nom:'?'}`;
+          const n2=`${d2.p1?d2.p1.nom:'?'} & ${d2.p2?d2.p2.nom:'?'}`;
+          const wc=(w,l)=>w>l?'green':w<l?'red':'gray';
+          const sc=(w,l)=>w>l?'winner':w<l?'loser':'';
+          const histRows=ms.map(m=>{
+            const k1=get2v2DuoKey(m.equipe1[0],m.equipe1[1]);
+            const s1=k1===d1key?m.score1:m.score2;
+            const s2=k1===d1key?m.score2:m.score1;
+            const wName=(k1===d1key&&m.gagnantEquipe===1)||(k1!==d1key&&m.gagnantEquipe===2)?n1:n2;
+            const d=m.date?new Date(m.date).toLocaleDateString('fr-FR'):'';
+            return `<div class="duel-match-item">
+              <div><div class="duel-match-winner">🏆 ${wName}</div><div class="duel-match-date">${d}</div></div>
+              <div class="duel-match-score"><span class="${s1>s2?'win':'lose'}">${s1}</span>–<span class="${s2>s1?'win':'lose'}">${s2}</span></div>
+            </div>`;
+          }).join('');
+          bilanHtml=`<div class="duel-bilan">
+            <div class="duel-bilan-header">${n1} vs ${n2}</div>
+            <div class="duel-bilan-body">
+              <div class="duel-bilan-side ${sc(d1w,d2w)}">
+                <div class="duel-bilan-name" style="font-size:12px">${n1}</div>
+                <div class="duel-bilan-wins ${wc(d1w,d2w)}">${d1w}</div>
+                <div class="duel-bilan-pct">${total>0?Math.round(d1w/total*100):0}% victoires</div>
+              </div>
+              <div class="duel-bilan-mid"><div class="duel-bilan-vs">VS</div><div class="duel-bilan-total">${total} partie${total!==1?'s':''}</div></div>
+              <div class="duel-bilan-side ${sc(d2w,d1w)}">
+                <div class="duel-bilan-name" style="font-size:12px">${n2}</div>
+                <div class="duel-bilan-wins ${wc(d2w,d1w)}">${d2w}</div>
+                <div class="duel-bilan-pct">${total>0?Math.round(d2w/total*100):0}% victoires</div>
+              </div>
+            </div>
+          </div>
+          <div class="duel-history-title" style="margin-top:14px">Historique</div>
+          <div class="duel-match-list">${histRows||'<div class="empty-state" style="padding:16px"><div class="es-icon">🎯</div><div class="es-title">Aucune confrontation</div></div>'}</div>`;
+        }
+      }
+      container.innerHTML=`<div class="duel-selector"><div class="duel-selector-row">
+        <select class="input-field" id="duel-2v2-d1" onchange="on2v2DuelChange()"><option value="">— Duo 1 —</option>${opts(d1key)}</select>
+        <span class="duel-sep-label">vs</span>
+        <select class="input-field" id="duel-2v2-d2" onchange="on2v2DuelChange()"><option value="">— Duo 2 —</option>${opts(d2key)}</select>
+      </div></div>${bilanHtml}`;
+    }
+    function on2v2DuelChange(){window._duel2v2D1=document.getElementById('duel-2v2-d1').value;window._duel2v2D2=document.getElementById('duel-2v2-d2').value;renderRanking();}
+    window.on2v2DuelChange=on2v2DuelChange;
 
-    document.getElementById('input-player-name').addEventListener('keydown', e => {
-      if (e.key==='Enter') savePlayer();
-    });
+    // EDIT JOUEUR
+    function openEditPlayerModal(playerId) {
+      const p=(window._players||[]).find(pl=>pl.id===playerId);
+      if(!p)return;
+      editingPlayerId=playerId;
+      editPhotoBase64=p.photo||null;
+      document.getElementById('edit-player-name').value=p.nom;
+      document.getElementById('edit-photo-preview').innerHTML=p.photo?`<img src="${p.photo}"/>`:'👤';
+      document.getElementById('modal-edit-player').classList.add('open');
+      setTimeout(()=>document.getElementById('edit-player-name').focus(),300);
+    }
+    async function updatePlayer() {
+      const name=document.getElementById('edit-player-name').value.trim();
+      if(!name){showToast('Entre un pseudo !');return;}
+      const exists=(window._players||[]).find(p=>p.nom.toLowerCase()===name.toLowerCase()&&p.id!==editingPlayerId);
+      if(exists){showToast('Ce pseudo existe déjà !');return;}
+      try{
+        const original=window._players.find(p=>p.id===editingPlayerId)||{};
+        const data={nom:name,createdAt:original.createdAt||Date.now()};
+        if(editPhotoBase64)data.photo=editPhotoBase64;
+        await window._setDoc(window._doc(window._db,'joueurs',editingPlayerId),data);
+        closeModal('modal-edit-player');
+        showToast('✅ Joueur modifié !');
+      }catch(e){showToast('Erreur : '+e.message);}
+    }
+    window.openEditPlayerModal=openEditPlayerModal;
+    window.updatePlayer=updatePlayer;
+
+    // SAVE JOUEUR
+    async function savePlayer() {
+      const name=document.getElementById('input-player-name').value.trim();
+      if(!name){showToast('Entre un pseudo !');return;}
+      const exists=(window._players||[]).find(p=>p.nom.toLowerCase()===name.toLowerCase());
+      if(exists){showToast('Ce pseudo existe déjà !');return;}
+      try{
+        const data={nom:name,createdAt:Date.now()};
+        if(currentPhotoBase64)data.photo=currentPhotoBase64;
+        await window._addDoc(window._col(window._db,'joueurs'),data);
+        closeModal('modal-add-player');
+        showToast('👤 '+name+' ajouté !');
+      }catch(e){showToast('Erreur : '+e.message);}
+    }
+    window.savePlayer=savePlayer;
+
+    // 1V1V1
+    function check1v1v1Joueurs() {
+      const ids=['select-1v1v1-j1','select-1v1v1-j2','select-1v1v1-j3'].map(id=>document.getElementById(id).value);
+      const err=document.getElementById('joueurs-1v1v1-error');
+      const filled=ids.every(id=>id!=='');
+      const unique=new Set(ids.filter(Boolean)).size===ids.filter(Boolean).length;
+      if(filled&&!unique){err.textContent='Joueurs différents svp !';document.getElementById('btn-next-joueurs-1v1v1').disabled=true;}
+      else{err.textContent='';document.getElementById('btn-next-joueurs-1v1v1').disabled=!filled||!unique;}
+    }
+    window.check1v1v1Joueurs=check1v1v1Joueurs;
+
+    function goToScore1v1v1() {
+      const ids=['select-1v1v1-j1','select-1v1v1-j2','select-1v1v1-j3'].map(id=>document.getElementById(id).value);
+      const [j1,j2,j3]=ids.map(id=>window._players.find(p=>p.id===id));
+      document.getElementById('score-1v1v1-name-j1').textContent=j1.nom;
+      document.getElementById('score-1v1v1-name-j2').textContent=j2.nom;
+      document.getElementById('score-1v1v1-name-j3').textContent=j3.nom;
+      setAvatar('score-avatar-1v1v1-j1',j1);
+      setAvatar('score-avatar-1v1v1-j2',j2);
+      setAvatar('score-avatar-1v1v1-j3',j3);
+      ['input-score-1v1v1-j1','input-score-1v1v1-j2','input-score-1v1v1-j3'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('score-1v1v1-error').textContent='';
+      document.getElementById('btn-save-score-1v1v1').disabled=true;
+      document.getElementById('step-joueurs-1v1v1').classList.remove('active');
+      document.getElementById('step-score-1v1v1').classList.add('active');
+      setTimeout(()=>document.getElementById('input-score-1v1v1-j1').focus(),200);
+    }
+    window.goToScore1v1v1=goToScore1v1v1;
+
+    function goBackTo1v1v1Joueurs() {
+      document.getElementById('step-score-1v1v1').classList.remove('active');
+      document.getElementById('step-joueurs-1v1v1').classList.add('active');
+    }
+    window.goBackTo1v1v1Joueurs=goBackTo1v1v1Joueurs;
+
+    function onScoreInput1v1v1() {
+      const scores=['input-score-1v1v1-j1','input-score-1v1v1-j2','input-score-1v1v1-j3'].map(id=>parseInt(document.getElementById(id).value));
+      const err=document.getElementById('score-1v1v1-error');
+      const btn=document.getElementById('btn-save-score-1v1v1');
+      if(scores.some(isNaN)){err.textContent='';btn.disabled=true;return;}
+      if(scores.some(s=>s<0)){err.textContent='Score négatif impossible.';btn.disabled=true;return;}
+      if(scores.some(s=>s>13)){err.textContent='Score max : 13 !';btn.disabled=true;return;}
+      const max=Math.max(...scores);
+      const winners=scores.filter(s=>s===max);
+      if(winners.length>1){err.textContent='Deux joueurs ne peuvent pas avoir le même score !';btn.disabled=true;return;}
+      err.textContent='';btn.disabled=false;
+    }
+    window.onScoreInput1v1v1=onScoreInput1v1v1;
+
+    async function saveMatch1v1v1() {
+      const ids=['select-1v1v1-j1','select-1v1v1-j2','select-1v1v1-j3'].map(id=>document.getElementById(id).value);
+      const scores=['input-score-1v1v1-j1','input-score-1v1v1-j2','input-score-1v1v1-j3'].map(id=>parseInt(document.getElementById(id).value));
+      const maxScore=Math.max(...scores);
+      const gagnantId=ids[scores.indexOf(maxScore)];
+      document.getElementById('btn-save-score-1v1v1').disabled=true;
+      document.getElementById('btn-save-score-1v1v1').textContent='Enregistrement...';
+      try{
+        await window._addDoc(window._col(window._db,'parties'),{
+          format:'1v1v1',
+          joueurs:ids,scores:scores,gagnantId,date:Date.now()
+        });
+        showPage('page-home');showToast('🎯 Partie 1v1v1 enregistrée !');
+      }catch(e){
+        document.getElementById('score-1v1v1-error').textContent='Erreur : '+e.message;
+        document.getElementById('btn-save-score-1v1v1').disabled=false;
+        document.getElementById('btn-save-score-1v1v1').textContent='✅ Enregistrer';
+      }
+    }
+    window.saveMatch1v1v1=saveMatch1v1v1;
+
+    // MODIFIER / SUPPRIMER MATCH
+    function openEditMatch(matchId) {
+      const m=(window._matches||[]).find(m=>m.id===matchId);
+      if(!m)return;
+      window._editingMatchId=matchId;
+      const body=document.getElementById('edit-match-body');
+      if(m.format==='1v1'){
+        const j1=window._players.find(p=>p.id===m.joueur1Id);
+        const j2=window._players.find(p=>p.id===m.joueur2Id);
+        document.getElementById('edit-match-title').textContent=`${j1?j1.nom:'?'} vs ${j2?j2.nom:'?'}`;
+        body.innerHTML=`
+          <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:16px">
+            <div style="text-align:center">
+              <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:6px">${j1?j1.nom:'?'}</div>
+              <input class="score-input" id="edit-score-j1" type="number" min="0" max="13" value="${m.score1}" inputmode="numeric" style="width:80px;font-size:30px;padding:8px"/>
+            </div>
+            <div style="font-size:20px;font-weight:700;color:var(--text2)">–</div>
+            <div style="text-align:center">
+              <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:6px">${j2?j2.nom:'?'}</div>
+              <input class="score-input" id="edit-score-j2" type="number" min="0" max="13" value="${m.score2}" inputmode="numeric" style="width:80px;font-size:30px;padding:8px"/>
+            </div>
+          </div>
+          <div class="score-error" id="edit-score-error"></div>
+          <button class="btn-primary" onclick="saveEditMatch()">✅ Enregistrer les modifications</button>
+          <button class="btn-danger" onclick="confirmDeleteMatch()">🗑 Supprimer cette partie</button>
+          <button class="btn-cancel" onclick="closeModal('modal-edit-match')">Annuler</button>`;
+      } else if(m.format==='2v2'){
+        const p1=window._players.find(p=>p.id===m.equipe1?.[0]);
+        const p2=window._players.find(p=>p.id===m.equipe1?.[1]);
+        const p3=window._players.find(p=>p.id===m.equipe2?.[0]);
+        const p4=window._players.find(p=>p.id===m.equipe2?.[1]);
+        const n1=`${p1?p1.nom:'?'} & ${p2?p2.nom:'?'}`;
+        const n2=`${p3?p3.nom:'?'} & ${p4?p4.nom:'?'}`;
+        document.getElementById('edit-match-title').textContent='Modifier le 2v2';
+        body.innerHTML=`
+          <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px">
+            <div style="text-align:center">
+              <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px">${n1}</div>
+              <input class="score-input" id="edit-score-eq1" type="number" min="0" max="13" value="${m.score1}" inputmode="numeric" style="width:80px;font-size:30px;padding:8px"/>
+            </div>
+            <div style="font-size:20px;font-weight:700;color:var(--text2)">–</div>
+            <div style="text-align:center">
+              <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px">${n2}</div>
+              <input class="score-input" id="edit-score-eq2" type="number" min="0" max="13" value="${m.score2}" inputmode="numeric" style="width:80px;font-size:30px;padding:8px"/>
+            </div>
+          </div>
+          <div class="score-error" id="edit-score-error"></div>
+          <button class="btn-primary" onclick="saveEditMatch()">✅ Enregistrer les modifications</button>
+          <button class="btn-danger" onclick="confirmDeleteMatch()">🗑 Supprimer cette partie</button>
+          <button class="btn-cancel" onclick="closeModal('modal-edit-match')">Annuler</button>`;
+      } else {
+        document.getElementById('edit-match-title').textContent='Modifier la partie';
+        body.innerHTML=`
+          <p style="color:var(--text2);font-size:13px;margin-bottom:16px">Les scores ne peuvent pas être modifiés pour le 1v1v1.</p>
+          <button class="btn-danger" onclick="confirmDeleteMatch()">🗑 Supprimer cette partie</button>
+          <button class="btn-cancel" onclick="closeModal('modal-edit-match')">Annuler</button>`;
+      }
+      document.getElementById('modal-edit-match').classList.add('open');
+    }
+    window.openEditMatch=openEditMatch;
+
+    async function saveEditMatch() {
+      const m=(window._matches||[]).find(m=>m.id===window._editingMatchId);
+      if(!m)return;
+      const err=document.getElementById('edit-score-error');
+      let s1,s2,gagnantId,gagnantEquipe;
+      if(m.format==='1v1'){
+        s1=parseInt(document.getElementById('edit-score-j1').value);
+        s2=parseInt(document.getElementById('edit-score-j2').value);
+        if(isNaN(s1)||isNaN(s2)||s1>13||s2>13){err.textContent='Scores invalides !';return;}
+        if(s1===s2){err.textContent="Pas d'égalité !";return;}
+        if(s1!==13&&s2!==13){err.textContent='Un joueur doit avoir 13 pts.';return;}
+        gagnantId=s1>s2?m.joueur1Id:m.joueur2Id;
+      } else {
+        s1=parseInt(document.getElementById('edit-score-eq1').value);
+        s2=parseInt(document.getElementById('edit-score-eq2').value);
+        if(isNaN(s1)||isNaN(s2)||s1>13||s2>13){err.textContent='Scores invalides !';return;}
+        if(s1===s2){err.textContent="Pas d'égalité !";return;}
+        if(s1!==13&&s2!==13){err.textContent='Une équipe doit avoir 13 pts.';return;}
+        gagnantEquipe=s1>s2?1:2;
+      }
+      try{
+        const updates={score1:s1,score2:s2};
+        if(gagnantId)updates.gagnantId=gagnantId;
+        if(gagnantEquipe)updates.gagnantEquipe=gagnantEquipe;
+        await window._updateDoc(window._doc(window._db,'parties',window._editingMatchId),updates);
+        closeModal('modal-edit-match');
+        showToast('✅ Partie modifiée !');
+      }catch(e){err.textContent='Erreur : '+e.message;}
+    }
+    window.saveEditMatch=saveEditMatch;
+
+    function confirmDeleteMatch() {
+      if(confirm('Supprimer définitivement cette partie ?')){deleteMatch();}
+    }
+    async function deleteMatch() {
+      try{
+        await window._deleteDoc(window._doc(window._db,'parties',window._editingMatchId));
+        closeModal('modal-edit-match');
+        showToast('🗑 Partie supprimée');
+      }catch(e){showToast('Erreur : '+e.message);}
+    }
+    window.confirmDeleteMatch=confirmDeleteMatch;
+
+    document.getElementById('input-player-name').addEventListener('keydown',e=>{if(e.key==='Enter')savePlayer();});
   </script>
 </body>
 </html>
