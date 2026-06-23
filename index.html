@@ -510,8 +510,9 @@
   <!-- CLASSEMENT -->
   <div class="page" id="page-ranking">
     <div class="tabs">
-      <button class="tab active" id="tab-1v1" onclick="setTab('1v1')">1 vs 1</button>
+      <button class="tab active" id="tab-1v1" onclick="setTab('1v1')">Solo</button>
       <button class="tab" id="tab-duels" onclick="setTab('duels')">Duels 1v1</button>
+      <button class="tab" id="tab-duels1v1v1" onclick="setTab('duels1v1v1')">Duels 3</button>
       <button class="tab" id="tab-2v2" onclick="setTab('2v2')">2 vs 2</button>
       <button class="tab" id="tab-duels2v2" onclick="setTab('duels2v2')">Duels 2v2</button>
     </div>
@@ -902,7 +903,7 @@
     window.showPage = showPage;
 
     function setTab(tab) {
-      ['1v1','duels','2v2','duels2v2'].forEach(t => {
+      ['1v1','duels','duels1v1v1','2v2','duels2v2'].forEach(t => {
         document.getElementById('tab-'+t).classList.toggle('active', t===tab);
       });
       window._currentTab = tab;
@@ -1145,13 +1146,35 @@
 
     // STATS
     function getPlayerStats(playerId) {
-      const ms=(window._matches||[]).filter(m=>m.format==='1v1'&&(m.joueur1Id===playerId||m.joueur2Id===playerId));
-      const played=ms.length;
-      const wins=ms.filter(m=>m.gagnantId===playerId).length;
+      // 1v1
+      const ms1v1=(window._matches||[]).filter(m=>m.format==='1v1'&&(m.joueur1Id===playerId||m.joueur2Id===playerId));
+      const wins1v1=ms1v1.filter(m=>m.gagnantId===playerId).length;
+      let diff=0;
+      ms1v1.forEach(m=>{diff+=m.joueur1Id===playerId?(m.score1-m.score2):(m.score2-m.score1);});
+
+      // 1v1v1 — diff = mon score - score du vainqueur (0 si je gagne, négatif sinon)
+      // Pour le vainqueur : diff = 13 - 2ème score
+      const ms3=(window._matches||[]).filter(m=>m.format==='1v1v1'&&(m.joueurs||[]).includes(playerId));
+      const wins3=ms3.filter(m=>m.gagnantId===playerId).length;
+      ms3.forEach(m=>{
+        const idx=(m.joueurs||[]).indexOf(playerId);
+        const myScore=(m.scores||[])[idx]??0;
+        const allScores=m.scores||[];
+        const winnerScore=Math.max(...allScores);
+        if(m.gagnantId===playerId){
+          // Vainqueur : diff = mon score - 2ème meilleur score
+          const second=allScores.filter((_,i)=>i!==idx).reduce((a,b)=>Math.max(a,b),0);
+          diff+=(myScore-second);
+        } else {
+          // Perdant : diff = mon score - score du vainqueur (négatif)
+          diff+=(myScore-winnerScore);
+        }
+      });
+
+      const played=ms1v1.length+ms3.length;
+      const wins=wins1v1+wins3;
       const losses=played-wins;
       const winPct=played>0?Math.round((wins/played)*100):0;
-      let diff=0;
-      ms.forEach(m=>{diff+=m.joueur1Id===playerId?(m.score1-m.score2):(m.score2-m.score1);});
       return{played,wins,losses,winPct,diff};
     }
 
@@ -1281,6 +1304,7 @@
       const tab=window._currentTab||'1v1';
       const container=document.getElementById('ranking-content');
       if(tab==='duels') { renderDuels(container); return; }
+      if(tab==='duels1v1v1') { renderDuels1v1v1(container); return; }
       if(tab==='2v2') { render2v2Classement(container); return; }
       if(tab==='duels2v2') { render2v2Duels(container); return; }
 
@@ -1373,6 +1397,89 @@
     }
     function onDuelChange(){window._duelJ1=document.getElementById('duel-select-j1').value;window._duelJ2=document.getElementById('duel-select-j2').value;renderRanking();}
     window.onDuelChange=onDuelChange;
+
+    // DUELS 1V1V1
+    function renderDuels1v1v1(container) {
+      const players=window._players||[];
+      const ms3=(window._matches||[]).filter(m=>m.format==='1v1v1');
+      if(!ms3.length){
+        container.innerHTML=`<div class="empty-state"><div class="es-icon">⚡</div><div class="es-title">Aucune partie 1v1v1</div><div class="es-sub">Enregistrez votre première partie à 3 !</div></div>`;
+        return;
+      }
+      const j1id=window._duel3J1||'';
+      const j2id=window._duel3J2||'';
+      const j3id=window._duel3J3||'';
+      const opts=(sel)=>players.map(p=>`<option value="${p.id}" ${p.id===sel?'selected':''}>${p.nom}</option>`).join('');
+
+      let bilanHtml='';
+      const selected=[j1id,j2id,j3id].filter(Boolean);
+      const unique=new Set(selected).size===selected.length;
+      if(selected.length===3&&unique){
+        const [p1,p2,p3]=selected.map(id=>players.find(p=>p.id===id));
+        const matchs=ms3.filter(m=>{
+          const joueurs=m.joueurs||[];
+          return selected.every(id=>joueurs.includes(id));
+        }).sort((a,b)=>(b.date||0)-(a.date||0));
+        const total=matchs.length;
+        const stats=selected.map(id=>({
+          id,
+          player:players.find(p=>p.id===id),
+          wins:matchs.filter(m=>m.gagnantId===id).length
+        }));
+        const histRows=matchs.length===0
+          ?`<div class="empty-state" style="padding:16px"><div class="es-icon">🎯</div><div class="es-title">Aucune confrontation à 3</div></div>`
+          :matchs.map(m=>{
+            const winner=players.find(p=>p.id===m.gagnantId);
+            const d=m.date?new Date(m.date).toLocaleDateString('fr-FR'):'';
+            const scores=selected.map((id,i)=>{
+              const idx=(m.joueurs||[]).indexOf(id);
+              const s=(m.scores||[])[idx]??'?';
+              const p=players.find(p=>p.id===id);
+              const won=m.gagnantId===id;
+              return `<span style="color:${won?'var(--green)':'var(--text)'};font-weight:${won?700:400}">${p?p.nom:'?'} <b>${s}</b></span>`;
+            }).join(' · ');
+            return `<div class="duel-match-item">
+              <div><div class="duel-match-winner">🏆 ${winner?winner.nom:'?'}</div><div class="duel-match-date">${d}</div></div>
+              <div style="font-size:12px;color:var(--text2)">${scores}</div>
+            </div>`;
+          }).join('');
+
+        bilanHtml=`<div class="duel-bilan">
+          <div class="duel-bilan-header">${stats.map(s=>s.player?s.player.nom:'?').join(' · ')}</div>
+          <div style="display:flex">
+            ${stats.map(s=>{
+              const pct=total>0?Math.round(s.wins/total*100):0;
+              const best=s.wins===Math.max(...stats.map(x=>x.wins));
+              return `<div style="flex:1;padding:14px 8px;text-align:center;background:${best?'var(--green-light)':''}">
+                ${avatarHtml(s.player,'duel-bilan-avatar')}
+                <div class="duel-bilan-name">${s.player?s.player.nom:'?'}</div>
+                <div class="duel-bilan-wins ${best?'green':'gray'}">${s.wins}</div>
+                <div class="duel-bilan-pct">${pct}% victoires</div>
+              </div>`;
+            }).join('<div style="width:1px;background:var(--border)"></div>')}
+          </div>
+        </div>
+        <div class="duel-history-title" style="margin-top:14px">Historique (${total} partie${total!==1?'s':''})</div>
+        <div class="duel-match-list">${histRows}</div>`;
+      }
+
+      container.innerHTML=`
+        <div class="duel-selector">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <select class="input-field" id="duel3-j1" onchange="onDuel3Change()"><option value="">— Joueur 1 —</option>${opts(j1id)}</select>
+            <select class="input-field" id="duel3-j2" onchange="onDuel3Change()"><option value="">— Joueur 2 —</option>${opts(j2id)}</select>
+            <select class="input-field" id="duel3-j3" onchange="onDuel3Change()"><option value="">— Joueur 3 —</option>${opts(j3id)}</select>
+          </div>
+        </div>
+        ${bilanHtml}`;
+    }
+    function onDuel3Change(){
+      window._duel3J1=document.getElementById('duel3-j1').value;
+      window._duel3J2=document.getElementById('duel3-j2').value;
+      window._duel3J3=document.getElementById('duel3-j3').value;
+      renderRanking();
+    }
+    window.onDuel3Change=onDuel3Change;
 
     // 2V2 CLASSEMENT
     function get2v2DuoKey(id1,id2){return[id1,id2].sort().join('_');}
