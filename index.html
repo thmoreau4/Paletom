@@ -39,6 +39,44 @@
       padding-bottom: 90px;
     }
 
+
+
+    /* CUSTOM DROPDOWN */
+    .custom-select { position:relative; }
+    .custom-select-btn {
+      width:100%; padding:10px 14px; border:1.5px solid rgba(0,0,0,0.1);
+      border-radius:var(--radius-sm); background:#f5f5f5; color:#111;
+      font-size:14px; font-weight:700; cursor:pointer;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .custom-select-btn .cs-arrow { font-size:12px; color:var(--text2); transition:transform 0.2s; }
+    .custom-select-btn.open .cs-arrow { transform:rotate(180deg); }
+    .custom-select-dropdown {
+      display:none; position:absolute; top:calc(100% + 4px); left:0; right:0;
+      background:#fff; border:1.5px solid rgba(0,0,0,0.12); border-radius:var(--radius-sm);
+      box-shadow:0 4px 16px rgba(0,0,0,0.14); z-index:100; overflow:hidden;
+    }
+    .cs-option + .cs-option { border-top:1px solid rgba(0,0,0,0.06); }
+    .custom-select-dropdown.open { display:block; }
+    .cs-option {
+      padding:10px 14px; font-size:14px; font-weight:600; cursor:pointer;
+      color:#111; transition:background 0.1s;
+    }
+    .cs-option:hover { background:var(--bg3); }
+    .cs-option.selected { font-weight:900; background:var(--bg3); }
+    .cs-option.selected::after { content:'✓'; float:right; color:#111; }
+
+    /* FILTER PILLS */
+    .filter-pill {
+      padding:6px 12px; border-radius:50px; font-size:12px; font-weight:700;
+      cursor:pointer; border:1.5px solid var(--border2);
+      background:transparent; color:var(--text2); white-space:nowrap;
+      transition:all 0.15s;
+    }
+    .filter-pill.active {
+      background:#111; color:#fff; border-color:#111;
+    }
+
     /* HEADER */
     .header {
       background: #0a0a0a;
@@ -58,6 +96,7 @@
 
     /* PAGES */
     .page { display:none; padding:16px; }
+    #page-home { padding:16px 20px; }
     .page.active { display:block; }
 
     /* BOUTON PRINCIPALE */
@@ -526,14 +565,14 @@
   </span>
 </button>
     </div>
-    </div>
 
-    <div class="section-title">Dernières parties</div>
-    <div id="recent-matches"></div>
+    <div class="section-title" style="padding:0 6px">Dernières parties</div>
+    <div id="recent-matches" style="padding:0 4px"></div>
   </div>
 
   <!-- CLASSEMENT -->
   <div class="page" id="page-ranking">
+    <div class="back-btn" onclick="showPage('page-home')" style="margin-bottom:12px">←</div>
     <div class="tabs" style="gap:6px">
       <button class="tab active" id="tab-1v1" onclick="setTab('1v1')">
         <span class="tab-text"><span class="tab-highlight"></span><span>🏅 Solo</span></span>
@@ -778,12 +817,12 @@
 
   <nav class="bottom-nav" id="bottom-nav">
     <div class="nav-item active" id="nav-home" onclick="showPage('page-home')">
-      <span class="nav-icon"><img src="data:image/jpeg;base64,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" style="width:26px;height:26px;border-radius:50%;object-fit:cover;vertical-align:middle"/></span><span class="nav-label">Home</span>
+      <span class="nav-icon"><img src="data:image/jpeg;base64,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" style="width:26px;height:26px;border-radius:50%;object-fit:cover;vertical-align:middle"/></span><span class="nav-label">Home</span>
     </div>
     <div class="nav-item" id="nav-ranking" onclick="showPage('page-ranking'); setTab('1v1')">
       <span class="nav-icon">🏆</span><span class="nav-label">Classement</span>
     </div>
-    <div class="nav-item" id="nav-duels" onclick="showPage('page-ranking'); setTab('duels')">
+    <div class="nav-item" id="nav-duels" onclick="showPage('page-stats')">
       <span class="nav-icon">📊</span><span class="nav-label">Stats</span>
     </div>
   </nav>
@@ -906,6 +945,66 @@
     </div>
   </div>
 
+
+  <!-- PAGE STATS -->
+  <div class="page" id="page-stats">
+    <div class="back-btn" onclick="history.back(); showPage('page-home')" style="margin-bottom:12px">←</div>
+    <!-- BLOCS STATS -->
+    <div style="display:flex;flex-direction:column;gap:10px">
+
+      <!-- BLOC CONFRONTATIONS -->
+      <div id="bloc-conf-header" onclick="toggleBloc('conf')" style="background:#fff;border:1.5px solid rgba(0,0,0,0.08);border-radius:var(--radius);padding:18px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)">
+        <span style="font-size:16px;font-weight:900;color:#111">
+          <span style="position:relative;display:inline-block">
+            <span style="position:absolute;inset:-3px -8px;border-radius:50px;background:linear-gradient(104deg,#7df9ff 0%,#38e8ff 30%,#00d4ff 55%,#38e8ff 80%,#80f0ff 100%);opacity:0.88;transform:skew(-1deg)"></span>
+            <span style="position:relative;z-index:1">⚔️ Confrontations</span>
+          </span>
+        </span>
+        <span id="bloc-conf-arrow" style="color:var(--text2);font-size:18px;transition:transform 0.2s">›</span>
+      </div>
+      <div id="bloc-conf-body" style="display:none">
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-top:-6px">
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+            <div class="custom-select">
+              <button class="custom-select-btn" id="conf-fmt-btn" onclick="toggleCS('conf-fmt')">
+                <span id="conf-fmt-label">Tous les formats</span><span class="cs-arrow">▾</span>
+              </button>
+              <div class="custom-select-dropdown" id="conf-fmt-dropdown">
+                <div class="cs-option selected" onclick="setConfMode('all','Tous les formats')">Tous les formats</div>
+                <div class="cs-option" onclick="setConfMode('1v1','1v1')">1v1</div>
+                <div class="cs-option" onclick="setConfMode('1v1v1','1v1v1')">1v1v1</div>
+                <div class="cs-option" onclick="setConfMode('2v2','Double')">Double</div>
+              </div>
+            </div>
+            <div id="conf-players-container"></div>
+          </div>
+          <div id="conf-result"></div>
+        </div>
+      </div>
+
+      <!-- BLOC TOUTES LES PARTIES -->
+      <div id="bloc-all-header" onclick="toggleBloc('all')" style="background:#fff;border:1.5px solid rgba(0,0,0,0.08);border-radius:var(--radius);padding:18px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)">
+        <span style="font-size:16px;font-weight:900;color:#111">
+          <span style="position:relative;display:inline-block">
+            <span style="position:absolute;inset:-3px -8px;border-radius:50px;background:linear-gradient(104deg,#e8b4ff 0%,#d580ff 30%,#c855ff 55%,#d580ff 80%,#e0a0ff 100%);opacity:0.88;transform:skew(-1deg)"></span>
+            <span style="position:relative;z-index:1">📅 Toutes les parties</span>
+          </span>
+        </span>
+        <span id="bloc-all-arrow" style="color:var(--text2);font-size:18px;transition:transform 0.2s">›</span>
+      </div>
+      <div id="bloc-all-body" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;margin:8px 0 6px;padding:0 2px">
+          <span style="font-size:11px;color:var(--text2);font-weight:600">Trier par :</span>
+          <span id="sort-lnk-desc" onclick="setSortAll('desc')" style="font-size:11px;font-weight:700;color:#111;cursor:pointer;text-decoration:underline">récent</span>
+          <span style="font-size:11px;color:var(--text2)">·</span>
+          <span id="sort-lnk-asc" onclick="setSortAll('asc')" style="font-size:11px;font-weight:500;color:var(--text2);cursor:pointer">ancien</span>
+        </div>
+        <div id="all-matches"></div>
+      </div>
+
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <!-- FIREBASE -->
@@ -951,15 +1050,16 @@
     let editingPlayerId = null;
 
     // NAV
-    const FULLSCREEN_PAGES = ['page-saisie','page-joueur','page-settings','page-players','page-rules'];
+    const FULLSCREEN_PAGES = ['page-saisie','page-joueur','page-settings','page-players','page-rules','page-stats'];
     function showPage(pageId) {
+      if (pageId === 'page-stats') { setTimeout(renderStats, 50); }
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       const isFullscreen = FULLSCREEN_PAGES.includes(pageId);
       // header géré inline dans page-home
       document.getElementById('bottom-nav').style.display = isFullscreen ? 'none' : '';
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const navMap = {'page-home':'nav-home','page-ranking':'nav-ranking','page-settings':'nav-duels'};
+      const navMap = {'page-home':'nav-home','page-ranking':'nav-ranking','page-stats':'nav-duels','page-settings':'nav-duels'};
       if (navMap[pageId]) document.getElementById(navMap[pageId]).classList.add('active');
       window.scrollTo(0,0);
     }
@@ -1432,6 +1532,338 @@
     }
     window.openPlayerPage = openPlayerPage;
 
+
+    // PAGE STATS
+    function renderStats() {
+      buildConfPlayers();
+      buildPlayerDropdown('all-player-dropdown', 'setPlayerAll', _allPlayer);
+      renderConfrontation();
+      renderAllMatches();
+    }
+    window.renderStats = renderStats;
+
+    function renderConfrontation() {
+      const j1id = _confJ1;
+      const j2id = _confJ2;
+      const mode = _confMode;
+      const container = document.getElementById('conf-result');
+      if (!container) return;
+      // En mode Double, on vérifie qu'au moins un duo complet est sélectionné
+      if (mode === '2v2') {
+        const e1=[_confE1a,_confE1b].filter(Boolean);
+        const e2=[_confE2a,_confE2b].filter(Boolean);
+        if (e1.length < 2 && e2.length < 2) { container.innerHTML = ''; return; }
+      } else if (mode === '1v1v1') {
+        if (!j1id) { container.innerHTML = ''; return; }
+      } else {
+        if (!j1id || !j2id || j1id === j2id) { container.innerHTML = ''; return; }
+      }
+      const j1 = (window._players||[]).find(p=>p.id===j1id);
+      const j2 = (window._players||[]).find(p=>p.id===j2id);
+      const matches = (window._matches||[]).filter(m => {
+        if (mode !== 'all' && m.format !== mode) return false;
+        if (m.format==='1v1') {
+          if (!j1id||!j2id) return false;
+          return (m.joueur1Id===j1id&&m.joueur2Id===j2id)||(m.joueur1Id===j2id&&m.joueur2Id===j1id);
+        }
+        if (m.format==='1v1v1') {
+          const j3id=_confJ3;
+          const ids=[j1id,j2id,j3id].filter(Boolean);
+          if(ids.length<1) return false;
+          return ids.every(id=>(m.joueurs||[]).includes(id));
+        }
+        if (m.format==='2v2') {
+          const e1=[_confE1a,_confE1b].filter(Boolean);
+          const e2=[_confE2a,_confE2b].filter(Boolean);
+          if(e1.length<2&&e2.length<2) return false;
+          const allInMatch=[...(m.equipe1||[]),...(m.equipe2||[])];
+          // Dès que les 2 joueurs d'un duo sont renseignés, ce duo doit être dans le match ensemble
+          const duoInMatch = (duo) => {
+            const inEq1 = duo.every(id=>(m.equipe1||[]).includes(id));
+            const inEq2 = duo.every(id=>(m.equipe2||[]).includes(id));
+            return inEq1||inEq2;
+          };
+          if(e1.length===2 && !duoInMatch(e1)) return false;
+          if(e2.length===2 && !duoInMatch(e2)) return false;
+          return true;
+        }
+        // mode 'all' : 2 joueurs minimum
+        if (!j1id||!j2id) return false;
+        if (m.format==='1v1') return (m.joueur1Id===j1id&&m.joueur2Id===j2id)||(m.joueur1Id===j2id&&m.joueur2Id===j1id);
+        if (m.format==='1v1v1') { const ids=[j1id,j2id,_confJ3].filter(Boolean); return ids.length>0&&ids.every(id=>(m.joueurs||[]).includes(id)); }
+        if (m.format==='2v2') return ([...(m.equipe1||[]),...(m.equipe2||[])]).includes(j1id)&&([...(m.equipe1||[]),...(m.equipe2||[])]).includes(j2id);
+        return false;
+      }).sort((a,b)=>(b.date||0)-(a.date||0));
+      if (!matches.length) { container.innerHTML = '<div style="text-align:center;color:var(--text2);padding:12px;font-size:14px">Aucune confrontation</div>'; return; }
+      // Calculer les victoires pour chaque joueur sélectionné
+      const j3id = _confJ3;
+      const e1ids = [_confE1a, _confE1b].filter(Boolean);
+      const e2ids = [_confE2a, _confE2b].filter(Boolean);
+      const countWins = (id) => matches.filter(m => {
+        if (m.format==='2v2') return (m.gagnantEquipe===1&&(m.equipe1||[]).includes(id))||(m.gagnantEquipe===2&&(m.equipe2||[]).includes(id));
+        return m.gagnantId===id;
+      }).length;
+      const j1w = countWins(j1id);
+      const j2w = countWins(j2id);
+      const j3w = j3id ? countWins(j3id) : null;
+      // Calcul diff de points
+      let j1diff = 0, j2diff = 0;
+      let j3diff = 0;
+      matches.forEach(m => {
+        if (m.format==='1v1') {
+          const j1is1 = m.joueur1Id===j1id;
+          j1diff += j1is1 ? (m.score1-m.score2) : (m.score2-m.score1);
+          j2diff += j1is1 ? (m.score2-m.score1) : (m.score1-m.score2);
+        } else if (m.format==='1v1v1') {
+          const winScore=Math.max(...(m.scores||[]));
+          const calcDiff = (id) => { const idx=(m.joueurs||[]).indexOf(id); if(idx<0)return 0; const s=(m.scores||[])[idx]??0; return m.gagnantId===id?(s-[...(m.scores||[])].filter((_,i)=>i!==idx).reduce((a,b)=>Math.max(a,b),0)):(s-winScore); };
+          j1diff += calcDiff(j1id); j2diff += calcDiff(j2id); if(j3id) j3diff += calcDiff(j3id);
+        } else if (m.format==='2v2') {
+          const j1eq = (m.equipe1||[]).includes(j1id) ? 1 : 2;
+          const j2eq = (m.equipe1||[]).includes(j2id) ? 1 : 2;
+          j1diff += j1eq===1 ? (m.score1-m.score2) : (m.score2-m.score1);
+          j2diff += j2eq===1 ? (m.score1-m.score2) : (m.score2-m.score1);
+        }
+      });
+      const ds = d => d>0 ? `<span style="color:#00cc44">+${d}</span>` : d<0 ? `<span style="color:#ff3b30">${d}</span>` : `<span style="color:var(--text2)">0</span>`;
+      const maxW = Math.max(j1w, j2w, j3w??0);
+      const playerCol = (nom, wins, diff) => `<div style="flex:1;text-align:center">
+        <div style="font-size:13px;font-weight:900;color:var(--text)">${nom||'?'}</div>
+        <div style="font-size:26px;font-weight:900;color:${wins===maxW&&wins>0?'#00cc44':'var(--text)'}">${wins}</div>
+        <div style="font-size:12px;font-weight:700">${ds(diff)} pts</div>
+      </div>`;
+      const j3 = j3id ? (window._players||[]).find(p=>p.id===j3id) : null;
+      const pname = id => (window._players||[]).find(p=>p.id===id)?.nom||'?';
+      let bilanRow;
+      if (mode==='2v2') {
+        const e1=[_confE1a,_confE1b].filter(Boolean);
+        const e2=[_confE2a,_confE2b].filter(Boolean);
+        const e1name = e1.map(pname).join(' & ') || '?';
+        const e2name = e2.length ? e2.map(pname).join(' & ') : '?';
+        const e1w = matches.filter(m=>(m.gagnantEquipe===1&&e1.every(id=>(m.equipe1||[]).includes(id)))||(m.gagnantEquipe===2&&e1.every(id=>(m.equipe2||[]).includes(id)))).length;
+        const e2w = e2.length ? matches.filter(m=>(m.gagnantEquipe===1&&e2.every(id=>(m.equipe1||[]).includes(id)))||(m.gagnantEquipe===2&&e2.every(id=>(m.equipe2||[]).includes(id)))).length : 0;
+        const maxWe = Math.max(e1w, e2w);
+        const eCol = (nom,wins,diff) => `<div style="flex:1;text-align:center"><div style="font-size:13px;font-weight:900;color:var(--text)">${nom}</div><div style="font-size:26px;font-weight:900;color:${wins===maxWe&&wins>0?'#00cc44':'var(--text)'}">${wins}</div><div style="font-size:12px;font-weight:700">${ds(diff)} pts</div></div>`;
+        bilanRow = eCol(e1name,e1w,j1diff) + (e2.length?`<div style="padding:0 6px;color:var(--text2);font-size:11px;align-self:center">vs</div>`+eCol(e2name,e2w,j2diff):'');
+      } else {
+        bilanRow = playerCol(j1?.nom,j1w,j1diff);
+        if (j2id) bilanRow += `<div style="padding:0 6px;color:var(--text2);font-size:11px;align-self:center">vs</div>` + playerCol(j2?.nom,j2w,j2diff);
+        if (j3id && j3) bilanRow += `<div style="padding:0 6px;color:var(--text2);font-size:11px;align-self:center">vs</div>` + playerCol(j3?.nom,j3w??0,j3diff??0);
+      }
+      container.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:center;margin-bottom:8px">${bilanRow}</div>
+        <div style="text-align:center;color:var(--text2);font-size:12px;margin-bottom:10px">${matches.length} partie${matches.length>1?'s':''}</div>
+        <div class="match-list">${matches.map(m=>renderMatchItem(m)).join('')}</div>`;
+    }
+    window.renderConfrontation = renderConfrontation;
+
+    function renderAllMatches() {
+      const container = document.getElementById('all-matches');
+      if (!container) return;
+
+      let matches = [...(window._matches||[])];
+      if (_allPlayer) matches = matches.filter(m => {
+        if (m.format==='1v1') return m.joueur1Id===_allPlayer||m.joueur2Id===_allPlayer;
+        if (m.format==='1v1v1') return (m.joueurs||[]).includes(_allPlayer);
+        if (m.format==='2v2') return [...(m.equipe1||[]),...(m.equipe2||[])].includes(_allPlayer);
+        return false;
+      });
+      if (_allFormat !== 'all') matches = matches.filter(m => m.format === _allFormat);
+      matches.sort((a,b) => _allSort==='desc' ? (b.date||0)-(a.date||0) : (a.date||0)-(b.date||0));
+      if (!matches.length) { container.innerHTML = '<div class="empty-state"><div class="es-icon">🎯</div><div class="es-title">Aucune partie</div></div>'; return; }
+      container.innerHTML = `<div class="match-list">${matches.map(m=>renderMatchItem(m)).join('')}</div>`;
+    }
+
+    // Extraire le rendu d'un match en fonction commune
+    function renderMatchItem(m) {
+      const d = m.date ? new Date(m.date).toLocaleDateString('fr-FR') : '';
+      const editBtn = `<div onclick="openEditMatch('${m.id}')" style="width:28px;height:28px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;font-weight:700;flex-shrink:0;color:var(--text2);letter-spacing:1px">•••</div>`;
+      if (m.format==='2v2') {
+        const p1=(window._players||[]).find(p=>p.id===m.equipe1?.[0]);
+        const p2=(window._players||[]).find(p=>p.id===m.equipe1?.[1]);
+        const p3=(window._players||[]).find(p=>p.id===m.equipe2?.[0]);
+        const p4=(window._players||[]).find(p=>p.id===m.equipe2?.[1]);
+        const n1=`${p1?p1.nom:'?'} & ${p2?p2.nom:'?'}`;
+        const n2=`${p3?p3.nom:'?'} & ${p4?p4.nom:'?'}`;
+        const s1c=m.gagnantEquipe===1?'win':'lose';
+        const s2c=m.gagnantEquipe===2?'win':'lose';
+        const sc1=s1c==='win'?`<span class="score-win"><span>${m.score1}</span></span>`:`<span class="score-lose">${m.score1}</span>`;
+        const sc2=s2c==='win'?`<span class="score-win"><span>${m.score2}</span></span>`:`<span class="score-lose">${m.score2}</span>`;
+        return `<div class="match-item" style="flex-direction:column;align-items:stretch;gap:2px;position:relative;padding-top:28px">
+          <div style="position:absolute;top:6px;left:12px"><div class="match-date">${d}</div><span class="match-badge b2v2"><span>Double</span></span></div>
+          <div style="position:absolute;top:10px;right:12px">${editBtn}</div>
+          <table style="border-collapse:collapse;text-align:center;margin:0 auto">
+            <tr><td style="font-size:13px;font-weight:900;color:#111;padding:0 6px;white-space:nowrap">${n1}</td><td style="font-size:12px;color:var(--text2);padding:0 6px;white-space:nowrap">vs</td><td style="font-size:13px;font-weight:900;color:#111;padding:0 6px;white-space:nowrap">${n2}</td></tr>
+            <tr><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc1}</td><td style="font-size:20px;color:var(--text2);font-weight:300;text-align:center;padding:0 6px">–</td><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc2}</td></tr>
+          </table></div>`;
+      }
+      if (m.format==='1v1v1') {
+        const ps=(m.joueurs||[]).map((id,i)=>({p:(window._players||[]).find(p=>p.id===id),s:m.scores?.[i]??'?',won:m.gagnantId===id}));
+        const sc=ps.map(x=>x.won?`<span class="score-win"><span>${x.s}</span></span>`:`<span class="score-lose">${x.s}</span>`);
+        return `<div class="match-item" style="flex-direction:column;align-items:stretch;gap:2px;position:relative;padding-top:28px">
+          <div style="position:absolute;top:6px;left:12px"><div class="match-date">${d}</div><span class="match-badge b1v1v1"><span>1v1v1</span></span></div>
+          <div style="position:absolute;top:10px;right:12px">${editBtn}</div>
+          <table style="border-collapse:collapse;text-align:center;margin:0 auto">
+            <tr><td style="font-size:13px;font-weight:900;color:#111;padding:0 10px;white-space:nowrap">${ps[0].p?ps[0].p.nom:'?'}</td><td style="font-size:11px;color:var(--text2);padding:0 8px">vs</td><td style="font-size:13px;font-weight:900;color:#111;padding:0 10px;white-space:nowrap">${ps[1].p?ps[1].p.nom:'?'}</td><td style="font-size:11px;color:var(--text2);padding:0 8px">vs</td><td style="font-size:13px;font-weight:900;color:#111;padding:0 10px;white-space:nowrap">${ps[2].p?ps[2].p.nom:'?'}</td></tr>
+            <tr><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc[0]}</td><td style="font-size:20px;color:var(--text2);font-weight:300;padding:0 8px">–</td><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc[1]}</td><td style="font-size:20px;color:var(--text2);font-weight:300;padding:0 8px">–</td><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc[2]}</td></tr>
+          </table></div>`;
+      }
+      // 1v1
+      const j1=(window._players||[]).find(p=>p.id===m.joueur1Id);
+      const j2=(window._players||[]).find(p=>p.id===m.joueur2Id);
+      const n1=j1?j1.nom:'?', n2=j2?j2.nom:'?';
+      const s1c=m.gagnantId===m.joueur1Id?'win':'lose';
+      const s2c=m.gagnantId===m.joueur2Id?'win':'lose';
+      const sc1=s1c==='win'?`<span class="score-win"><span>${m.score1}</span></span>`:`<span class="score-lose">${m.score1}</span>`;
+      const sc2=s2c==='win'?`<span class="score-win"><span>${m.score2}</span></span>`:`<span class="score-lose">${m.score2}</span>`;
+      return `<div class="match-item" style="flex-direction:column;align-items:stretch;gap:2px;position:relative;padding-top:28px">
+        <div style="position:absolute;top:6px;left:12px"><div class="match-date">${d}</div><span class="match-badge b1v1"><span>1v1</span></span></div>
+        <div style="position:absolute;top:10px;right:12px">${editBtn}</div>
+        <table style="border-collapse:collapse;text-align:center;margin:0 auto">
+          <tr><td style="font-size:15px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap">${n1}</td><td style="font-size:13px;color:var(--text2);padding:0 6px;white-space:nowrap">vs</td><td style="font-size:15px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap">${n2}</td></tr>
+          <tr><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc1}</td><td style="font-size:20px;color:var(--text2);font-weight:300;text-align:center;padding:0 6px">–</td><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc2}</td></tr>
+        </table></div>`;
+    }
+    window.renderMatchItem = renderMatchItem;
+
+    function toggleBloc(name) {
+      const body = document.getElementById('bloc-'+name+'-body');
+      const arrow = document.getElementById('bloc-'+name+'-arrow');
+      const open = body.style.display === 'none';
+      body.style.display = open ? 'block' : 'none';
+      arrow.style.transform = open ? 'rotate(90deg)' : '';
+      if (open && name === 'all') renderAllMatches();
+      if (open && name === 'conf') renderConfrontation();
+    }
+    window.toggleBloc = toggleBloc;
+
+    // CUSTOM DROPDOWNS
+    let _allSort = 'desc', _allFormat = 'all', _allPlayer = '';
+    let _confMode = 'all', _confJ1 = '', _confJ2 = '', _confJ3 = '', _confE1a = '', _confE1b = '', _confE2a = '', _confE2b = '';
+
+    function toggleCS(id) {
+      const btn = document.getElementById(id+'-btn');
+      const dd = document.getElementById(id+'-dropdown');
+      if (!btn||!dd) return;
+      const isOpen = dd.classList.contains('open');
+      // Fermer tous les autres
+      document.querySelectorAll('.custom-select-dropdown.open').forEach(el=>el.classList.remove('open'));
+      document.querySelectorAll('.custom-select-btn.open').forEach(el=>el.classList.remove('open'));
+      if (!isOpen) { btn.classList.add('open'); dd.classList.add('open'); }
+    }
+    function closeAllCS() {
+      document.querySelectorAll('.custom-select-dropdown.open').forEach(el=>el.classList.remove('open'));
+      document.querySelectorAll('.custom-select-btn.open').forEach(el=>el.classList.remove('open'));
+    }
+    document.addEventListener('click', e => { if (!e.target.closest('.custom-select')) closeAllCS(); });
+
+    function setSortAll(val, label) {
+      _allSort = val;
+      const desc = document.getElementById('sort-lnk-desc');
+      const asc = document.getElementById('sort-lnk-asc');
+      if(desc){ desc.style.fontWeight=val==='desc'?'700':'500'; desc.style.color=val==='desc'?'#111':'var(--text2)'; desc.style.textDecoration=val==='desc'?'underline':'none'; }
+      if(asc){ asc.style.fontWeight=val==='asc'?'700':'500'; asc.style.color=val==='asc'?'#111':'var(--text2)'; asc.style.textDecoration=val==='asc'?'underline':'none'; }
+      closeAllCS(); renderAllMatches();
+    }
+    function setFormatAll(val, label) {
+      _allFormat = val;
+      document.getElementById('all-fmt-label').textContent = label || val;
+      document.querySelectorAll('#all-fmt-dropdown .cs-option').forEach(o=>o.classList.toggle('selected',o.textContent.trim()===label));
+      closeAllCS(); renderAllMatches();
+    }
+    function setPlayerAll(val, label) {
+      _allPlayer = val;
+      document.getElementById('all-player-label').textContent = label || 'Tous les joueurs';
+      document.querySelectorAll('#all-player-dropdown .cs-option').forEach(o=>o.classList.toggle('selected',o.dataset.val===val));
+      closeAllCS(); renderAllMatches();
+    }
+    function setConfMode(val, label) {
+      _confMode = val;
+      // Reset les joueurs
+      _confJ1='';_confJ2='';_confJ3='';_confE1a='';_confE1b='';_confE2a='';_confE2b='';
+      document.getElementById('conf-fmt-label').textContent = label || val;
+      document.querySelectorAll('#conf-fmt-dropdown .cs-option').forEach(o=>o.classList.toggle('selected',o.textContent.trim()===label));
+      closeAllCS(); buildConfPlayers(); renderConfrontation();
+    }
+    function setConfJ1(val, label) {
+      _confJ1 = val;
+      const el=document.getElementById("conf-j1-label");if(el)el.textContent=label||"Joueur 1";
+      document.querySelectorAll("#conf-j1-dropdown .cs-option").forEach(o=>o.classList.toggle("selected",o.dataset.val===val));
+      closeAllCS(); renderConfrontation();
+    }
+    function setConfJ2(val, label) {
+      _confJ2 = val;
+      const el=document.getElementById("conf-j2-label");if(el)el.textContent=label||"Joueur 2";
+      document.querySelectorAll("#conf-j2-dropdown .cs-option").forEach(o=>o.classList.toggle("selected",o.dataset.val===val));
+      closeAllCS(); renderConfrontation();
+    }
+    function setConfJ3(val,label){_confJ3=val;const el=document.getElementById("conf-j3-label");if(el)el.textContent=label||"Joueur 3";document.querySelectorAll("#conf-j3-dropdown .cs-option").forEach(o=>o.classList.toggle("selected",o.dataset.val===val));closeAllCS();renderConfrontation();}
+    function setConfE1a(val,label){_confE1a=val;const el=document.getElementById("conf-e1a-label");if(el)el.textContent=label||"Joueur A";document.querySelectorAll("#conf-e1a-dropdown .cs-option").forEach(o=>o.classList.toggle("selected",o.dataset.val===val));closeAllCS();renderConfrontation();}
+    function setConfE1b(val,label){_confE1b=val;const el=document.getElementById("conf-e1b-label");if(el)el.textContent=label||"Joueur B";document.querySelectorAll("#conf-e1b-dropdown .cs-option").forEach(o=>o.classList.toggle("selected",o.dataset.val===val));closeAllCS();renderConfrontation();}
+    function setConfE2a(val,label){_confE2a=val;const el=document.getElementById("conf-e2a-label");if(el)el.textContent=label||"Joueur C";document.querySelectorAll("#conf-e2a-dropdown .cs-option").forEach(o=>o.classList.toggle("selected",o.dataset.val===val));closeAllCS();renderConfrontation();}
+    function setConfE2b(val,label){_confE2b=val;const el=document.getElementById("conf-e2b-label");if(el)el.textContent=label||"Joueur D";document.querySelectorAll("#conf-e2b-dropdown .cs-option").forEach(o=>o.classList.toggle("selected",o.dataset.val===val));closeAllCS();renderConfrontation();}
+    window.toggleCS=toggleCS; window.setSortAll=setSortAll; window.setFormatAll=setFormatAll;
+    window.setPlayerAll=setPlayerAll; window.setConfMode=setConfMode;
+    window.setConfJ1=setConfJ1; window.setConfJ2=setConfJ2;
+    window.setConfJ3=setConfJ3; window.setConfE1a=setConfE1a; window.setConfE1b=setConfE1b;
+    window.setConfE2a=setConfE2a; window.setConfE2b=setConfE2b;
+
+    function buildPlayerDropdown(ddId, clickFn, activeId, withAll=true) {
+      const dd = document.getElementById(ddId);
+      if (!dd) return;
+      const allOpt = withAll ? `<div class="cs-option${activeId===''?' selected':''}" data-val="" onclick="${clickFn}('','Tous les joueurs')">Tous les joueurs</div>` : '';
+      dd.innerHTML = allOpt + (window._players||[]).map(p =>
+          `<div class="cs-option${p.id===activeId?' selected':''}" data-val="${p.id}" onclick="${clickFn}('${p.id}','${p.nom}')">${p.nom}</div>`
+        ).join('');
+    }
+
+    function buildConfPlayers() {
+      const c = document.getElementById('conf-players-container');
+      if (!c) return;
+      const mode = _confMode;
+
+      function makeDD(id, label, activeId, setter) {
+        return `<div class="custom-select" style="margin-bottom:8px">
+          <button class="custom-select-btn" id="${id}-btn" onclick="toggleCS('${id}')">
+            <span id="${id}-label">${activeId ? ((window._players||[]).find(p=>p.id===activeId)?.nom||label) : label}</span>
+            <span class="cs-arrow">▾</span>
+          </button>
+          <div class="custom-select-dropdown" id="${id}-dropdown"></div>
+        </div>`;
+      }
+
+      if (mode === '1v1') {
+        c.innerHTML = makeDD('conf-j1','Joueur 1',_confJ1,'setConfJ1') + makeDD('conf-j2','Joueur 2',_confJ2,'setConfJ2');
+      } else if (mode === '1v1v1') {
+        c.innerHTML = makeDD('conf-j1','Joueur 1',_confJ1,'setConfJ1') + makeDD('conf-j2','Joueur 2',_confJ2,'setConfJ2') + makeDD('conf-j3','Joueur 3',_confJ3,'setConfJ3');
+      } else if (mode === '2v2') {
+        c.innerHTML = `<div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px">ÉQUIPE 1</div>`
+          + makeDD('conf-e1a','Joueur A',_confE1a,'setConfE1a') + makeDD('conf-e1b','Joueur B',_confE1b,'setConfE1b')
+          + `<div style="font-size:11px;font-weight:700;color:var(--text2);margin:8px 0 6px">ÉQUIPE 2</div>`
+          + makeDD('conf-e2a','Joueur C',_confE2a,'setConfE2a') + makeDD('conf-e2b','Joueur D',_confE2b,'setConfE2b');
+      } else {
+        c.innerHTML = makeDD('conf-j1','Joueur 1',_confJ1,'setConfJ1') + makeDD('conf-j2','Joueur 2',_confJ2,'setConfJ2');
+      }
+      // Remplir les dropdowns APRÈS que le DOM soit mis à jour
+      setTimeout(() => {
+        if (mode==='1v1'||mode==='all') {
+          buildPlayerDropdown('conf-j1-dropdown','setConfJ1',_confJ1,false);
+          buildPlayerDropdown('conf-j2-dropdown','setConfJ2',_confJ2,false);
+        } else if (mode==='1v1v1') {
+          buildPlayerDropdown('conf-j1-dropdown','setConfJ1',_confJ1,false);
+          buildPlayerDropdown('conf-j2-dropdown','setConfJ2',_confJ2,false);
+          buildPlayerDropdown('conf-j3-dropdown','setConfJ3',_confJ3,false);
+        } else if (mode==='2v2') {
+          buildPlayerDropdown('conf-e1a-dropdown','setConfE1a',_confE1a,false);
+          buildPlayerDropdown('conf-e1b-dropdown','setConfE1b',_confE1b,false);
+          buildPlayerDropdown('conf-e2a-dropdown','setConfE2a',_confE2a,false);
+          buildPlayerDropdown('conf-e2b-dropdown','setConfE2b',_confE2b,false);
+        }
+      }, 0);
+    }
+
+
+
     // RENDER RECENT MATCHES
     function renderRecentMatches() {
       const container=document.getElementById('recent-matches');
@@ -1442,7 +1874,7 @@
       }
       container.innerHTML=`<div class="match-list">${recent.map(m=>{
         const d=m.date?new Date(m.date).toLocaleDateString('fr-FR'):'';
-        const editBtn=`<div onclick="openEditMatch('${m.id}')" style="width:28px;height:28px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;flex-shrink:0">✏️</div>`;
+        const editBtn=`<div onclick="openEditMatch('${m.id}')" style="width:28px;height:28px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;font-weight:700;flex-shrink:0;color:var(--text2);letter-spacing:1px">•••</div>`;
         if(m.format==='2v2'){
           const p1=(window._players||[]).find(p=>p.id===m.equipe1?.[0]);
           const p2=(window._players||[]).find(p=>p.id===m.equipe1?.[1]);
@@ -1541,7 +1973,7 @@
       const dc=(d)=>d>0?'diff-pos':d<0?'diff-neg':'diff-zero';
       const ds=(d)=>d>0?'+'+d:d.toString();
       container.innerHTML=`<div class="ranking-table">
-        <div class="ranking-table-header"><span>#</span><span>Joueur</span><span>%V</span><span>V</span><span>D</span><span>Diff</span></div>
+        <div class="ranking-table-header"><span>#</span><span>Solo</span><span>%V</span><span>V</span><span>D</span><span>Diff</span></div>
         ${players.map((p,i)=>`<div class="ranking-row" onclick="openPlayerPage('${p.id}')">
           <div class="rank-pos-cell ${pc(i)}">${pl(i)}</div>
           <div class="rank-player-cell">${avatarHtml(p,'rank-avatar-sm')}<span class="rank-name-cell">${p.nom}</span></div>
@@ -1566,7 +1998,7 @@
       const dc=(d)=>d>0?'diff-pos':d<0?'diff-neg':'diff-zero';
       const ds=(d)=>d>0?'+'+d:d.toString();
       container.innerHTML=`<div class="ranking-table">
-        <div class="ranking-table-header"><span>#</span><span>Joueur</span><span>%V</span><span>V</span><span>D</span><span>Diff</span></div>
+        <div class="ranking-table-header"><span>#</span><span>Solo</span><span>%V</span><span>V</span><span>D</span><span>Diff</span></div>
         ${players.map((p,i)=>`<div class="ranking-row" onclick="openPlayerPage('${p.id}')">
           <div class="rank-pos-cell ${pc(i)}">${pl(i)}</div>
           <div class="rank-player-cell">${avatarHtml(p,'rank-avatar-sm')}<span class="rank-name-cell">${p.nom}</span></div>
@@ -1764,7 +2196,7 @@
       const dc=(d)=>d>0?'diff-pos':d<0?'diff-neg':'diff-zero';
       const ds=(d)=>d>0?'+'+d:d.toString();
       container.innerHTML=`<div class="ranking-table">
-        <div class="ranking-table-header"><span>#</span><span>Duo</span><span>%V</span><span>V</span><span>D</span><span>Diff</span></div>
+        <div class="ranking-table-header"><span>#</span><span>Double</span><span>%V</span><span>V</span><span>D</span><span>Diff</span></div>
         ${duos.map((d,i)=>`<div class="ranking-row">
           <div class="rank-pos-cell ${pc(i)}">${pl(i)}</div>
           <div class="rank-player-cell"><span class="rank-name-cell" style="font-size:12px">${d.p1?d.p1.nom:'?'} & ${d.p2?d.p2.nom:'?'}</span></div>
