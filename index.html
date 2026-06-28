@@ -175,7 +175,7 @@
       position:fixed; bottom:0; left:50%; transform:translateX(-50%);
       width:100%; max-width:480px;
       background:var(--bg2); border-top:1px solid var(--border);
-      display:flex; padding:8px 0 20px; z-index:100;
+      display:flex; padding:4px 0 6px; z-index:100;
       box-shadow:0 -2px 10px rgba(26,46,74,0.08);
     }
     .nav-item {
@@ -552,7 +552,7 @@
         
       </div>
       <div style="position:absolute;top:14px;right:14px" onclick="showPage('page-settings')">
-        <div style="width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.35);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer">⚙️</div>
+        <div onclick="showPage('page-settings')" style="width:34px;height:34px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,0.2)">⚙️</div>
       </div>
     </div>
 
@@ -1791,23 +1791,21 @@
         const s2c=m.gagnantEquipe===2?'win':'lose';
         const sc1=s1c==='win'?`<span class="score-win"><span>${m.score1}</span></span>`:`<span class="score-lose">${m.score1}</span>`;
         const sc2=s2c==='win'?`<span class="score-win"><span>${m.score2}</span></span>`:`<span class="score-lose">${m.score2}</span>`;
-        return `<div class="match-item" style="flex-direction:column;align-items:stretch;gap:2px;position:relative;padding-top:28px">
-          <div style="position:absolute;top:6px;left:12px"><div class="match-date">${d}</div><span class="match-badge b2v2"><span>Double</span></span></div>
-          <div style="position:absolute;top:10px;right:12px">${editBtn}</div>
-          <table style="border-collapse:collapse;text-align:center;margin:0 auto">
-            <tr><td style="font-size:11px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis">${n1}</td><td style="font-size:10px;color:var(--text2);padding:0 3px">vs</td><td style="font-size:11px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis">${n2}</td></tr>
-            <tr><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc1}</td><td style="font-size:20px;color:var(--text2);font-weight:300;text-align:center;padding:0 6px">–</td><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc2}</td></tr>
+        return `<div class="match-item" style="flex-direction:column;align-items:stretch;gap:0px;padding:6px 10px 6px">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:1px"><div class="match-date">${d}</div><span class="match-badge b2v2"><span>Double</span></span><div style="flex:1"></div>${editBtn}</div>
+          <table style="border-collapse:collapse;text-align:center;margin:0 auto;margin-top:0">
+            <tr><td style="font-size:14px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap">${n1}</td><td style="font-size:10px;color:var(--text2);padding:0 3px">vs</td><td style="font-size:14px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap">${n2}</td></tr>
+            <tr><td style="font-size:20px;font-weight:800;padding-top:0;text-align:center">${sc1}</td><td style="font-size:20px;color:var(--text2);font-weight:300;text-align:center;padding:0 6px">–</td><td style="font-size:20px;font-weight:800;padding-top:0;text-align:center">${sc2}</td></tr>
           </table></div>`;
       }
       if (m.format==='1v1v1') {
         const ps=(m.joueurs||[]).map((id,i)=>({nom:resolvePlayerName(id,m),s:m.scores?.[i]??'?',won:m.gagnantId===id}));
         const sc=ps.map(x=>x.won?`<span class="score-win"><span>${x.s}</span></span>`:`<span class="score-lose">${x.s}</span>`);
-        return `<div class="match-item" style="flex-direction:column;align-items:stretch;gap:2px;position:relative;padding-top:28px">
-          <div style="position:absolute;top:6px;left:12px"><div class="match-date">${d}</div><span class="match-badge b1v1v1"><span>1v1v1</span></span></div>
-          <div style="position:absolute;top:10px;right:12px">${editBtn}</div>
-          <table style="border-collapse:collapse;text-align:center;margin:0 auto">
-            <tr><td style="font-size:11px;font-weight:900;color:#111;padding:0 3px;white-space:nowrap;max-width:80px;overflow:hidden;text-overflow:ellipsis">${ps[0].nom}</td><td style="font-size:9px;color:var(--text2);padding:0 2px">vs</td><td style="font-size:11px;font-weight:900;color:#111;padding:0 3px;white-space:nowrap;max-width:80px;overflow:hidden;text-overflow:ellipsis">${ps[1].nom}</td><td style="font-size:9px;color:var(--text2);padding:0 2px">vs</td><td style="font-size:11px;font-weight:900;color:#111;padding:0 3px;white-space:nowrap;max-width:80px;overflow:hidden;text-overflow:ellipsis">${ps[2].nom}</td></tr>
-            <tr><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc[0]}</td><td style="font-size:18px;color:var(--text2);font-weight:300;padding:0 3px">–</td><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc[1]}</td><td style="font-size:18px;color:var(--text2);font-weight:300;padding:0 3px">–</td><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc[2]}</td></tr>
+        return `<div class="match-item" style="flex-direction:column;align-items:stretch;gap:0px;padding:6px 10px 6px">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:1px"><div class="match-date">${d}</div><span class="match-badge b1v1v1"><span>1v1v1</span></span><div style="flex:1"></div>${editBtn}</div>
+          <table style="border-collapse:collapse;text-align:center;margin:0 auto;margin-top:0">
+            <tr><td style="font-size:14px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap">${ps[0].nom}</td><td style="font-size:9px;color:var(--text2);padding:0 2px">vs</td><td style="font-size:14px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap">${ps[1].nom}</td><td style="font-size:9px;color:var(--text2);padding:0 2px">vs</td><td style="font-size:14px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap">${ps[2].nom}</td></tr>
+            <tr><td style="font-size:20px;font-weight:800;padding-top:0;text-align:center">${sc[0]}</td><td style="font-size:18px;color:var(--text2);font-weight:300;padding:0 3px">–</td><td style="font-size:20px;font-weight:800;padding-top:0;text-align:center">${sc[1]}</td><td style="font-size:18px;color:var(--text2);font-weight:300;padding:0 3px">–</td><td style="font-size:20px;font-weight:800;padding-top:0;text-align:center">${sc[2]}</td></tr>
           </table></div>`;
       }
       // 1v1
@@ -1816,12 +1814,11 @@
       const s2c=m.gagnantId===m.joueur2Id?'win':'lose';
       const sc1=s1c==='win'?`<span class="score-win"><span>${m.score1}</span></span>`:`<span class="score-lose">${m.score1}</span>`;
       const sc2=s2c==='win'?`<span class="score-win"><span>${m.score2}</span></span>`:`<span class="score-lose">${m.score2}</span>`;
-      return `<div class="match-item" style="flex-direction:column;align-items:stretch;gap:2px;position:relative;padding-top:28px">
-        <div style="position:absolute;top:6px;left:12px"><div class="match-date">${d}</div><span class="match-badge b1v1"><span>1v1</span></span></div>
-        <div style="position:absolute;top:10px;right:12px">${editBtn}</div>
-        <table style="border-collapse:collapse;text-align:center;margin:0 auto">
-          <tr><td style="font-size:15px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap">${n1}</td><td style="font-size:13px;color:var(--text2);padding:0 6px;white-space:nowrap">vs</td><td style="font-size:15px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap">${n2}</td></tr>
-          <tr><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc1}</td><td style="font-size:20px;color:var(--text2);font-weight:300;text-align:center;padding:0 6px">–</td><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc2}</td></tr>
+      return `<div class="match-item" style="flex-direction:column;align-items:stretch;gap:0px;padding:6px 10px 6px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:1px"><div class="match-date">${d}</div><span class="match-badge b1v1"><span>1v1</span></span><div style="flex:1"></div>${editBtn}</div>
+        <table style="border-collapse:collapse;text-align:center;margin:0 auto;margin-top:0">
+          <tr><td style="font-size:14px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap">${n1}</td><td style="font-size:13px;color:var(--text2);padding:0 6px;white-space:nowrap">vs</td><td style="font-size:14px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap">${n2}</td></tr>
+          <tr><td style="font-size:20px;font-weight:800;padding-top:0;text-align:center">${sc1}</td><td style="font-size:20px;color:var(--text2);font-weight:300;text-align:center;padding:0 6px">–</td><td style="font-size:20px;font-weight:800;padding-top:0;text-align:center">${sc2}</td></tr>
         </table></div>`;
     }
     window.renderMatchItem = renderMatchItem;
@@ -1983,94 +1980,16 @@
 
     // RENDER RECENT MATCHES
     function renderRecentMatches() {
-      const container=document.getElementById('recent-matches');
-      const recent=[...(window._matches||[])].sort((a,b)=>(b.date||0)-(a.date||0)).slice(0,8);
-      if(!recent.length){
-        container.innerHTML=`<div class="empty-state"><div class="es-icon">🎯</div><div class="es-title">Aucune partie</div><div class="es-sub">Lance ta première partie !</div></div>`;
+      const container = document.getElementById('recent-matches');
+      if (!container) return;
+      const recent = [...(window._matches||[])].sort((a,b)=>(b.date||0)-(a.date||0)).slice(0,8);
+      if (!recent.length) {
+        container.innerHTML = `<div class="empty-state"><div class="es-icon">🎯</div><div class="es-title">Aucune partie</div><div class="es-sub">Lance ta première partie !</div></div>`;
         return;
       }
-      container.innerHTML=`<div class="match-list">${recent.map(m=>{
-        const d=m.date?new Date(m.date).toLocaleDateString('fr-FR'):'';
-        const editBtn=`<div onclick="openEditMatch('${m.id}')" style="width:22px;height:22px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;font-weight:700;color:var(--text2);flex-shrink:0">•••</div>`;
-        if(m.format==='2v2'){
-          const p1=(window._players||[]).find(p=>p.id===m.equipe1?.[0]);
-          const p2=(window._players||[]).find(p=>p.id===m.equipe1?.[1]);
-          const p3=(window._players||[]).find(p=>p.id===m.equipe2?.[0]);
-          const p4=(window._players||[]).find(p=>p.id===m.equipe2?.[1]);
-          const n1=`${p1?p1.nom:'?'} & ${p2?p2.nom:'?'}`;
-          const n2=`${p3?p3.nom:'?'} & ${p4?p4.nom:'?'}`;
-          const s1c=m.gagnantEquipe===1?'win':'lose';
-          const s2c=m.gagnantEquipe===2?'win':'lose';
-          const sc1=s1c==='win'?`<span class="score-win"><span>${m.score1}</span></span>`:`<span class="score-lose">${m.score1}</span>`;
-          const sc2=s2c==='win'?`<span class="score-win"><span>${m.score2}</span></span>`:`<span class="score-lose">${m.score2}</span>`;
-          return `<div class="match-item" style="flex-direction:column;align-items:stretch;gap:2px;justify-content:center;min-height:80px;padding-top:28px">
-            <div style="position:absolute;top:8px;left:12px"><div class="match-date">${d}</div><span class="match-badge b2v2"><span>Double</span></span></div>
-            <div style="position:absolute;top:10px;right:12px">${editBtn}</div>
-            <table style="border-collapse:collapse;text-align:center;margin:0 auto">
-              <tr>
-                <td style="font-size:13px;font-weight:900;color:#111">${n1}</td>
-                <td style="font-size:12px;color:var(--text2);font-weight:400">vs</td>
-                <td style="font-size:13px;font-weight:900;color:#111">${n2}</td>
-              </tr>
-              <tr>
-                <td style="font-size:20px;font-weight:800;padding-top:2px">${sc1}</td>
-                <td style="font-size:20px;color:var(--text2);font-weight:300;padding:0 4px">–</td>
-                <td style="font-size:20px;font-weight:800;padding-top:2px">${sc2}</td>
-              </tr>
-            </table>
-          </div>`;
-        }
-        if(m.format==='1v1v1'){
-          const ps=(m.joueurs||[]).map((id,i)=>({p:(window._players||[]).find(p=>p.id===id),s:m.scores?.[i]??'?',won:m.gagnantId===id}));
-          const sc=ps.map(x=>x.won?`<span class="score-win"><span>${x.s}</span></span>`:`<span class="score-lose">${x.s}</span>`);
-          return `<div class="match-item" style="flex-direction:column;align-items:stretch;gap:2px;justify-content:center;min-height:80px;padding-top:28px">
-            <div style="position:absolute;top:8px;left:12px"><div class="match-date">${d}</div><span class="match-badge b1v1v1"><span>1v1v1</span></span></div>
-            <div style="position:absolute;top:10px;right:12px">${editBtn}</div>
-            <table style="border-collapse:collapse;text-align:center;margin:0 auto">
-              <tr>
-                <td style="font-size:15px;font-weight:900;color:#111;padding:0 10px;white-space:nowrap">${ps[0].p?ps[0].p.nom:'?'}</td>
-                <td style="font-size:13px;color:var(--text2);font-weight:400;padding:0 8px;white-space:nowrap">vs</td>
-                <td style="font-size:15px;font-weight:900;color:#111;padding:0 10px;white-space:nowrap">${ps[1].p?ps[1].p.nom:'?'}</td>
-                <td style="font-size:13px;color:var(--text2);font-weight:400;padding:0 8px;white-space:nowrap">vs</td>
-                <td style="font-size:15px;font-weight:900;color:#111;padding:0 10px;white-space:nowrap">${ps[2].p?ps[2].p.nom:'?'}</td>
-              </tr>
-              <tr>
-                <td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc[0]}</td>
-                <td style="font-size:20px;color:var(--text2);font-weight:300;text-align:center;padding:0 8px">–</td>
-                <td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc[1]}</td>
-                <td style="font-size:20px;color:var(--text2);font-weight:300;text-align:center;padding:0 8px">–</td>
-                <td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc[2]}</td>
-              </tr>
-            </table>
-          </div>`;
-        }
-        const j1=(window._players||[]).find(p=>p.id===m.joueur1Id);
-        const j2=(window._players||[]).find(p=>p.id===m.joueur2Id);
-        const s1c=m.gagnantId===m.joueur1Id?'win':'lose';
-        const s2c=m.gagnantId===m.joueur2Id?'win':'lose';
-                const n1=j1?j1.nom:'?', n2=j2?j2.nom:'?';
-        const sc1=s1c==='win'?`<span class="score-win"><span>${m.score1}</span></span>`:`<span class="score-lose">${m.score1}</span>`;
-        const sc2=s2c==='win'?`<span class="score-win"><span>${m.score2}</span></span>`:`<span class="score-lose">${m.score2}</span>`;
-        return `<div class="match-item" style="flex-direction:column;align-items:stretch;gap:2px;justify-content:center;min-height:80px;padding-top:28px">
-          <div style="position:absolute;top:8px;left:12px"><div class="match-date">${d}</div><span class="match-badge b1v1"><span>1v1</span></span></div>
-          <div style="position:absolute;top:10px;right:12px">${editBtn}</div>
-          <table style="border-collapse:collapse;text-align:center;margin:0 auto">
-            <tr>
-              <td style="font-size:15px;font-weight:900;color:#111;padding:0 6px">${n1}</td>
-              <td style="font-size:13px;color:var(--text2);font-weight:400;padding:0 6px;white-space:nowrap">vs</td>
-              <td style="font-size:15px;font-weight:900;color:#111;padding:0 6px">${n2}</td>
-            </tr>
-            <tr>
-              <td style="font-size:20px;font-weight:800;padding-top:2px">${sc1}</td>
-              <td style="font-size:20px;color:var(--text2);font-weight:300">–</td>
-              <td style="font-size:20px;font-weight:800;padding-top:2px">${sc2}</td>
-            </tr>
-          </table>
-        </div>`;
-      }).join('')}</div>`;
+      container.innerHTML = `<div class="match-list">${recent.map(m=>renderMatchItem(m)).join('')}</div>`;
     }
 
-    // CLASSEMENT
     function renderRanking() {
       const tab=window._currentTab||'1v1';
       const container=document.getElementById('ranking-content');
