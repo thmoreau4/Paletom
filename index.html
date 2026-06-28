@@ -284,7 +284,7 @@
 
     /* JOUEURS LIST */
     .player-list { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
-    .player-item {
+    .player-item { position:relative;
       background:var(--bg2); border:1px solid var(--border);
       border-radius:var(--radius-sm); padding:10px 12px; position:relative;
       display:flex; align-items:center; gap:12px; box-shadow:var(--shadow);
@@ -1321,9 +1321,9 @@
         if (!dd) return;
         const curVal = document.getElementById(id)?.value || '';
         dd.innerHTML = players.map(p =>
-          `<div class="cs-option${p.id===curVal?' selected':''}" data-val="${p.id}" onclick="setSaisiePlayer('${id}','${id}',this,'${placeholder}')">${p.nom}</div>`
+          `<div class="cs-option${p.id===curVal?' selected':''}" data-val="${p.id}" onclick="setSaisiePlayer('${id}',this)">${p.nom}</div>`
         ).join('') +
-        `<div class="cs-option" style="border-top:1px solid rgba(0,0,0,0.1);color:var(--text2);font-style:italic" data-val="__guest__" onclick="setGuestPlayer('${id}','${placeholder}')">+ Invité</div>`;
+        `<div class="cs-option" style="border-top:1px solid rgba(0,0,0,0.1);color:var(--text2);font-style:italic" data-val="__guest__" onclick="setGuestPlayer('${id}')">+ Invité</div>`;
       });
     }
 
@@ -1381,9 +1381,11 @@
       document.getElementById('btn-save-score').disabled=true;
       document.getElementById('btn-save-score').textContent='Enregistrement...';
       try {
+        const _pn1 = {}; 
+        [j1id,j2id].forEach(id=>{const p=window._players.find(p=>p.id===id);if(p)_pn1[id]=p.nom;if(window._guestNames?.[id])_pn1[id]=window._guestNames[id];});
         await window._addDoc(window._col(window._db,'parties'),{
           format:'1v1',joueur1Id:j1id,joueur2Id:j2id,
-          score1:s1,score2:s2,gagnantId:s1>s2?j1id:j2id,date:Date.now()
+          score1:s1,score2:s2,gagnantId:s1>s2?j1id:j2id,date:Date.now(),playerNames:_pn1
         });
         showPage('page-home'); showToast('🎯 Partie enregistrée !');
       } catch(e) {
@@ -1538,8 +1540,7 @@
             <div class="player-stats">${s.played} partie${s.played!==1?'s':''} · ${s.winPct}% victoires</div>
           </div>
           <div style="display:flex;gap:8px">
-            <div class="player-edit-btn" onclick="event.stopPropagation();openEditPlayerModal('${p.id}')">✏️</div>
-            <div class="player-edit-btn" style="background:#fdecea;color:#c0392b" onclick="event.stopPropagation();confirmDeletePlayer('${p.id}','${p.nom}')">🗑️</div>
+
           </div>
         </div>`;
       }).join('');
@@ -1579,21 +1580,63 @@
         </div>`;
       }).join('');
 
+      // Parties filtrables
+      let _ppFormat = 'all';
+      function renderPPMatches() {
+        const allM = (window._matches||[]).filter(m => {
+          if ((window._ppFormatVal||'all') !== 'all' && m.format !== (window._ppFormatVal||'all')) return false;
+          if (m.format==='1v1') return m.joueur1Id===playerId||m.joueur2Id===playerId;
+          if (m.format==='1v1v1') return (m.joueurs||[]).includes(playerId);
+          if (m.format==='2v2') return [...(m.equipe1||[]),...(m.equipe2||[])].includes(playerId);
+          return false;
+        }).sort((a,b)=>(b.date||0)-(a.date||0));
+        document.getElementById('pp-matches').innerHTML = allM.length
+          ? `<div class="match-list">${allM.map(m=>renderMatchItem(m)).join('')}</div>`
+          : '<div style="text-align:center;color:var(--text2);padding:16px;font-size:13px">Aucune partie</div>';
+      }
+      window._renderPPMatches = renderPPMatches;
+
       document.getElementById('pp-content').innerHTML = `
         <div class="stats-grid">
           <div class="stat-card"><div class="sv">${s.played}</div><div class="sl">Parties</div></div>
-          <div class="stat-card"><div class="sv green">${s.wins}</div><div class="sl">Victoires</div></div>
-          <div class="stat-card"><div class="sv red">${s.losses}</div><div class="sl">Défaites</div></div>
+          <div class="stat-card"><div class="sv" style="color:#00cc44">${s.wins}</div><div class="sl">Victoires</div></div>
+          <div class="stat-card"><div class="sv" style="color:#ff3b30">${s.losses}</div><div class="sl">Défaites</div></div>
           <div class="stat-card"><div class="sv">${s.winPct}%</div><div class="sl">% Victoires</div></div>
-          <div class="stat-card"><div class="sv ${s.diff>0?'green':s.diff<0?'red':''}">${diffStr(s.diff)}</div><div class="sl">Diff. pts</div></div>
-          <div class="stat-card"><div class="sv">${s.played>0?Math.round(s.wins/s.played*10)/1:'–'}</div><div class="sl">Ratio</div></div>
+          <div class="stat-card"><div class="sv" style="color:${s.diff>0?'#00cc44':s.diff<0?'#ff3b30':'inherit'}">${diffStr(s.diff)}</div><div class="sl">Diff. pts</div></div>
         </div>
-
+        <div style="display:flex;gap:6px;margin:14px 0 8px">
+          <button id="ppf-all" onclick="setPPFormat('all')" class="filter-pill active" style="font-size:11px;padding:5px 10px">Tous</button>
+          <button id="ppf-1v1" onclick="setPPFormat('1v1')" class="filter-pill" style="font-size:11px;padding:5px 10px">1v1</button>
+          <button id="ppf-1v1v1" onclick="setPPFormat('1v1v1')" class="filter-pill" style="font-size:11px;padding:5px 10px">1v1v1</button>
+          <button id="ppf-2v2" onclick="setPPFormat('2v2')" class="filter-pill" style="font-size:11px;padding:5px 10px">2v2</button>
+        </div>
+        <div id="pp-matches"></div>
       `;
+      renderPPMatches();
 
       showPage('page-joueur');
     }
     window.openPlayerPage = openPlayerPage;
+
+    function setPPFormat(fmt) {
+      window._ppFormat = fmt;
+      ['all','1v1','1v1v1','2v2'].forEach(f=>document.getElementById('ppf-'+f)?.classList.toggle('active',f===fmt));
+      // Mettre à jour la variable locale via la closure
+      if (window._renderPPMatches) { window._ppFormatVal = fmt; window._renderPPMatches(); }
+    }
+    window.setPPFormat = setPPFormat;
+
+    function togglePlayerMenu(id) {
+      const menu = document.getElementById('pmenu-'+id);
+      const isOpen = menu.style.display !== 'none';
+      closePlayerMenus();
+      if (!isOpen) menu.style.display = 'block';
+    }
+    function closePlayerMenus() {
+      document.querySelectorAll('[id^="pmenu-"]').forEach(m=>m.style.display='none');
+    }
+    document.addEventListener('click', () => closePlayerMenus());
+    window.togglePlayerMenu = togglePlayerMenu;
 
 
     // PAGE STATS
@@ -1784,16 +1827,17 @@
     // Résoudre le nom d'un joueur (vrai joueur, invité via match, ou invité local)
     function resolvePlayerName(playerId, match) {
       if (!playerId) return '?';
-      // Vrai joueur
+      // Vrai joueur encore présent
       const p = (window._players||[]).find(p=>p.id===playerId);
       if (p) return p.nom;
-      // Invité stocké dans le match
-      if (match && match.guestNames && match.guestNames[playerId]) return match.guestNames[playerId];
+      // Nom sauvegardé dans le match (playerNames ou guestNames)
+      if (match?.playerNames?.[playerId]) return match.playerNames[playerId];
+      if (match?.guestNames?.[playerId]) return match.guestNames[playerId];
       // Invité local (session en cours)
-      if (window._guestNames && window._guestNames[playerId]) return window._guestNames[playerId];
-      // Fallback : extraire le prénom du guestId
+      if (window._guestNames?.[playerId]) return window._guestNames[playerId];
+      // Fallback guestId
       if (playerId.startsWith('guest_')) return playerId.replace('guest_','').replace(/_[0-9]+$/,'').replace(/_/g,' ');
-      return '?';
+      return 'Joueur supprimé';
     }
     window.resolvePlayerName = resolvePlayerName;
 
@@ -2450,9 +2494,10 @@
       document.getElementById('btn-save-score-1v1v1').disabled=true;
       document.getElementById('btn-save-score-1v1v1').textContent='Enregistrement...';
       try{
+        const _pn3 = {};
+        ids.forEach(id=>{const p=window._players.find(p=>p.id===id);if(p)_pn3[id]=p.nom;if(window._guestNames?.[id])_pn3[id]=window._guestNames[id];});
         await window._addDoc(window._col(window._db,'parties'),{
-          format:'1v1v1',
-          joueurs:ids,scores:scores,gagnantId,date:Date.now()
+          format:'1v1v1',joueurs:ids,scores:scores,gagnantId,date:Date.now(),playerNames:_pn3
         });
         showPage('page-home');showToast('🎯 Partie 1v1v1 enregistrée !');
       }catch(e){
