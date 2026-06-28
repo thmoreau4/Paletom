@@ -1310,13 +1310,20 @@
 
     // SELECTS
     function refreshPlayerSelects() {
-      const players = window._players || [];
-      ['select-j1','select-j2','select-1v1v1-j1','select-1v1v1-j2','select-1v1v1-j3','select-2v2-j1','select-2v2-j2','select-2v2-j3','select-2v2-j4'].forEach(id => {
-        const sel = document.getElementById(id); if (!sel) return;
-        const val = sel.value;
-        sel.innerHTML = '<option value="">— Sélectionner —</option>';
-        players.forEach(p => { const o = document.createElement('option'); o.value=p.id; o.textContent=p.nom; sel.appendChild(o); });
-        sel.value = val;
+      const players = window._players||[];
+      const selects = [
+        ['select-j1','— Joueur 1 —'],['select-j2','— Joueur 2 —'],
+        ['select-1v1v1-j1','— Joueur 1 —'],['select-1v1v1-j2','— Joueur 2 —'],['select-1v1v1-j3','— Joueur 3 —'],
+        ['select-2v2-j1','— Joueur A —'],['select-2v2-j2','— Joueur B —'],['select-2v2-j3','— Joueur C —'],['select-2v2-j4','— Joueur D —'],
+      ];
+      selects.forEach(([id, placeholder]) => {
+        const dd = document.getElementById(id+'-dropdown');
+        if (!dd) return;
+        const curVal = document.getElementById(id)?.value || '';
+        dd.innerHTML = players.map(p =>
+          `<div class="cs-option${p.id===curVal?' selected':''}" data-val="${p.id}" onclick="setSaisiePlayer('${id}','${id}',this,'${placeholder}')">${p.nom}</div>`
+        ).join('') +
+        `<div class="cs-option" style="border-top:1px solid rgba(0,0,0,0.1);color:var(--text2);font-style:italic" data-val="__guest__" onclick="setGuestPlayer('${id}','${placeholder}')">+ Invité</div>`;
       });
     }
 
@@ -1743,7 +1750,7 @@
           <div style="position:absolute;top:6px;left:12px"><div class="match-date">${d}</div><span class="match-badge b2v2"><span>Double</span></span></div>
           <div style="position:absolute;top:10px;right:12px">${editBtn}</div>
           <table style="border-collapse:collapse;text-align:center;margin:0 auto">
-            <tr><td style="font-size:13px;font-weight:900;color:#111;padding:0 6px;white-space:nowrap">${n1}</td><td style="font-size:12px;color:var(--text2);padding:0 6px;white-space:nowrap">vs</td><td style="font-size:13px;font-weight:900;color:#111;padding:0 6px;white-space:nowrap">${n2}</td></tr>
+            <tr><td style="font-size:11px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis">${n1}</td><td style="font-size:10px;color:var(--text2);padding:0 3px">vs</td><td style="font-size:11px;font-weight:900;color:#111;padding:0 4px;white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis">${n2}</td></tr>
             <tr><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc1}</td><td style="font-size:20px;color:var(--text2);font-weight:300;text-align:center;padding:0 6px">–</td><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc2}</td></tr>
           </table></div>`;
       }
@@ -1754,7 +1761,7 @@
           <div style="position:absolute;top:6px;left:12px"><div class="match-date">${d}</div><span class="match-badge b1v1v1"><span>1v1v1</span></span></div>
           <div style="position:absolute;top:10px;right:12px">${editBtn}</div>
           <table style="border-collapse:collapse;text-align:center;margin:0 auto">
-            <tr><td style="font-size:12px;font-weight:900;color:#111;padding:0 5px;white-space:nowrap">${ps[0].nom}</td><td style="font-size:10px;color:var(--text2);padding:0 3px">vs</td><td style="font-size:12px;font-weight:900;color:#111;padding:0 5px;white-space:nowrap">${ps[1].nom}</td><td style="font-size:10px;color:var(--text2);padding:0 3px">vs</td><td style="font-size:12px;font-weight:900;color:#111;padding:0 5px;white-space:nowrap">${ps[2].nom}</td></tr>
+            <tr><td style="font-size:11px;font-weight:900;color:#111;padding:0 3px;white-space:nowrap;max-width:80px;overflow:hidden;text-overflow:ellipsis">${ps[0].nom}</td><td style="font-size:9px;color:var(--text2);padding:0 2px">vs</td><td style="font-size:11px;font-weight:900;color:#111;padding:0 3px;white-space:nowrap;max-width:80px;overflow:hidden;text-overflow:ellipsis">${ps[1].nom}</td><td style="font-size:9px;color:var(--text2);padding:0 2px">vs</td><td style="font-size:11px;font-weight:900;color:#111;padding:0 3px;white-space:nowrap;max-width:80px;overflow:hidden;text-overflow:ellipsis">${ps[2].nom}</td></tr>
             <tr><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc[0]}</td><td style="font-size:18px;color:var(--text2);font-weight:300;padding:0 3px">–</td><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc[1]}</td><td style="font-size:18px;color:var(--text2);font-weight:300;padding:0 3px">–</td><td style="font-size:20px;font-weight:800;padding-top:2px;text-align:center">${sc[2]}</td></tr>
           </table></div>`;
       }
