@@ -1320,14 +1320,30 @@
         const dd = document.getElementById(id+'-dropdown');
         if (!dd) return;
         const curVal = document.getElementById(id)?.value || '';
-        dd.innerHTML = players.map(p =>
-          `<div class="cs-option${p.id===curVal?' selected':''}" data-val="${p.id}" data-sid="${id}" data-type="player">${p.nom}</div>`
-        ).join('') +
-        `<div class="cs-option" style="border-top:1px solid rgba(0,0,0,0.1);color:var(--text2);font-style:italic" data-val="__guest__" data-sid="${id}" data-type="guest">+ Invité</div>`;
+        dd.innerHTML = '';
+        players.forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'cs-option' + (p.id===curVal?' selected':'');
+          div.textContent = p.nom;
+          div.addEventListener('mousedown', (e) => {
+            e.preventDefault(); e.stopPropagation();
+            pickSaisiePlayer(id, p.id, p.nom);
+          });
+          dd.appendChild(div);
+        });
+        const guestDiv = document.createElement('div');
+        guestDiv.className = 'cs-option';
+        guestDiv.textContent = '+ Invité';
+        guestDiv.style.cssText = 'border-top:1px solid rgba(0,0,0,0.1);color:var(--text2);font-style:italic';
+        guestDiv.addEventListener('mousedown', (e) => {
+          e.preventDefault(); e.stopPropagation();
+          setGuestPlayer(id);
+        });
+        dd.appendChild(guestDiv);
       });
     }
 
-    // 1V1
+
     function checkJoueurs() {
       const j1 = document.getElementById('select-j1').value;
       const j2 = document.getElementById('select-j2').value;
