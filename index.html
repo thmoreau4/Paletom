@@ -1321,9 +1321,9 @@
         if (!dd) return;
         const curVal = document.getElementById(id)?.value || '';
         dd.innerHTML = players.map(p =>
-          `<div class="cs-option${p.id===curVal?' selected':''}" data-val="${p.id}" onclick="setSaisiePlayer('${id}',this)">${p.nom}</div>`
+          `<div class="cs-option${p.id===curVal?' selected':''}" data-val="${p.id}" data-sid="${id}" data-type="player">${p.nom}</div>`
         ).join('') +
-        `<div class="cs-option" style="border-top:1px solid rgba(0,0,0,0.1);color:var(--text2);font-style:italic" data-val="__guest__" onclick="setGuestPlayer('${id}')">+ Invité</div>`;
+        `<div class="cs-option" style="border-top:1px solid rgba(0,0,0,0.1);color:var(--text2);font-style:italic" data-val="__guest__" data-sid="${id}" data-type="guest">+ Invité</div>`;
       });
     }
 
@@ -1534,13 +1534,15 @@
       list.innerHTML=players.map(p=>{
         const s=getPlayerStats(p.id);
         const av=avatarHtml(p,'player-avatar-lg');
-        return `<div class="player-item" onclick="openPlayerPage('${p.id}')">${av}
+        return `<div class="player-item" style="position:relative" onclick="openPlayerPage('${p.id}')">${av}
           <div class="player-info">
             <div class="player-name">${p.nom}</div>
             <div class="player-stats">${s.played} partie${s.played!==1?'s':''} · ${s.winPct}% victoires</div>
           </div>
-          <div style="display:flex;gap:8px">
-
+          <div onclick="event.stopPropagation();togglePlayerMenu('${p.id}')" style="width:30px;height:30px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;font-weight:700;color:var(--text2);flex-shrink:0">•••</div>
+          <div id="pmenu-${p.id}" style="display:none;position:absolute;right:12px;top:44px;background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-sm);box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:50;overflow:hidden;min-width:140px">
+            <div onclick="event.stopPropagation();closePlayerMenus();openEditPlayerModal('${p.id}')" style="padding:10px 14px;font-size:14px;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06)">Modifier</div>
+            <div onclick="event.stopPropagation();closePlayerMenus();confirmDeletePlayer('${p.id}','${p.nom}')" style="padding:10px 14px;font-size:14px;font-weight:600;cursor:pointer;color:#c0392b">Supprimer</div>
           </div>
         </div>`;
       }).join('');
@@ -1781,7 +1783,7 @@
     // Extraire le rendu d'un match en fonction commune
     function renderMatchItem(m) {
       const d = m.date ? new Date(m.date).toLocaleDateString('fr-FR') : '';
-      const editBtn = `<div onclick="openEditMatch('${m.id}')" style="width:28px;height:28px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;font-weight:700;flex-shrink:0;color:var(--text2);letter-spacing:1px">•••</div>`;
+      const editBtn = `<div onclick="openEditMatch('${m.id}')" style="width:22px;height:22px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;font-weight:700;color:var(--text2);flex-shrink:0">•••</div>`;
       if (m.format==='2v2') {
         const n1=`${resolvePlayerName(m.equipe1?.[0],m)} & ${resolvePlayerName(m.equipe1?.[1],m)}`;
         const n2=`${resolvePlayerName(m.equipe2?.[0],m)} & ${resolvePlayerName(m.equipe2?.[1],m)}`;
@@ -1989,7 +1991,7 @@
       }
       container.innerHTML=`<div class="match-list">${recent.map(m=>{
         const d=m.date?new Date(m.date).toLocaleDateString('fr-FR'):'';
-        const editBtn=`<div onclick="openEditMatch('${m.id}')" style="width:28px;height:28px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;font-weight:700;flex-shrink:0;color:var(--text2);letter-spacing:1px">•••</div>`;
+        const editBtn=`<div onclick="openEditMatch('${m.id}')" style="width:22px;height:22px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;font-weight:700;color:var(--text2);flex-shrink:0">•••</div>`;
         if(m.format==='2v2'){
           const p1=(window._players||[]).find(p=>p.id===m.equipe1?.[0]);
           const p2=(window._players||[]).find(p=>p.id===m.equipe1?.[1]);
