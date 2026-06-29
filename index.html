@@ -1756,8 +1756,8 @@
     window.pickSaisiePlayer = pickSaisiePlayer;
 
     function setGuestPlayer(inputId) {
-      closeAllCS();
       const name = prompt('Prénom de l\'invité :');
+      closeAllCS();
       if (!name || !name.trim()) return;
       const guestId = 'guest_' + name.trim().replace(/\s+/g,'_') + '_' + Date.now();
       const inp = document.getElementById(inputId);
@@ -1783,10 +1783,12 @@
     window.checkJoueurs = checkJoueurs;
 
     function goToScore() {
-      const j1 = window._players.find(p=>p.id===document.getElementById('select-j1').value);
-      const j2 = window._players.find(p=>p.id===document.getElementById('select-j2').value);
-      document.getElementById('score-name-j1').textContent = j1.nom;
-      document.getElementById('score-name-j2').textContent = j2.nom;
+      const j1id = document.getElementById('select-j1').value;
+      const j2id = document.getElementById('select-j2').value;
+      const j1 = window._players.find(p=>p.id===j1id);
+      const j2 = window._players.find(p=>p.id===j2id);
+      document.getElementById('score-name-j1').textContent = resolvePlayerName(j1id, null);
+      document.getElementById('score-name-j2').textContent = resolvePlayerName(j2id, null);
       setAvatar('score-avatar-j1', j1); setAvatar('score-avatar-j2', j2);
       document.getElementById('input-score-j1').value = '';
       document.getElementById('input-score-j2').value = '';
@@ -1857,8 +1859,8 @@
     function goToScore2v2() {
       const ids=['select-2v2-j1','select-2v2-j2','select-2v2-j3','select-2v2-j4'].map(id=>document.getElementById(id).value);
       const [j1,j2,j3,j4]=ids.map(id=>window._players.find(p=>p.id===id));
-      document.getElementById('score-name-eq1').textContent=`${j1.nom} & ${j2.nom}`;
-      document.getElementById('score-name-eq2').textContent=`${j3.nom} & ${j4.nom}`;
+      document.getElementById('score-name-eq1').textContent=`${resolvePlayerName(ids[0],null)} & ${resolvePlayerName(ids[1],null)}`;
+      document.getElementById('score-name-eq2').textContent=`${resolvePlayerName(ids[2],null)} & ${resolvePlayerName(ids[3],null)}`;
       [[j1,'score-avatar-2v2-j1'],[j2,'score-avatar-2v2-j2'],[j3,'score-avatar-2v2-j3'],[j4,'score-avatar-2v2-j4']].forEach(([p,id])=>setAvatar(id,p));
       document.getElementById('input-score-eq1').value='';
       document.getElementById('input-score-eq2').value='';
@@ -3192,9 +3194,9 @@
     function goToScore1v1v1() {
       const ids=['select-1v1v1-j1','select-1v1v1-j2','select-1v1v1-j3'].map(id=>document.getElementById(id).value);
       const [j1,j2,j3]=ids.map(id=>window._players.find(p=>p.id===id));
-      document.getElementById('score-1v1v1-name-j1').textContent=j1.nom;
-      document.getElementById('score-1v1v1-name-j2').textContent=j2.nom;
-      document.getElementById('score-1v1v1-name-j3').textContent=j3.nom;
+      document.getElementById('score-1v1v1-name-j1').textContent=resolvePlayerName(ids[0],null);
+      document.getElementById('score-1v1v1-name-j2').textContent=resolvePlayerName(ids[1],null);
+      document.getElementById('score-1v1v1-name-j3').textContent=resolvePlayerName(ids[2],null);
       setAvatar('score-avatar-1v1v1-j1',j1);
       setAvatar('score-avatar-1v1v1-j2',j2);
       setAvatar('score-avatar-1v1v1-j3',j3);
