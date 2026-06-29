@@ -2773,7 +2773,7 @@
       });
       const trios=Object.entries(trioMap).map(([key,ids])=>{
         const players=ids.map(id=>(window._players||[]).find(p=>p.id===id));
-        const nom=players.map(p=>p?p.nom:'?').join(' & ');
+        const nom=ids.map(id=>resolvePlayerName(id,null)).join(' & ');
         return{key,ids,nom,...get3v3TrioStats(ids)};
       }).sort((a,b)=>b.winPct-a.winPct||b.diff-a.diff);
       const pc=(i)=>i===0?'gold':i===1?'silver':i===2?'bronze':'';
@@ -2820,8 +2820,8 @@
           const total=ms.length;
           const d1w=ms.filter(m=>{const k1=get2v2DuoKey(m.equipe1[0],m.equipe1[1]);return(k1===d1key&&m.gagnantEquipe===1)||(k1!==d1key&&m.gagnantEquipe===2);}).length;
           const d2w=total-d1w;
-          const n1=`${d1.p1?d1.p1.nom:'?'} & ${d1.p2?d1.p2.nom:'?'}`;
-          const n2=`${d2.p1?d2.p1.nom:'?'} & ${d2.p2?d2.p2.nom:'?'}`;
+          const n1=`${resolvePlayerName(d1.ids[0],null)} & ${resolvePlayerName(d1.ids[1],null)}`;
+          const n2=`${resolvePlayerName(d2.ids[0],null)} & ${resolvePlayerName(d2.ids[1],null)}`;
           const wc=(w,l)=>w>l?'green':w<l?'red':'gray';
           const sc=(w,l)=>w>l?'winner':w<l?'loser':'';
           const histRows=ms.map(m=>{
