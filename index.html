@@ -3,12 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#ffffff" />
+  <meta name="theme-color" content="#1e2d40" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Paletom" />
   <title>Paletom</title>
   <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="logo_app.png" />
+  <link rel="apple-touch-icon" href="logo_app.png" />
   <style>
     * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
     :root {
@@ -35,10 +37,13 @@
     }
     body {
       margin: 0;
-      font-family: 'Nunito', sans-serif;
+      font-family: 'Nunito', ui-rounded, -apple-system, system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
+    }
+    *, button, input, select, textarea {
+      font-family: 'Nunito', ui-rounded, -apple-system, system-ui, sans-serif;
     }
 
 
@@ -106,7 +111,7 @@
       font-size:16px; font-weight:900; cursor:pointer;
       display:flex; align-items:center; justify-content:space-between;
       box-shadow:0 4px 0 var(--accent-btn);
-      font-family:'Nunito',sans-serif;
+      font-family:'Nunito',ui-rounded,-apple-system,system-ui,sans-serif;
       transition:transform 0.1s, box-shadow 0.1s;
     }
     .new-game-btn:active { transform:translateY(2px); box-shadow:0 2px 0 var(--accent-btn); }
