@@ -573,9 +573,9 @@
     <!-- HEADER NAVY -->
     <div style="background:var(--navy);padding:env(safe-area-inset-top, 12px) 18px 18px;padding-top:max(env(safe-area-inset-top), 12px)">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <div style="display:flex;align-items:center;gap:6px">
-          <div style="width:6px;height:6px;border-radius:50%;background:var(--accent)"></div>
-          <div style="font-size:10px;font-weight:700;color:#ffffff50;letter-spacing:1px;text-transform:uppercase" id="ligue-nom-display">Ma ligue</div>
+        <div onclick="changerLigue()" style="display:flex;align-items:center;gap:5px;cursor:pointer">
+          <div style="font-size:14px;font-weight:800;color:var(--accent)" id="ligue-nom-display">Ma ligue</div>
+          <div style="font-size:15px;font-weight:700;color:var(--accent);opacity:0.8">↻</div>
         </div>
         <div onclick="showPage('page-settings')" style="width:32px;height:32px;background:#ffffff12;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer">⚙️</div>
       </div>
@@ -612,31 +612,32 @@
   <!-- CLASSEMENT -->
   <div class="page" id="page-ranking">
     <!-- Header classement -->
-    <div style="background:var(--bg);padding:52px 20px 0 20px">
-      <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Classement</div>
-      <div style="font-size:28px;font-weight:900;color:var(--text);letter-spacing:-1px;margin-bottom:16px">PEP</div>
-      <!-- Tabs scroll horizontal -->
-      <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:1px;-webkit-overflow-scrolling:touch;scrollbar-width:none">
+    <div style="background:var(--navy);padding:max(env(safe-area-inset-top),12px) 18px 16px">
+      <div style="font-size:11px;font-weight:700;color:#ffffff60;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Classement</div>
+      <div style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-0.5px;margin-bottom:14px">PEP 🏆</div>
+      <!-- Tabs grille 2x3 au lieu de scroll -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-bottom:2px">
         <button id="tab-pep" onclick="setTab('pep')"
-          style="flex-shrink:0;padding:8px 16px;border-radius:50px;border:none;background:var(--navy);color:var(--bg);font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">
+          style="padding:8px 4px;border-radius:8px;border:none;background:var(--accent);color:#14532d;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit">
           Général
         </button>
         <button class="tab active" id="tab-1v1" onclick="setTab('1v1')"
-          style="flex-shrink:0;padding:8px 16px;border-radius:50px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
+          style="padding:8px 4px;border-radius:8px;border:none;background:#ffffff20;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">
           1v1
         </button>
         <button class="tab" id="tab-1v1v1" onclick="setTab('1v1v1')"
-          style="flex-shrink:0;padding:8px 16px;border-radius:50px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
+          style="padding:8px 4px;border-radius:8px;border:none;background:#ffffff20;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">
           1v1v1
         </button>
         <button class="tab" id="tab-2v2" onclick="setTab('2v2')"
-          style="flex-shrink:0;padding:8px 16px;border-radius:50px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
+          style="padding:8px 4px;border-radius:8px;border:none;background:#ffffff20;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">
           Double
         </button>
         <button class="tab" id="tab-3v3" onclick="setTab('3v3')"
-          style="flex-shrink:0;padding:8px 16px;border-radius:50px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
+          style="padding:8px 4px;border-radius:8px;border:none;background:#ffffff20;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">
           Triplette
         </button>
+        <div></div>
       </div>
     </div>
     <div id="ranking-content" style="padding:16px 20px"></div>
@@ -666,15 +667,6 @@
       <div>
         <div style="font-size:17px;font-weight:800;color:#fff">Paramètres</div>
         <div style="font-size:12px;color:rgba(255,255,255,0.65)">Paletom</div>
-      </div>
-    </div>
-
-    <div class="section-title">Joueurs</div>
-    <div class="settings-section">
-      <div class="settings-item" onclick="showPage('page-players')">
-        <span class="si-icon">👥</span>
-        <span class="si-label">Gérer les joueurs</span>
-        <span class="si-arrow">›</span>
       </div>
     </div>
 
@@ -1129,51 +1121,43 @@
   <div class="modal-overlay" id="modal-new-game" onclick="closeModal('modal-new-game')">
     <div class="modal" onclick="event.stopPropagation()">
       <div class="modal-handle"></div>
+
+      <!-- STEP 1 : Choix du format -->
       <div id="modal-ng-step1">
         <div class="modal-title">Nouvelle partie</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <button class="modal-format-btn" onclick="showSubFormats('1v1')" style="">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <span style="position:relative;display:inline-block">
-                <span style="position:absolute;inset:-3px -10px;border-radius:50px;background:#e8e8e8;opacity:0.88;transform:skew(-1deg)"></span>
-                <span style="position:relative;z-index:1;font-size:17px;font-weight:900;color:#111">1 vs 1</span>
-              </span>
-              <span style="font-size:20px;color:var(--text2)">›</span>
-            </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+
+          <button onclick="showSubFormats('1v1')" style="background:#f0f4ff;border:none;border-radius:14px;padding:18px 12px;text-align:center;cursor:pointer;font-family:inherit;transition:background 0.15s">
+            <div style="font-size:26px;margin-bottom:6px">🎯</div>
+            <div style="font-size:15px;font-weight:900;color:#1a1d2e;margin-bottom:3px">1 vs 1</div>
+            <div style="font-size:11px;color:#9899b0;font-weight:600">Duel direct</div>
           </button>
-          <button class="modal-format-btn" onclick="showSubFormats('1v1v1')" style="">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <span style="position:relative;display:inline-block">
-                <span style="position:absolute;inset:-3px -10px;border-radius:50px;background:#e8e8e8;opacity:0.88;transform:skew(-1deg)"></span>
-                <span style="position:relative;z-index:1;font-size:17px;font-weight:900;color:#111">1 vs 1 vs 1</span>
-              </span>
-              <span style="font-size:20px;color:var(--text2)">›</span>
-            </div>
+
+          <button onclick="showSubFormats('1v1v1')" style="background:#f0f4ff;border:none;border-radius:14px;padding:18px 12px;text-align:center;cursor:pointer;font-family:inherit;transition:background 0.15s">
+            <div style="font-size:26px;margin-bottom:6px">🔺</div>
+            <div style="font-size:15px;font-weight:900;color:#1a1d2e;margin-bottom:3px">1 vs 1 vs 1</div>
+            <div style="font-size:11px;color:#9899b0;font-weight:600">Trois joueurs</div>
           </button>
-          <button class="modal-format-btn" onclick="showSubFormats('2v2')" style="">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <span style="position:relative;display:inline-block">
-                <span style="position:absolute;inset:-3px -10px;border-radius:50px;background:#e8e8e8;opacity:0.88;transform:skew(-1deg)"></span>
-                <span style="position:relative;z-index:1;font-size:17px;font-weight:900;color:#111">Doublette · 2 vs 2</span>
-              </span>
-              <span style="font-size:20px;color:var(--text2)">›</span>
-            </div>
+
+          <button onclick="showSubFormats('2v2')" style="background:#f0f4ff;border:none;border-radius:14px;padding:18px 12px;text-align:center;cursor:pointer;font-family:inherit;transition:background 0.15s">
+            <div style="font-size:26px;margin-bottom:6px">⚔️</div>
+            <div style="font-size:15px;font-weight:900;color:#1a1d2e;margin-bottom:3px">Double</div>
+            <div style="font-size:11px;color:#9899b0;font-weight:600">2 équipes de 2</div>
           </button>
-          <button class="modal-format-btn" onclick="showSubFormats('3v3')" style="">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <span style="position:relative;display:inline-block">
-                <span style="position:absolute;inset:-3px -10px;border-radius:50px;background:#e8e8e8;opacity:0.88;transform:skew(-1deg)"></span>
-                <span style="position:relative;z-index:1;font-size:17px;font-weight:900;color:#111">Triplette · 3 vs 3</span>
-              </span>
-              <span style="font-size:20px;color:var(--text2)">›</span>
-            </div>
+
+          <button onclick="showSubFormats('3v3')" style="background:#1e2d40;border:none;border-radius:14px;padding:18px 12px;text-align:center;cursor:pointer;font-family:inherit;transition:background 0.15s">
+            <div style="font-size:26px;margin-bottom:6px">👑</div>
+            <div style="font-size:15px;font-weight:900;color:#4ade80;margin-bottom:3px">Triplette</div>
+            <div style="font-size:11px;color:#4ade8080;font-weight:600">2 équipes de 3</div>
           </button>
+
         </div>
       </div>
-      <!-- Étape 2 : sous-formats -->
+
+      <!-- STEP 2 : Sous-format + pts max -->
       <div id="modal-ng-step2" style="display:none">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-          <button onclick="document.getElementById('modal-ng-step1').style.display='';document.getElementById('modal-ng-step2').style.display='none'" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text2)">←</button>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <button onclick="document.getElementById('modal-ng-step1').style.display='';document.getElementById('modal-ng-step2').style.display='none'" style="background:#f0f4ff;border:none;border-radius:8px;width:32px;height:32px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit">←</button>
           <div class="modal-title" id="modal-ng-step2-title" style="margin:0">Choisir le format</div>
         </div>
         <div id="modal-ng-subformats" style="display:flex;flex-direction:column;gap:8px"></div>
@@ -1272,9 +1256,9 @@
   <!-- PAGE STATS -->
   <div class="page" id="page-stats">
     <!-- HEADER -->
-    <div style="background:var(--bg);padding:52px 20px 16px">
-      <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Analyse</div>
-      <div style="font-size:28px;font-weight:900;color:var(--text);letter-spacing:-1px">Stats</div>
+    <div style="background:var(--navy);padding:max(env(safe-area-inset-top),12px) 18px 16px">
+      <div style="font-size:11px;font-weight:700;color:#ffffff60;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Analyse</div>
+      <div style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-0.5px">Stats 📊</div>
     </div>
     <!-- BLOCS -->
     <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:10px">
@@ -1467,6 +1451,7 @@
     const FULLSCREEN_PAGES = ['page-saisie','page-joueur','page-settings','page-players','page-rules','page-ideas','page-update','page-ligue'];
     function showPage(pageId) {
       if (pageId === 'page-stats') { setTimeout(renderStats, 50); }
+      if (pageId === 'page-players') { setTimeout(() => window.renderPlayers?.(), 50); }
       if (pageId === 'page-settings') { loadSettingsLigue?.(); }
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
@@ -1485,16 +1470,16 @@
         const el = document.getElementById('tab-'+t);
         if (!el) return;
         const isActive = t === tab;
-        el.style.background = isActive ? 'var(--navy)' : '#fff';
+        el.style.background = isActive ? 'var(--accent)' : '#ffffff20';
         el.style.color = isActive ? 'var(--bg)' : '#b8a898';
-        el.style.borderColor = isActive ? 'var(--navy)' : 'var(--border2)';
+        el.style.borderColor = 'transparent';
         el.classList.toggle('active', isActive);
       });
       // tab-pep est toujours visuellement "actif" mais on distingue via underline
       const pepEl = document.getElementById('tab-pep');
       if (pepEl) {
-        pepEl.style.background = 'var(--navy)';
-        pepEl.style.color = 'var(--bg)';
+        pepEl.style.background = 'var(--accent)';
+        pepEl.style.color = '#14532d';
         pepEl.style.fontWeight = tab === 'pep' ? '900' : '600';
         pepEl.style.opacity = tab === 'pep' ? '1' : '0.6';
       }
@@ -2348,19 +2333,23 @@
         if (delta === null || delta === undefined) return '';
         const col = delta > 0 ? 'var(--green)' : delta < 0 ? 'var(--red)' : 'var(--text2)';
         const bg = delta > 0 ? 'var(--green-light)' : delta < 0 ? 'var(--red-light)' : 'var(--bg3)';
-        return `<span style="font-size:10px;font-weight:800;color:${col};background:${bg};border-radius:6px;padding:2px 8px">${delta>0?'+':''}${delta} PEP</span>`;
+        return `<span style="font-size:10px;font-weight:700;color:${col};background:${bg};border-radius:5px;padding:1px 6px;margin-left:4px">${delta>0?'+':''}${delta}</span>`;
       }
 
       const fmtLabel = {'1v1':'1v1','1v1v1':'1v1v1','2v2':'Double','3v3':'Triplette'}[m.format] || m.format;
-      const fmtBadge = `<span style="font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;background:var(--navy);color:#fff">${fmtLabel}</span>`;
-      const editBtn = `<div onclick="openEditMatch('${m.id}')" style="color:var(--text2);font-size:16px;cursor:pointer">···</div>`;
+      const fmtColor = {'1v1':'#f0fdf4','1v1v1':'#fff7ed','2v2':'#eff6ff','3v3':'#fdf4ff'}[m.format] || '#f0f4ff';
+      const fmtText = {'1v1':'#16a34a','1v1v1':'#c2410c','2v2':'#2563eb','3v3':'#7c3aed'}[m.format] || '#444';
+      const editBtn = `<div onclick="openEditMatch('${m.id}')" style="color:var(--text2);font-size:18px;cursor:pointer;padding:0 4px">···</div>`;
 
-      // Layout commun : grid 3 colonnes centré
-      function scoreCol(name, score, isWinner, pepHtml) {
-        return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px">
-          <div style="font-size:12px;font-weight:800;color:var(--text);text-align:center;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div>
-          <div style="font-size:42px;font-weight:900;color:${isWinner?'var(--text)':'#c8cce8'};letter-spacing:-2px;line-height:1">${score}</div>
+      // Style commun : ligne joueur compact type Flashscore
+      function playerRow(name, score, isWinner, pepHtml, isLast) {
+        const scoreColor = isWinner ? 'var(--text)' : '#b0b3c8';
+        const nameWeight = isWinner ? '700' : '500';
+        const border = isLast ? '' : 'border-bottom:1px solid var(--border)';
+        return `<div style="display:flex;align-items:center;gap:8px;padding:7px 12px;${border}">
+          <div style="flex:1;font-size:13px;font-weight:${nameWeight};color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div>
           ${pepHtml}
+          <div style="font-size:14px;font-weight:800;color:${scoreColor};min-width:20px;text-align:right">${score}</div>
         </div>`;
       }
 
@@ -2369,18 +2358,14 @@
         const n2 = resolvePlayerName(m.joueur2Id, m);
         const g1 = m.gagnantId === m.joueur1Id;
         return `<div class="match-item">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-            ${fmtBadge}
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="font-size:10px;color:var(--text2)">${d}</span>
-              ${editBtn}
-            </div>
+          <div style="display:flex;align-items:center;padding:6px 12px 4px;border-bottom:1px solid var(--border)">
+            <span style="font-size:10px;font-weight:700;background:${fmtColor};color:${fmtText};padding:2px 7px;border-radius:20px">${fmtLabel}</span>
+            <span style="flex:1"></span>
+            <span style="font-size:10px;color:var(--text2)">${d}</span>
+            ${editBtn}
           </div>
-          <div style="display:grid;grid-template-columns:1fr 28px 1fr;align-items:center;gap:4px">
-            ${scoreCol(n1, m.score1, g1, pepBadge(m.joueur1Id))}
-            <div style="text-align:center;font-size:14px;color:#c8cce8;font-weight:300">—</div>
-            ${scoreCol(n2, m.score2, !g1, pepBadge(m.joueur2Id))}
-          </div>
+          ${playerRow(n1, m.score1, g1, pepBadge(m.joueur1Id), false)}
+          ${playerRow(n2, m.score2, !g1, pepBadge(m.joueur2Id), true)}
         </div>`;
       }
 
@@ -2389,19 +2374,13 @@
         const ss = m.scores || [0,0,0];
         const maxS = Math.max(...ss);
         return `<div class="match-item">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-            ${fmtBadge}
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="font-size:10px;color:var(--text2)">${d}</span>
-              ${editBtn}
-            </div>
+          <div style="display:flex;align-items:center;padding:6px 12px 4px;border-bottom:1px solid var(--border)">
+            <span style="font-size:10px;font-weight:700;background:${fmtColor};color:${fmtText};padding:2px 7px;border-radius:20px">${fmtLabel}</span>
+            <span style="flex:1"></span>
+            <span style="font-size:10px;color:var(--text2)">${d}</span>
+            ${editBtn}
           </div>
-          <div style="display:grid;grid-template-columns:1fr 20px 1fr 20px 1fr;align-items:center;gap:2px">
-            ${ss.map((s,i) => `
-              ${scoreCol(ns[i]||'?', s, s===maxS, pepBadge((m.joueurs||[])[i]))}
-              ${i<2?'<div style="text-align:center;font-size:13px;color:#c8cce8;font-weight:300">—</div>':''}
-            `).join('')}
-          </div>
+          ${ss.map((s,i) => playerRow(ns[i]||'?', s, s===maxS, pepBadge((m.joueurs||[])[i]), i===ss.length-1)).join('')}
         </div>`;
       }
 
@@ -2409,25 +2388,22 @@
       const eq1 = (m.equipe1||[]).map(id => resolvePlayerName(id, m)).join(' · ');
       const eq2 = (m.equipe2||[]).map(id => resolvePlayerName(id, m)).join(' · ');
       const g1w = m.gagnantEquipe === 1;
-      // Un seul delta par équipe (tous identiques)
       const pep1 = pepBadge((m.equipe1||[])[0]);
       const pep2 = pepBadge((m.equipe2||[])[0]);
       return `<div class="match-item">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          ${fmtBadge}
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:10px;color:var(--text2)">${d}</span>
-            ${editBtn}
-          </div>
+        <div style="display:flex;align-items:center;padding:6px 12px 4px;border-bottom:1px solid var(--border)">
+          <span style="font-size:10px;font-weight:700;background:${fmtColor};color:${fmtText};padding:2px 7px;border-radius:20px">${fmtLabel}</span>
+          <span style="flex:1"></span>
+          <span style="font-size:10px;color:var(--text2)">${d}</span>
+          ${editBtn}
         </div>
-        <div style="display:grid;grid-template-columns:1fr 28px 1fr;align-items:center;gap:4px">
-          ${scoreCol(eq1, m.score1, g1w, pep1)}
-          <div style="text-align:center;font-size:14px;color:#c8cce8;font-weight:300">—</div>
-          ${scoreCol(eq2, m.score2, !g1w, pep2)}
-        </div>
+        ${playerRow(eq1, m.score1, g1w, pep1, false)}
+        ${playerRow(eq2, m.score2, !g1w, pep2, true)}
       </div>`;
     }
     window.renderMatchItem = renderMatchItem;
+
+
 
 
 
