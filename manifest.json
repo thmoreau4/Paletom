@@ -1,11 +1,15 @@
 {
   "name": "Paletom",
   "short_name": "Paletom",
-  "icons": [
-    { "src": "logo_app.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "logo_app.png", "sizes": "512x512", "type": "image/png" }
-  ],
-  "start_url": "./index.html",
+  "description": "Scores et classements de Palet Vendéen entre amis",
+  "start_url": "/Paletom/index.html",
+  "scope": "/Paletom/",
   "display": "standalone",
-  "theme_color": "#1e2d40"
+  "background_color": "#e8eaf2",
+  "theme_color": "#1e2d40",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "logo_app.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "logo_app.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
 }
