@@ -2387,6 +2387,11 @@
     function renderJaugePEP() {
       const container = document.getElementById('stats-global');
       if (!container) return;
+      renderJaugePEPIn(container, false);
+    }
+
+    function renderJaugePEPIn(container, fullscreen) {
+      if (!container) return;
       const players = (window._players||[]).filter(p => p && p.nom);
       if (!players.length) return;
 
@@ -2412,8 +2417,11 @@
       const rows = sorted.map((p, i) => ({ ...p, row: i % 2 }));
 
       const jaugeHtml = `
-        <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin:16px 0 10px">⚡ Jauge PEP</div>
-        <div style="background:#fff;border-radius:14px;padding:14px 12px;box-shadow:var(--shadow)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px">
+          <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text2)">⚡ Jauge PEP</div>
+          ${!fullscreen ? `<div onclick="openJaugeModal()" style="font-size:11px;font-weight:700;color:var(--text2);cursor:pointer;background:#fff;border-radius:6px;padding:3px 8px;box-shadow:var(--shadow)">⛶ Agrandir</div>` : ''}
+        </div>
+        <div style="background:${fullscreen?'#ffffff15':'#fff'};border-radius:14px;padding:${fullscreen?'20px 16px':'14px 12px'};box-shadow:${fullscreen?'none':'var(--shadow)'}">
           <div style="position:relative">
 
             <!-- Rangée haute -->
@@ -2427,7 +2435,7 @@
                   : `<div style="width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid ${col};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:${col}">${initials}</div>`;
                 return `<div style="position:absolute;left:${left}%;bottom:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
                   ${av}
-                  <div style="font-size:8px;font-weight:800;color:#888;white-space:nowrap;max-width:44px;text-align:center;margin-top:1px;overflow:hidden;text-overflow:ellipsis">${p.nom.split(' ')[0]}</div>
+                  <div style="font-size:8px;font-weight:800;color:${fullscreen?'#fff':'#888'};white-space:nowrap;max-width:44px;text-align:center;margin-top:1px;overflow:hidden;text-overflow:ellipsis">${p.nom.split(' ')[0]}</div>
                   <div style="width:2px;height:6px;background:${col}"></div>
                 </div>`;
               }).join('')}
@@ -2456,21 +2464,21 @@
                 return `<div style="position:absolute;left:${left}%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
                   <div style="width:2px;height:6px;background:${col}"></div>
                   ${av}
-                  <div style="font-size:8px;font-weight:800;color:#888;white-space:nowrap;max-width:44px;text-align:center;margin-top:1px;overflow:hidden;text-overflow:ellipsis">${p.nom.split(' ')[0]}</div>
+                  <div style="font-size:8px;font-weight:800;color:${fullscreen?'#fff':'#888'};white-space:nowrap;max-width:44px;text-align:center;margin-top:1px;overflow:hidden;text-overflow:ellipsis">${p.nom.split(' ')[0]}</div>
                 </div>`;
               }).join('')}
             </div>
 
             <!-- Labels centrés sur chaque niveau -->
             <div style="position:relative;height:14px;margin-top:4px">
-              ${niveaux.map(n => `<div style="position:absolute;left:${n.centre}%;transform:translateX(-50%);font-size:8px;font-weight:800;color:${n.col};white-space:nowrap">${n.name}</div>`).join('')}
+              ${niveaux.map(n => `<div style="position:absolute;left:${n.centre}%;transform:translateX(-50%);font-size:8px;font-weight:800;color:${fullscreen?'#fff':n.col};white-space:nowrap">${n.name}</div>`).join('')}
             </div>
 
           </div>
         </div>
       `;
 
-      container.innerHTML += jaugeHtml;
+      if (fullscreen) { container.innerHTML = jaugeHtml; } else { container.innerHTML += jaugeHtml; }
     }
 
 
@@ -3981,7 +3989,21 @@
       return playerIds.some(id => id && id.startsWith('guest_'));
     }
 
-        function showFanny(loserName) {
+        function openJaugeModal() {
+      const modal = document.getElementById('modal-jauge');
+      if (!modal) return;
+      modal.style.display = 'flex';
+      // Rendre la jauge dans le modal avec une plage plus large
+      renderJaugePEPIn(document.getElementById('modal-jauge-content'), true);
+    }
+    function closeJaugeModal() {
+      const modal = document.getElementById('modal-jauge');
+      if (modal) modal.style.display = 'none';
+    }
+    window.openJaugeModal = openJaugeModal;
+    window.closeJaugeModal = closeJaugeModal;
+
+    function showFanny(loserName) {
       const el = document.getElementById('fanny-text');
       if (el) el.textContent = `Cul sur la planche, ${loserName} ! 🍑`;
       const modal = document.getElementById('modal-fanny');
@@ -4367,5 +4389,14 @@
         <button onclick="closeFanny()" style="background:#1e2d40;color:#fff;border:none;border-radius:10px;padding:12px 32px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent">Aïe 😬</button>
       </div>
     </div>
+  </div>
+
+  <!-- MODAL JAUGE PLEIN ÉCRAN -->
+  <div id="modal-jauge" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:var(--navy);z-index:9000;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:max(env(safe-area-inset-top),12px) 18px 12px">
+      <div style="font-size:16px;font-weight:900;color:#fff">⚡ Jauge PEP</div>
+      <div onclick="closeJaugeModal()" style="width:32px;height:32px;background:#ffffff15;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;color:#fff">✕</div>
+    </div>
+    <div id="modal-jauge-content" style="flex:1;overflow:auto;padding:0 16px 20px;display:flex;flex-direction:column;justify-content:center"></div>
   </div>
 </body>
