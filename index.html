@@ -2398,9 +2398,6 @@
       const MIN = 750, MAX = 1250, RANGE = MAX - MIN;
       function pct(pts) { return Math.max(1, Math.min(99, (Math.max(MIN, Math.min(MAX, pts)) - MIN) / RANGE * 100)); }
 
-      // Seuils fixes — chaque niveau fait 100pts
-      // RG: 750-850 (centre 12%), Rookie: 850-950 (centre 30%), Confirmé: 950-1050 (centre 50%)
-      // All-Star: 1050-1150 (centre 70%), Legend: 1150-1250 (centre 88%)
       const niveaux = [
         { name: 'Rudy G.', centre: pct(800),  col: '#1e88e5' },
         { name: 'Rookie',  centre: pct(900),  col: '#43a047' },
@@ -2414,71 +2411,123 @@
         ...p, pepScore: calcPepGeneral(p).score
       })).sort((a,b) => a.pepScore - b.pepScore);
 
-      const rows = sorted.map((p, i) => ({ ...p, row: i % 2 }));
+      function getCol(score) {
+        return score<850?'#1e88e5':score<950?'#43a047':score<1050?'#fb8c00':score<1150?'#ab47bc':'#e53935';
+      }
+      function avatarHtmlJauge(p, size) {
+        const col = getCol(p.pepScore);
+        const initials = p.nom.substring(0,2).toUpperCase();
+        return p.photo
+          ? `<img src="${p.photo}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;border:2px solid ${col}"/>`
+          : `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${fullscreen?'#ffffff20':'#fff'};border:2px solid ${col};display:flex;align-items:center;justify-content:center;font-size:${size<30?8:9}px;font-weight:800;color:${col}">${initials}</div>`;
+      }
 
-      const jaugeHtml = `
+      let jaugeHtml = '';
+
+      if (!fullscreen) {
+        // MODE NORMAL : 2 rangées fixes pair/impair
+        const rows = sorted.map((p, i) => ({ ...p, left: pct(p.pepScore), row: i % 2 }));
+        const topRows = rows.filter(p => p.row === 0);
+        const botRows = rows.filter(p => p.row === 1);
+
+        jaugeHtml = `
         <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px">
           <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text2)">⚡ Jauge PEP</div>
-          ${!fullscreen ? `<div onclick="openJaugeModal()" style="font-size:11px;font-weight:700;color:var(--text2);cursor:pointer;background:#fff;border-radius:6px;padding:3px 8px;box-shadow:var(--shadow)">⛶ Agrandir</div>` : ''}
+          <div onclick="openJaugeModal()" style="font-size:11px;font-weight:700;color:var(--text2);cursor:pointer;background:#fff;border-radius:6px;padding:3px 8px;box-shadow:var(--shadow)">⛶ Agrandir</div>
         </div>
-        <div style="background:${fullscreen?'#ffffff15':'#fff'};border-radius:14px;padding:${fullscreen?'20px 16px':'14px 12px'};box-shadow:${fullscreen?'none':'var(--shadow)'}">
+        <div style="background:#fff;border-radius:14px;padding:14px 12px;box-shadow:var(--shadow)">
           <div style="position:relative">
-
-            <!-- Rangée haute -->
             <div style="position:relative;height:52px">
-              ${rows.filter(p=>p.row===0).map(p => {
-                const left = pct(p.pepScore);
-                const col = p.pepScore<850?'#1e88e5':p.pepScore<950?'#43a047':p.pepScore<1050?'#fb8c00':p.pepScore<1150?'#ab47bc':'#e53935';
-                const initials = p.nom.substring(0,2).toUpperCase();
-                const av = p.photo
-                  ? `<img src="${p.photo}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid ${col}"/>`
-                  : `<div style="width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid ${col};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:${col}">${initials}</div>`;
-                return `<div style="position:absolute;left:${left}%;bottom:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
-                  ${av}
-                  <div style="font-size:8px;font-weight:800;color:${fullscreen?'#fff':'#888'};white-space:nowrap;max-width:44px;text-align:center;margin-top:1px;overflow:hidden;text-overflow:ellipsis">${p.nom.split(' ')[0]}</div>
+              ${topRows.map(p => {
+                const col = getCol(p.pepScore);
+                return `<div style="position:absolute;left:${p.left}%;bottom:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+                  ${avatarHtmlJauge(p, 28)}
+                  <div style="font-size:8px;font-weight:800;color:#888;white-space:nowrap;max-width:44px;text-align:center;margin-top:1px;overflow:hidden;text-overflow:ellipsis">${p.nom.split(' ')[0]}</div>
                   <div style="width:2px;height:6px;background:${col}"></div>
                 </div>`;
               }).join('')}
             </div>
-
-            <!-- Barre dégradée 750-1250, seuils à 850/950/1050/1150 -->
-            <div style="height:10px;border-radius:5px;background:linear-gradient(to right,
-              #1565c0 0%, #1e88e5 ${pct(850)}%,
-              #2e7d32 ${pct(850)}%, #43a047 ${pct(950)}%,
-              #e65100 ${pct(950)}%, #fb8c00 ${pct(1050)}%,
-              #6a1b9a ${pct(1050)}%, #ab47bc ${pct(1150)}%,
-              #b71c1c ${pct(1150)}%, #e53935 100%
-            );position:relative">
+            <div style="height:10px;border-radius:5px;background:linear-gradient(to right,#1565c0 0%,#1e88e5 ${pct(850)}%,#2e7d32 ${pct(850)}%,#43a047 ${pct(950)}%,#e65100 ${pct(950)}%,#fb8c00 ${pct(1050)}%,#6a1b9a ${pct(1050)}%,#ab47bc ${pct(1150)}%,#b71c1c ${pct(1150)}%,#e53935 100%);position:relative">
               ${seuils.map(s => `<div style="position:absolute;left:${pct(s)}%;top:0;bottom:0;width:2px;background:#fff;opacity:0.7;transform:translateX(-50%)"></div>`).join('')}
             </div>
-
-            <!-- Rangée basse -->
             <div style="position:relative;height:52px">
-              ${rows.filter(p=>p.row===1).map(p => {
-                const left = pct(p.pepScore);
-                const col = p.pepScore<850?'#1e88e5':p.pepScore<950?'#43a047':p.pepScore<1050?'#fb8c00':p.pepScore<1150?'#ab47bc':'#e53935';
-                const initials = p.nom.substring(0,2).toUpperCase();
-                const av = p.photo
-                  ? `<img src="${p.photo}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid ${col}"/>`
-                  : `<div style="width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid ${col};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:${col}">${initials}</div>`;
-                return `<div style="position:absolute;left:${left}%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+              ${botRows.map(p => {
+                const col = getCol(p.pepScore);
+                return `<div style="position:absolute;left:${p.left}%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
                   <div style="width:2px;height:6px;background:${col}"></div>
-                  ${av}
-                  <div style="font-size:8px;font-weight:800;color:${fullscreen?'#fff':'#888'};white-space:nowrap;max-width:44px;text-align:center;margin-top:1px;overflow:hidden;text-overflow:ellipsis">${p.nom.split(' ')[0]}</div>
+                  ${avatarHtmlJauge(p, 28)}
+                  <div style="font-size:8px;font-weight:800;color:#888;white-space:nowrap;max-width:44px;text-align:center;margin-top:1px;overflow:hidden;text-overflow:ellipsis">${p.nom.split(' ')[0]}</div>
                 </div>`;
               }).join('')}
             </div>
-
-            <!-- Labels centrés sur chaque niveau -->
             <div style="position:relative;height:14px;margin-top:4px">
-              ${niveaux.map(n => `<div style="position:absolute;left:${n.centre}%;transform:translateX(-50%);font-size:8px;font-weight:800;color:${fullscreen?'#fff':n.col};white-space:nowrap">${n.name}</div>`).join('')}
+              ${niveaux.map(n => `<div style="position:absolute;left:${n.centre}%;transform:translateX(-50%);font-size:8px;font-weight:800;color:${n.col};white-space:nowrap">${n.name}</div>`).join('')}
             </div>
-
           </div>
-        </div>
-      `;
+        </div>`;
 
-      if (fullscreen) { container.innerHTML = jaugeHtml; } else { container.innerHTML += jaugeHtml; }
+      } else {
+        // MODE PLEIN ÉCRAN PAYSAGE : anti-chevauchement multi-rangées
+        const SEUIL = 8;
+        const rowsAbove = [];
+        const rowsBelow = [];
+        sorted.forEach((p, i) => {
+          const left = pct(p.pepScore);
+          const bank = i % 2 === 0 ? rowsAbove : rowsBelow;
+          let placed = false;
+          for (let r = 0; r < bank.length; r++) {
+            const lastLeft = bank[r][bank[r].length - 1].left;
+            if (left - lastLeft >= SEUIL) {
+              bank[r].push({ ...p, left });
+              placed = true;
+              break;
+            }
+          }
+          if (!placed) bank.push([{ ...p, left }]);
+        });
+
+        const ROW_H = 52;
+        const heightAbove = Math.max(1, rowsAbove.length) * ROW_H;
+        const heightBelow = Math.max(1, rowsBelow.length) * ROW_H;
+
+        function renderFsRow(rows, isAbove) {
+          return rows.map((row, rowIdx) => {
+            const offset = isAbove ? (rows.length - 1 - rowIdx) * ROW_H : rowIdx * ROW_H;
+            return row.map(p => {
+              const col = getCol(p.pepScore);
+              const lineH = offset > 0 ? offset + 6 : 6;
+              if (isAbove) {
+                return `<div style="position:absolute;left:${p.left}%;bottom:${offset}px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+                  ${avatarHtmlJauge(p, 32)}
+                  <div style="font-size:9px;font-weight:800;color:#fff;white-space:nowrap;max-width:50px;text-align:center;margin-top:2px;overflow:hidden;text-overflow:ellipsis">${p.nom.split(' ')[0]}</div>
+                  <div style="width:2px;height:${lineH}px;background:${col}"></div>
+                </div>`;
+              } else {
+                return `<div style="position:absolute;left:${p.left}%;top:${offset}px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+                  <div style="width:2px;height:${lineH}px;background:${col}"></div>
+                  ${avatarHtmlJauge(p, 32)}
+                  <div style="font-size:9px;font-weight:800;color:#fff;white-space:nowrap;max-width:50px;text-align:center;margin-top:2px;overflow:hidden;text-overflow:ellipsis">${p.nom.split(' ')[0]}</div>
+                </div>`;
+              }
+            }).join('');
+          }).join('');
+        }
+
+        jaugeHtml = `
+        <div style="position:relative">
+          <div style="position:relative;height:${heightAbove}px">${renderFsRow(rowsAbove, true)}</div>
+          <div style="height:12px;border-radius:6px;background:linear-gradient(to right,#1565c0 0%,#1e88e5 ${pct(850)}%,#2e7d32 ${pct(850)}%,#43a047 ${pct(950)}%,#e65100 ${pct(950)}%,#fb8c00 ${pct(1050)}%,#6a1b9a ${pct(1050)}%,#ab47bc ${pct(1150)}%,#b71c1c ${pct(1150)}%,#e53935 100%);position:relative">
+            ${seuils.map(s => `<div style="position:absolute;left:${pct(s)}%;top:0;bottom:0;width:2px;background:#fff;opacity:0.7;transform:translateX(-50%)"></div>`).join('')}
+          </div>
+          <div style="position:relative;height:${heightBelow}px">${renderFsRow(rowsBelow, false)}</div>
+          <div style="position:relative;height:16px;margin-top:6px">
+            ${niveaux.map(n => `<div style="position:absolute;left:${n.centre}%;transform:translateX(-50%);font-size:9px;font-weight:800;color:#ffffff80;white-space:nowrap">${n.name}</div>`).join('')}
+          </div>
+        </div>`;
+      }
+
+      if (fullscreen) { container.innerHTML = jaugeHtml; }
+      else { container.innerHTML += jaugeHtml; }
     }
 
 
@@ -3993,12 +4042,19 @@
       const modal = document.getElementById('modal-jauge');
       if (!modal) return;
       modal.style.display = 'flex';
-      // Rendre la jauge dans le modal avec une plage plus large
+      // Forcer le paysage sur mobile
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(()=>{});
+      }
       renderJaugePEPIn(document.getElementById('modal-jauge-content'), true);
     }
     function closeJaugeModal() {
       const modal = document.getElementById('modal-jauge');
       if (modal) modal.style.display = 'none';
+      // Revenir en portrait
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('portrait').catch(()=>{});
+      }
     }
     window.openJaugeModal = openJaugeModal;
     window.closeJaugeModal = closeJaugeModal;
