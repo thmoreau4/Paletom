@@ -454,7 +454,7 @@
     /* SAISIE */
     #page-saisie { padding:0; }
     .saisie-header {
-      background:var(--bg); padding:52px 20px 20px;
+      background:var(--navy); padding:max(env(safe-area-inset-top),12px) 20px 20px;
       display:flex; align-items:flex-start; gap:12px;
     }
 
@@ -489,18 +489,18 @@
       background:#fff; display:flex; align-items:center;
       justify-content:center; cursor:pointer; font-size:16px; color:#fff; flex-shrink:0;
     }
-    .saisie-title { font-size:24px; font-weight:900; color:var(--text); letter-spacing:-0.5px; }
-    .saisie-sub { font-size:12px; color:var(--text2); margin-top:3px; }
+    .saisie-title { font-size:24px; font-weight:900; color:#fff; letter-spacing:-0.5px; }
+    .saisie-sub { font-size:12px; color:#ffffff80; margin-top:3px; }
     .saisie-body { padding:20px; }
     .step { display:none; }
     .step.active { display:block; }
-    .step-title { font-size:11px; font-weight:700; margin-bottom:16px; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px; }
+    .step-title { font-size:11px; font-weight:700; margin-bottom:16px; color:var(--text); text-transform:uppercase; letter-spacing:0.5px; }
 
     .score-vs-row {
       display:flex; align-items:center;
-      background:#fff; border-radius:12px;
-      border:1px solid var(--border2); margin-bottom:16px; padding:20px 16px;
-      gap:0;
+      background:#fff; border-radius:16px;
+      box-shadow:var(--shadow); margin-bottom:16px; padding:24px 16px;
+      gap:0; border:none;
     }
     .score-player { flex:1; padding:16px 12px; text-align:center; }
     .score-player-name {
@@ -516,8 +516,8 @@
     }
     .score-avatar img { width:100%; height:100%; object-fit:contain; }
     .score-input {
-      width:100%; background:#fff; border:1px solid var(--border2);
-      border-radius:10px; padding:16px; font-size:36px; font-weight:900;
+      width:100%; background:#fff; border:2px solid var(--border2);
+      border-radius:14px; padding:16px; font-size:40px; font-weight:900;
       text-align:center; color:var(--text); outline:none;
       -webkit-appearance:none; appearance:none;
     }
@@ -992,7 +992,7 @@
   <div class="page" id="page-saisie">
     <div class="saisie-header">
       <div>
-        <div onclick="showPage('page-home')" style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:12px;cursor:pointer">← Retour</div>
+        <div onclick="showPage('page-home')" style="font-size:12px;font-weight:700;color:#ffffff80;margin-bottom:12px;cursor:pointer">← Retour</div>
         <div class="saisie-title">Nouvelle partie</div>
         <div class="saisie-sub" id="saisie-sub">1 vs 1 · Palet Vendéen</div>
       </div>
@@ -2486,7 +2486,7 @@
             <div style="font-size:16px;font-weight:900;color:var(--text);line-height:1;margin-top:2px">${topWinner.nom}</div>
             <div style="font-size:11px;color:var(--green);font-weight:700;margin-top:3px">${topWins} victoire${topWins>1?'s':''}</div>
           </div>` : ''}
-          ${topStreakPlayer && topStreak > 1 ? `<div style="background:#fff;border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)">
+          ${topStreakPlayer && topStreak >= 1 ? `<div style="background:#fff;border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)">
             <div style="font-size:9px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">🔥 Série en cours</div>
             <div style="font-size:16px;font-weight:900;color:var(--text);line-height:1;margin-top:2px">${topStreakPlayer.nom}</div>
             <div style="font-size:11px;color:var(--red);font-weight:700;margin-top:3px">${topStreak} victoires d'affilée</div>
