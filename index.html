@@ -104,7 +104,7 @@
 
     /* PAGES */
     .page { display:none; padding:16px; }
-    #page-home, #page-ranking, #page-stats { padding:0; }
+    #page-home, #page-ranking, #page-stats, #page-players, #page-joueur, #page-settings, #page-rules, #page-saisie, #page-ligue, #page-ideas, #page-update { padding:0; }
     .page.active { display:block; }
     #page-rules, #page-settings, #page-joueur, #page-saisie, #page-ligue, #page-ideas, #page-update { position:fixed; top:0; left:0; right:0; bottom:0; overflow-y:auto; z-index:10; background:var(--bg); }
 
@@ -2743,24 +2743,22 @@
         return;
       }
 
-      // Bilan victoires si 2 joueurs sélectionnés
+      // Bilan victoires - tous les joueurs sélectionnés
       let bilanHtml = '';
-      if (j1id && j2id) {
+      const joueursSel = [j1id,j2id,j3id].filter(Boolean);
+      if (joueursSel.length >= 1) {
         const countWins = id => matches.filter(m => {
           if (m.format==='2v2'||m.format==='3v3') return (m.gagnantEquipe===1&&(m.equipe1||[]).includes(id))||(m.gagnantEquipe===2&&(m.equipe2||[]).includes(id));
           return m.gagnantId===id;
         }).length;
-        const j1w = countWins(j1id), j2w = countWins(j2id);
-        const maxW = Math.max(j1w, j2w);
+        const wins = joueursSel.map(id => ({ id, nom: pname(id), w: countWins(id) }));
+        const maxW = Math.max(...wins.map(x=>x.w));
         const col = (nom,w) => `<div style="flex:1;text-align:center">
-          <div style="font-size:13px;font-weight:800;color:var(--text)">${nom}</div>
-          <div style="font-size:28px;font-weight:900;color:${w===maxW&&w>0?'#2d8a4e':'var(--text)'}">${w}</div>
+          <div style="font-size:12px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nom}</div>
+          <div style="font-size:26px;font-weight:900;color:${w===maxW&&w>0?'#2d8a4e':'var(--text)'}">${w}</div>
         </div>`;
-        bilanHtml = `<div style="display:flex;align-items:center;background:#fff;border-radius:12px;padding:12px;box-shadow:var(--shadow);margin-bottom:10px">
-          ${col(pname(j1id),j1w)}
-          <div style="color:var(--text2);font-size:11px;font-weight:700;padding:0 8px">vs</div>
-          ${col(pname(j2id),j2w)}
-        </div>
+        const seps = wins.map((x,i) => i<wins.length-1 ? col(x.nom,x.w)+'<div style="color:var(--text2);font-size:11px;font-weight:700;padding:0 4px">vs</div>' : col(x.nom,x.w)).join('');
+        bilanHtml = `<div style="display:flex;align-items:center;background:#fff;border-radius:12px;padding:12px;box-shadow:var(--shadow);margin-bottom:10px">${seps}</div>
         <div style="text-align:center;color:var(--text2);font-size:12px;margin-bottom:8px">${matches.length} partie${matches.length>1?'s':''}</div>`;
       }
 
