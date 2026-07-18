@@ -626,7 +626,7 @@
     <div id="home-header" style="background:var(--navy);padding:env(safe-area-inset-top, 12px) 18px 18px;padding-top:max(env(safe-area-inset-top), 12px);transition:background 0.35s">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <div id="ligue-changer-btn" onclick="changerLigueIfAllowed()" style="display:flex;align-items:center;gap:5px;cursor:pointer">
-          <div style="font-size:14px;font-weight:800;color:var(--accent)" id="ligue-nom-display">Ma ligue</div>
+          <div style="font-size:14px;font-weight:800;color:var(--accent)" id="ligue-nom-display"></div>
           <div style="font-size:15px;font-weight:700;color:var(--accent);opacity:0.8">↻</div>
         </div>
         <div style="display:flex;gap:6px;align-items:center">
@@ -1515,6 +1515,9 @@
       <!-- RÉSUMÉ GLOBAL -->
       <div id="stats-global"></div>
 
+      <!-- TOURNOIS ARCHIVÉS -->
+      <div id="tournois-archives"></div>
+
       <!-- CONFRONTATIONS -->
       <div>
         <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:8px">⚔️ Confrontations directes</div>
@@ -1692,7 +1695,7 @@
     let editingPlayerId = null;
 
     // NAV
-    const FULLSCREEN_PAGES = ['page-saisie','page-joueur','page-settings','page-rules','page-ideas','page-update','page-ligue'];
+    const FULLSCREEN_PAGES = ['page-saisie','page-joueur','page-settings','page-rules','page-ideas','page-update','page-ligue','page-players'];
     function showPage(pageId) {
       // Si on revient sur page-home, s'assurer que le bon contenu est visible
       if (pageId === 'page-home') {
@@ -2490,9 +2493,11 @@
           <button id="ppf-2v2" onclick="setPPFormat('2v2')" style="padding:7px 4px;border-radius:8px;border:none;background:#fff;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Double</button>
           <button id="ppf-3v3" onclick="setPPFormat('3v3')" style="padding:7px 4px;border-radius:8px;border:none;background:#fff;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Trip.</button>
         </div>
+        <div id="pp-palmares"></div>
         <div id="pp-matches"></div>
-      `;
+      \`;
       renderPPMatches();
+      renderPalmares(playerId);
 
       showPage('page-joueur');
     }
@@ -2532,6 +2537,7 @@
       renderConfrontation();
       renderAllMatches();
       renderStatsGlobal();
+      renderTournoisArchives();
     }
     window.renderStats = renderStats;
 
@@ -3301,11 +3307,118 @@
       const modal = document.getElementById('modal-pdf-pep');
       const iframe = document.getElementById('iframe-pdf-pep');
       if (iframe.src === '' || iframe.src === window.location.href) {
-        iframe.src = 'https://thmoreau4.github.io/Paletom/Paletom_PEP_v1.pdf';
+        iframe.src = 'https://docs.google.com/viewer?url=https://thmoreau4.github.io/Paletom/Paletom_PEP_v1.pdf&embedded=true';
       }
       modal.style.display = 'flex';
     }
     window.openPepPdf = openPepPdf;
+
+    function tirageAuSortPoule(pouleIdx) {
+      const t = _tournoiCourant;
+      const poule = t.poules[pouleIdx];
+      if(!poule) return;
+      // Mélanger aléatoirement les joueurs à égalité
+      for(let i=poule.joueurs.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [poule.joueurs[i],poule.joueurs[j]]=[poule.joueurs[j],poule.joueurs[i]];
+      }
+      showToast('🎲 Tirage effectué pour '+poule.nom+' !');
+      renderCoupeDuMonde();
+    }
+    window.tirageAuSortPoule = tirageAuSortPoule;
+
+    function voirPoulesCDM() {
+      // Basculer temporairement en phase poules pour afficher les résultats
+      const t = _tournoiCourant;
+      if (!t) return;
+      t._phaseTemp = t.phase;
+      t.phase = 'poules';
+      renderCoupeDuMonde();
+      // Remplacer le bouton Lancer par Retour finale
+      setTimeout(() => {
+        const btn = document.querySelector('[onclick="lancerPhaseFinale()"]');
+        if (btn) {
+          btn.textContent = '← Retour à la phase finale';
+          btn.onclick = () => {
+            t.phase = t._phaseTemp || 'finale';
+            renderCoupeDuMonde();
+          };
+        }
+      }, 50);
+    }
+    window.voirPoulesCDM = voirPoulesCDM;
+
+    async function archiverTournoi(t, vainqueur) {
+      try {
+        const ligueId = t.ligueId || window._currentLigueId;
+        if (!ligueId) return;
+        // Construire le résumé du tournoi
+        const resume = {
+          nom: t.nom,
+          format: t.format,
+          mode: t.mode,
+          date: t.date || Date.now(),
+          dateFin: t.dateFin || Date.now(),
+          vainqueur: { id: vainqueur.id, nom: vainqueur.nom },
+          participants: (t.participants||[]).map(p => ({ id:p.id, nom:p.nom })),
+          nbParticipants: (t.participants||[]).length,
+        };
+        // Sauvegarder dans la collection tournois de la ligue
+        const colTournois = collection(db, 'ligues', ligueId, 'tournois');
+        await addDoc(colTournois, resume);
+        console.log('Tournoi archivé :', resume.nom);
+      } catch(e) {
+        console.error('Erreur archivage tournoi:', e);
+      }
+    }
+    window.archiverTournoi = archiverTournoi;
+
+    function renderTournoisArchives() {
+      const container = document.getElementById('tournois-archives');
+      if (!container) return;
+      const tournois = window._tournois || [];
+      if (!tournois.length) { container.innerHTML = ''; return; }
+      container.innerHTML = '<div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:8px">🏆 Tournois</div>'
+        +'<div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:var(--shadow)">'
+        +tournois.map((t,i) => {
+          const date = t.dateFin ? new Date(t.dateFin).toLocaleDateString('fr-FR') : '';
+          return '<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:'+(i<tournois.length-1?'1px solid var(--border)':'none')+'">'
+            +'<div style="font-size:20px">🏆</div>'
+            +'<div style="flex:1">'
+            +'<div style="font-size:13px;font-weight:800;color:var(--text)">'+t.nom+'</div>'
+            +'<div style="font-size:11px;color:var(--text2)">'+t.vainqueur?.nom+' · '+date+'</div>'
+            +'</div>'
+            +'<div style="font-size:11px;color:var(--text2)">'+t.nbParticipants+' joueurs</div>'
+            +'</div>';
+        }).join('')
+        +'</div>';
+    }
+    window.renderTournoisArchives = renderTournoisArchives;
+
+    function renderPalmares(playerId) {
+      const container = document.getElementById('pp-palmares');
+      if (!container) return;
+      const tournoisGagnes = (window._tournois||[]).filter(t => t.vainqueur && t.vainqueur.id === playerId);
+      if (!tournoisGagnes.length) { container.innerHTML = ''; return; }
+      container.innerHTML = '<div style="margin-top:16px">'
+        +'<div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:8px">🏆 Palmarès tournois</div>'
+        +'<div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:var(--shadow)">'
+        +tournoisGagnes.map(function(t,i){
+          const date = t.dateFin ? new Date(t.dateFin).toLocaleDateString('fr-FR') : '';
+          return '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:'+(i<tournoisGagnes.length-1?'1px solid var(--border)':'none')+'">'
+            +'<div style="font-size:18px">🏆</div>'
+            +'<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text)">'+t.nom+'</div>'
+            +'<div style="font-size:11px;color:var(--text2)">'+date+' · '+t.nbParticipants+' joueurs</div></div>'
+            +'</div>';
+        }).join('')
+        +'</div></div>';
+    }
+    window.renderPalmares = renderPalmares;
+
+    function wizSetLigue(ligueId) {
+      _wizData.ligueId = ligueId;
+    }
+    window.wizSetLigue = wizSetLigue;
 
     function renderRecentMatches() {
       const container = document.getElementById('recent-matches');
@@ -4740,6 +4853,18 @@
         let html = '<div style="margin-bottom:24px"><div style="font-size:22px;font-weight:900;color:#1a1d2e;margin-bottom:6px">Options</div><div style="font-size:13px;color:#9899b0;font-weight:600">Personnalise les règles</div></div>';
         if (_wizData.mode === 'indiv') {
           html += wizOptionRow('⚡ Compte pour le PEP', 'Membres de la ligue uniquement', _wizData.pep, "wizToggle('pep')");
+          // Sélecteur de ligue si PEP activé
+          if (_wizData.pep) {
+            const ligues = window._ligues || [];
+            const selectHtml = '<div style="margin-top:8px;padding:12px 16px;background:#fff;border-radius:12px;box-shadow:var(--shadow)">'
+              +'<div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px">Rattacher à la ligue :</div>'
+              +'<select id="wiz-ligue-sel" onchange="wizSetLigue(this.value)" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:700;color:var(--text);font-family:inherit;background:#fff">'
+              +'<option value="">— Choisir une ligue —</option>'
+              +ligues.map(l => '<option value="'+l.id+'"'+((_wizData.ligueId===l.id)?' selected':'')+'>'+l.nom+'</option>').join('')
+              +'</select>'
+              +'</div>';
+            html += selectHtml;
+          }
         }
         if (_wizData.format !== 'champ') {
           html += wizOptionRow('Matchs de classement', 'Les éliminés jouent pour la 3e, 5e place...', _wizData.classement, "wizToggle('classement')");
@@ -4931,7 +5056,7 @@
       const participants = _wizData._participants || [];
       if (participants.length < 2) { showToast('Erreur : pas assez de participants'); return; }
       const pepOn = _wizData.pep && _wizData.mode === 'indiv';
-      _tournoiCourant = genererTournoi({ nom: _wizData.nom, format: _wizData.format, mode: _wizData.mode, participants, pepOn, scoreMode: _wizData.score, date: Date.now() });
+      _tournoiCourant = genererTournoi({ nom: _wizData.nom, format: _wizData.format, mode: _wizData.mode, participants, pepOn, scoreMode: _wizData.score, date: Date.now(), ligueId: _wizData.ligueId || window._currentLigueId });
       document.getElementById('tournoi-parametrage').style.display = 'none';
       // Coupe du Monde : afficher l'écran de vérification des poules
       if (_wizData.format === 'monde') {
@@ -5270,40 +5395,68 @@
           +'</div></div>'
           +'<div style="overflow-y:auto;flex:1;padding:12px 16px 100px;background:var(--bg)">';
 
+        // Calcul nb qualifiés pour l'affichage
+        const nbPoulesCDM = t.poules.length;
+        let nbQualifCDM = 1; while(nbQualifCDM*2 <= nbPoulesCDM*2) nbQualifCDM*=2;
+        const nbPremiersCDM = nbPoulesCDM;
+        const nbDeuxiemesCDM = nbQualifCDM - nbPremiersCDM;
+        // Tous les 1ers qualifiés + les nbDeuxiemesCDM meilleurs 2èmes
+        // Pour savoir quels 2èmes sont qualifiés, il faut comparer entre poules
+        // On calcule les classements de toutes les poules d'abord
+        const tousClassements = t.poules.map(poule => {
+          const c = poule.joueurs.map(p => ({...p, pts:0, v:0, d:0, diff:0}));
+          poule.matchs.forEach(m => {
+            if(!m.played) return;
+            const i1=c.findIndex(p=>p.id===m.j1.id), i2=c.findIndex(p=>p.id===m.j2.id);
+            if(i1<0||i2<0) return;
+            c[i1].diff+=(m.s1-m.s2); c[i2].diff+=(m.s2-m.s1);
+            if(m.s1>m.s2){c[i1].pts+=3;c[i1].v++;c[i2].d++;}else{c[i2].pts+=3;c[i2].v++;c[i1].d++;}
+          });
+          c.sort((a,b)=>b.pts-a.pts||b.diff-a.diff);
+          return c;
+        });
+        // Tous les matchs joués dans la poule?
+        const tousJoueesCDM = t.poules.every(p=>p.matchs.every(m=>m.played));
+        // IDs des 2èmes qualifiés (si tous matchs joués)
+        const deuxiemesQualifIds = new Set();
+        if(tousJoueesCDM && nbDeuxiemesCDM > 0) {
+          const deuxiemes = tousClassements.map(c=>c[1]).filter(Boolean)
+            .sort((a,b)=>b.pts-a.pts||b.diff-a.diff);
+          deuxiemes.slice(0, nbDeuxiemesCDM).forEach(p => deuxiemesQualifIds.add(p.id));
+        }
+
         // Pour chaque poule : classement + matchs
         t.poules.forEach((poule, pi) => {
           // Calculer classement poule
-          const clas = poule.joueurs.map(p => ({...p, pts:0, v:0, d:0, joues:0}));
-          poule.matchs.forEach(m => {
-            if(!m.played) return;
-            const i1=clas.findIndex(p=>p.id===m.j1.id), i2=clas.findIndex(p=>p.id===m.j2.id);
-            if(i1<0||i2<0) return;
-            clas[i1].joues++; clas[i2].joues++;
-            if(m.s1>m.s2){clas[i1].pts+=3;clas[i1].v++;clas[i2].d++;}
-            else{clas[i2].pts+=3;clas[i2].v++;clas[i1].d++;}
-          });
-          clas.sort((a,b)=>b.pts-a.pts||b.v-a.v);
+          // Utiliser le classement déjà calculé
+          const clas = tousClassements[pi];
           const total = poule.matchs.length;
+          // Détecter égalité parfaite (tous les joueurs à égalité)
+          const egaliteParfaite = poule.matchs.every(m=>m.played) && clas.length >= 2 &&
+            clas.every(p => p.pts === clas[0].pts && p.diff === clas[0].diff);
           const joues = poule.matchs.filter(m=>m.played).length;
 
           html += '<div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:8px">'+poule.nom+' · '+joues+'/'+total+'</div>'
             +'<div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:4px">'
-            +'<div style="display:grid;grid-template-columns:1fr 36px 28px 28px;align-items:center;gap:4px;padding:6px 12px;background:var(--navy)">'
+            +'<div style="display:grid;grid-template-columns:1fr 36px 28px 28px 36px;align-items:center;gap:4px;padding:6px 12px;background:var(--navy)">'
             +'<div style="font-size:9px;font-weight:700;color:#ffffff60">Joueur</div>'
             +'<div style="font-size:9px;font-weight:700;color:#ffffff60;text-align:center">Pts</div>'
             +'<div style="font-size:9px;font-weight:700;color:#ffffff60;text-align:center">V</div>'
             +'<div style="font-size:9px;font-weight:700;color:#ffffff60;text-align:center">D</div>'
+            +'<div style="font-size:9px;font-weight:700;color:#ffffff60;text-align:center">Diff</div>'
             +'</div>'
-            +clas.map((p,i) => '<div style="display:grid;grid-template-columns:1fr 36px 28px 28px;align-items:center;gap:4px;padding:9px 12px;border-bottom:'+(i<clas.length-1?'1px solid var(--border)':'none')+';background:'+(i<2?'#fffbeb':'#fff')+'">'
-              +'<div style="font-size:13px;font-weight:700;color:#1a1d2e">'+(i<2?'✓ ':'')+p.nom+'</div>'
+            +clas.map((p,i) => '<div style="display:grid;grid-template-columns:1fr 36px 28px 28px 36px;align-items:center;gap:4px;padding:9px 12px;border-bottom:'+(i<clas.length-1?'1px solid var(--border)':'none')+';background:'+(i===0?'#fffbeb':(i===1&&tousJoueesCDM&&deuxiemesQualifIds.has(p.id))?'#fffbeb':'#fff')+'">'
+              +'<div style="font-size:13px;font-weight:700;color:#1a1d2e">'+(i===0?'① ':(i===1&&(nbDeuxiemesCDM>0||(tousJoueesCDM&&deuxiemesQualifIds.has(p.id))))?'② ':'')+(tousJoueesCDM&&(i===0||deuxiemesQualifIds.has(p.id))?'✓ ':'')+p.nom+'</div>'
               +'<div style="font-size:14px;font-weight:900;color:#fbbf24;text-align:center">'+p.pts+'</div>'
               +'<div style="font-size:12px;font-weight:700;color:#4ade80;text-align:center">'+p.v+'</div>'
               +'<div style="font-size:12px;font-weight:700;color:#f87171;text-align:center">'+p.d+'</div>'
+              +'<div style="font-size:11px;font-weight:700;color:'+(p.diff>0?'#4ade80':p.diff<0?'#f87171':'#9899b0')+';text-align:center">'+(p.diff>0?'+':'')+p.diff+'</div>'
               +'</div>').join('')
             +'</div>';
 
           // Matchs restants de cette poule par ronde
           const restants = poule.matchs.filter(m=>!m.played);
+          const jouesDansPoule = poule.matchs.filter(m=>m.played);
           if (restants.length>0) {
             const rondes = {};
             restants.forEach(m => { if(!rondes[m.ronde]) rondes[m.ronde]=[]; rondes[m.ronde].push(m); });
@@ -5315,6 +5468,25 @@
                   +'</div>').join('')
                 +'</div>';
             });
+          }
+          if (jouesDansPoule.length>0) {
+            html += '<div style="font-size:10px;font-weight:700;color:var(--text2);margin:6px 0 4px">Matchs joués — appuie pour modifier</div>'
+              +'<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:6px;opacity:0.8">'
+              +jouesDansPoule.map((m,i) => '<div onclick="openMatchMonde(this)" data-id="'+m.id+'" style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:'+(i<jouesDansPoule.length-1?'1px solid var(--border)':'none')+';cursor:pointer">'
+                +'<div style="flex:1;font-size:12px;font-weight:700;color:#1a1d2e">'+m.j1.nom+' vs '+m.j2.nom+'</div>'
+                +'<div style="font-size:12px;font-weight:900;color:'+(m.s1>m.s2?'#2d8a4e':'#9899b0')+'">'+m.s1+'</div>'
+                +'<div style="font-size:11px;color:var(--text2);margin:0 4px">–</div>'
+                +'<div style="font-size:12px;font-weight:900;color:'+(m.s2>m.s1?'#2d8a4e':'#9899b0')+'">'+m.s2+'</div>'
+                +'<div style="font-size:10px;color:var(--text2);margin-left:4px">✏️</div>'
+                +'</div>').join('')
+              +'</div>';
+          }
+          // Bouton tirage au sort si égalité parfaite
+          if(egaliteParfaite) {
+            html += '<div style="background:#fbbf2415;border:1.5px solid #fbbf2430;border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px">'
+              +'<div style="flex:1;font-size:12px;font-weight:700;color:#92400e">⚖️ Égalité parfaite — tirage au sort nécessaire</div>'
+              +'<button data-pi="'+pi+'" onclick="tirageAuSortPoule(+this.dataset.pi)" style="background:#fbbf24;color:#1a1400;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;flex-shrink:0">🎲 Tirer</button>'
+              +'</div>';
           }
           html += '<div style="height:8px"></div>';
         });
@@ -5356,7 +5528,7 @@
 
         pageTC.innerHTML = '<div style="background:var(--bg);padding:14px 16px 10px;flex-shrink:0">'
           +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
-          +'<div onclick="quitterTournoi()" style="width:32px;height:32px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;flex-shrink:0">←</div>'
+          +'<div onclick="voirPoulesCDM()" style="width:32px;height:32px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;flex-shrink:0">←</div>'
           +'<div style="flex:1"><div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text2)">Phase finale · '+t.nom+'</div><div style="font-size:16px;font-weight:900;color:#1a1d2e">🏆 Bracket</div></div>'
           +'<button onclick="openBracketComplet()" style="background:#fbbf24;color:#1a1400;border:none;border-radius:10px;padding:7px 12px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;flex-shrink:0">🗺 Bracket</button>'
           +'</div>'
@@ -5424,39 +5596,96 @@
       }
       document.getElementById('content-tournoi').style.display = 'none';
       pageTC.style.display = 'flex';
+      _renderVerifPoules(pageTC);
+    }
+    window.showVerifPoules = showVerifPoules;
+
+    function _renderVerifPoules(pageTC) {
+      const t = _tournoiCourant;
       const lettres = 'ABCDEFGHIJKLMNOP';
       let html = '<div style="background:var(--bg);padding:14px 16px 10px;flex-shrink:0">'
         +'<div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:2px">🌍 Coupe du Monde</div>'
         +'<div style="font-size:16px;font-weight:900;color:#1a1d2e">Vérifier les poules</div>'
         +'</div>'
         +'<div style="overflow-y:auto;flex:1;padding:12px 16px 120px;background:var(--bg)">'
-        +'<div style="background:#fbbf2415;border:1.5px solid #fbbf2430;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:12px;font-weight:600;color:#92400e">💡 Glisse les joueurs entre les poules pour les réorganiser</div>';
+        +(function(){
+        const nb2 = t.poules.length;
+        let nq = 1; while(nq*2 <= nb2*2) nq*=2;
+        const n1 = nb2, n2 = nq - n1;
+        return '<div style="background:#fbbf2415;border:1.5px solid #fbbf2430;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:12px;font-weight:600;color:#92400e">'
+          +'💡 Appuie sur ⇄ pour déplacer un joueur · <strong>'+nq+' qualifiés</strong> pour la finale ('
+          +n1+' premiers + '+n2+' meilleur'+(n2>1?'s ':' ')+'2ème'+(n2>1?'s':'')+')</div>';
+      })();
 
       t.poules.forEach((poule, pi) => {
         const nb = poule.joueurs.length;
-        const warn = nb !== 4;
+        const warn = nb < 2;
         html += '<div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:8px">'+poule.nom+'</div>'
-          +'<div id="poule-card-'+pi+'" style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px">'
+          +'<div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px">'
           +'<div style="background:'+(warn?'#4a3000':'#1e2d40')+';padding:10px 14px;display:flex;align-items:center;justify-content:space-between">'
           +'<div style="font-size:13px;font-weight:900;color:#fff">'+poule.nom+'</div>'
-          +'<div style="font-size:11px;color:'+(warn?'#fbbf2480':'#ffffff60')+';font-weight:600">'+nb+' joueurs · 2 qualifiés'+(warn?' ⚠️':'')+'</div>'
-          +'</div>'
-          +poule.joueurs.map(p => {
-            const init = p.nom.substring(0,2).toUpperCase();
-            return '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border)">'
-              +'<div style="width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0">'+init+'</div>'
-              +'<div style="flex:1;font-size:13px;font-weight:700;color:#1a1d2e">'+p.nom+'</div>'
-              +'</div>';
-          }).join('')
+          +'<div style="font-size:11px;color:'+(warn?'#fbbf2480':'#ffffff60')+';font-weight:600">'+nb+' joueurs'+(warn?' ⚠️':'')+'</div>'
           +'</div>';
+
+        poule.joueurs.forEach(p => {
+          const init = p.nom.substring(0,2).toUpperCase();
+          // Boutons pour déplacer vers les autres poules
+          const autresPoules = t.poules.filter((_,i) => i !== pi);
+          const btns = autresPoules.map(autre =>
+            '<button data-jid="'+p.id+'" data-from="'+pi+'" data-to="'+t.poules.indexOf(autre)+'" onclick="deplacerJoueur(this.dataset.jid,+this.dataset.from,+this.dataset.to)" style="background:#f0f1f8;border:none;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;color:#1e2d40;cursor:pointer;font-family:inherit">⇄ '+autre.nom+'</button>'
+          ).join('');
+          html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border)">'
+            +'<div style="width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0">'+init+'</div>'
+            +'<div style="flex:1;font-size:13px;font-weight:700;color:#1a1d2e">'+p.nom+'</div>'
+            +'<div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">'+btns+'</div>'
+            +'</div>';
+        });
+        html += '</div>';
       });
+
       html += '</div>'
         +'<div style="flex-shrink:0;background:var(--bg);border-top:1px solid #e0e3f0;padding:12px 16px calc(16px + 60px)">'
-        +'<button onclick="confirmerPoules()" style="width:100%;background:#fbbf24;color:#1a1400;border:none;border-radius:16px;padding:15px 20px;font-size:15px;font-weight:900;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 0 #d97706">'
-        +'<span>Lancer le tournoi</span><span>→</span></button></div>';
+        +(function(){
+        const invalid = t.poules.some(p => p.joueurs.length < 2);
+        if(invalid){
+          return '<div style="background:#fee2e2;border:1.5px solid #fca5a5;border-radius:12px;padding:12px 14px;margin-bottom:10px;font-size:12px;font-weight:600;color:#991b1b">⚠️ Chaque poule doit avoir au moins 2 joueurs</div>'
+            +'<button disabled style="width:100%;background:#e0e3f0;color:#9899b0;border:none;border-radius:16px;padding:15px 20px;font-size:15px;font-weight:900;font-family:inherit;cursor:not-allowed">Lancer le tournoi →</button></div>';
+        }
+        return '<button onclick="confirmerPoules()" style="width:100%;background:#fbbf24;color:#1a1400;border:none;border-radius:16px;padding:15px 20px;font-size:15px;font-weight:900;font-family:inherit;cursor:pointer;box-shadow:0 4px 0 #d97706">Lancer le tournoi →</button></div>';
+      })();
+
       pageTC.innerHTML = html;
     }
-    window.showVerifPoules = showVerifPoules;
+
+    function deplacerJoueur(joueurId, dePouleIdx, versPouleIdx) {
+      const t = _tournoiCourant;
+      const joueur = t.poules[dePouleIdx].joueurs.find(j => j.id === joueurId);
+      if (!joueur) return;
+      t.poules[dePouleIdx].joueurs = t.poules[dePouleIdx].joueurs.filter(j => j.id !== joueurId);
+      t.poules[versPouleIdx].joueurs.push(joueur);
+      // Régénérer les matchs des deux poules affectées
+      [dePouleIdx, versPouleIdx].forEach(pi => {
+        const poule = t.poules[pi];
+        const pj = poule.joueurs;
+        const players = [...pj];
+        if (players.length % 2 !== 0) players.push(null);
+        const np = players.length, nbR = np - 1;
+        let mIdx = 0;
+        poule.matchs = [];
+        for(let r=0;r<nbR;r++){
+          for(let k=0;k<np/2;k++){
+            const j1=players[k], j2=players[np-1-k];
+            if(j1&&j2) poule.matchs.push({id:'monde_p'+pi+'_r'+r+'_'+mIdx++,j1,j2,s1:null,s2:null,gagnant:null,played:false,isBye:false,isPrelim:false,ronde:r+1,pouleIdx:pi});
+          }
+          const last=players.pop(); players.splice(1,0,last);
+        }
+      });
+      // Re-render
+      const pageTC = document.getElementById('tournoi-en-cours');
+      if (pageTC) _renderVerifPoules(pageTC);
+    }
+    window.deplacerJoueur = deplacerJoueur;
+    wVerifPoules;
 
     function confirmerPoules() {
       showTournoiEnCours();
@@ -5466,43 +5695,143 @@
     function lancerPhaseFinale() {
       const t = _tournoiCourant;
       // Récupérer les 2 premiers de chaque poule
-      const qualifies = [];
+      // Récupérer classements par poule
+      const classementsPoules = [];
       t.poules.forEach(poule => {
-        const clas = poule.joueurs.map(p => ({...p, pts:0, v:0}));
+        const clas = poule.joueurs.map(p => ({...p, pts:0, v:0, d:0, diff:0}));
         poule.matchs.forEach(m => {
           if(!m.played) return;
           const i1=clas.findIndex(p=>p.id===m.j1.id), i2=clas.findIndex(p=>p.id===m.j2.id);
           if(i1>=0&&i2>=0){
+            clas[i1].diff += (m.s1-m.s2); clas[i2].diff += (m.s2-m.s1);
             if(m.s1>m.s2){clas[i1].pts+=3;clas[i1].v++;}
             else{clas[i2].pts+=3;clas[i2].v++;}
           }
         });
-        clas.sort((a,b)=>b.pts-a.pts||b.v-a.v);
-        qualifies.push(clas[0], clas[1]);
+        clas.sort((a,b) => {
+          if(b.pts !== a.pts) return b.pts - a.pts;
+          const m12 = poule.matchs.find(m => m.played && ((m.j1.id===a.id&&m.j2.id===b.id)||(m.j1.id===b.id&&m.j2.id===a.id)));
+          if(m12){ const aWon = (m12.j1.id===a.id&&m12.s1>m12.s2)||(m12.j2.id===a.id&&m12.s2>m12.s1); return aWon?-1:1; }
+          return b.diff - a.diff;
+        });
+        classementsPoules.push({ premier: clas[0], deuxieme: clas[1] });
       });
-      showToast(qualifies.length+' joueurs qualifies pour la phase finale !');
-      // Générer le bracket de la phase finale
-      const shuffledQ = qualifies.sort(()=>Math.random()-0.5);
-      const pInf = shuffledQ.length === Math.pow(2,Math.floor(Math.log2(shuffledQ.length)))
-        ? shuffledQ.length : Math.pow(2,Math.floor(Math.log2(shuffledQ.length)));
-      const nbPrelim = shuffledQ.length - pInf;
-      const nomTour = (np) => np===2?'Finale':np===4?'Demi-finales':np===8?'Quarts de finale':'Tour ('+np+')';
-      const tours = [];
-      const premierMatchs = shuffledQ.slice(0,shuffledQ.length%2===0?shuffledQ.length:shuffledQ.length-1).reduce((acc,p,i,arr)=>{
-        if(i%2===0) acc.push({id:'fin_'+i/2,j1:p,j2:arr[i+1]||null,s1:null,s2:null,gagnant:null,played:false,isBye:false,isPrelim:false});
-        return acc;
-      },[]);
-      tours.push({nom:'Quarts de finale',matchs:premierMatchs});
-      let curN=premierMatchs.length, tIdx=1;
-      while(curN>=2){
-        const matchs=[];
-        for(let i=0;i<curN/2;i++) matchs.push({id:'fin_t'+tIdx+'_'+i,j1:null,j2:null,s1:null,s2:null,gagnant:null,played:false,isBye:false});
-        tours.push({nom:nomTour(curN),matchs});
-        curN/=2; tIdx++;
+
+      // Calcul nb qualifiés = puissance de 2 <= nb_poules*2
+      const nb = classementsPoules.length;
+      const nbQualifNaturel = nb * 2;
+      let nbQualif = 1;
+      while(nbQualif * 2 <= nbQualifNaturel) nbQualif *= 2;
+      const nbPremiers = nb; // tous les 1ers
+      const nbDeuxiemes = nbQualif - nbPremiers; // meilleurs 2èmes
+
+      // Tous les 1ers qualifiés d'office
+      const premiers = classementsPoules.map(c => c.premier);
+
+      // Trier les 2èmes par pts → confrontation directe → diff pour prendre les meilleurs
+      const deuxiemes = classementsPoules.map(c => c.deuxieme).sort((a,b) => {
+        if(b.pts !== a.pts) return b.pts - a.pts;
+        return b.diff - a.diff;
+      });
+      const meilleursDeuxiemes = deuxiemes.slice(0, nbDeuxiemes);
+
+      // Tirage croisé : alterner 1ers et 2èmes
+      // 1er poule A vs meilleur 2ème, 1er poule B vs 2ème meilleur 2ème...
+      const shuffled = [];
+      for(let i=0;i<nbPremiers;i++){
+        shuffled.push(premiers[i]);
+        if(i < meilleursDeuxiemes.length) shuffled.push(meilleursDeuxiemes[i]);
       }
+      // Si plus de 2èmes que de 1ers (ne devrait pas arriver), ajouter le reste
+      for(let i=nbPremiers;i<meilleursDeuxiemes.length;i++) shuffled.push(meilleursDeuxiemes[i]);
+      const n = shuffled.length;
+
+      // Calcul bracket avec prélims (même algo que genererTournoi)
+      const pInf = Math.pow(2, Math.floor(Math.log2(n)));
+      const nbPrelim = n - pInf;
+      const nbDirects = pInf - nbPrelim;
+
+      const nomTour = (np) => np===2?'Finale':np===4?'Demi-finales':np===8?'Quarts':np===16?'16e de finale':'Tour';
+      const tours = [];
+
+      // Tour principal
+      const mainMatchs = [];
+      let sIdx = 0;
+      // Matchs préliminaires
+      for(let i=0;i<nbPrelim;i++){
+        mainMatchs.push({id:'fin_prelim_'+i,j1:shuffled[sIdx++],j2:shuffled[sIdx++],s1:null,s2:null,gagnant:null,played:false,isBye:false,isPrelim:true,_waitsPrelim1:-1,_waitsPrelim2:-1});
+      }
+      // Directs
+      for(let i=0;i<nbDirects;i++){
+        mainMatchs.push({id:'fin_dir_'+i,j1:shuffled[sIdx++],j2:null,s1:null,s2:null,gagnant:null,played:false,isBye:true,isPrelim:false});
+      }
+
+      // Lier les prélims aux directs
+      let prelimIdx=0;
+      for(let i=0;i<mainMatchs.length;i++){
+        const m=mainMatchs[i];
+        if(m.isBye){
+          if(prelimIdx<nbPrelim){
+            m.j2=null;
+            m._waitsPrelim1=-1;
+            const prelim=mainMatchs[prelimIdx];
+            if(prelim){m._waitsPrelim1=prelimIdx;}
+            prelimIdx++;
+          }
+        }
+      }
+
+      // Si pas de prélims, tour simple
+      if(nbPrelim===0){
+        for(let i=0;i<mainMatchs.length;i++){
+          const m=mainMatchs[i];
+          m.j2=shuffled[nbDirects+i]||null;
+          m.isBye=false;
+          m.isPrelim=false;
+        }
+      }
+
+      // En fait : approche simplifiée et robuste
+      // Bracket simple : apparier les qualifiés 2 par 2
+      const bracketMatchs = [];
+      for(let i=0;i<Math.floor(n/2);i++){
+        bracketMatchs.push({
+          id:'fin_'+i,
+          j1:shuffled[i*2],
+          j2:shuffled[i*2+1]||null,
+          s1:null,s2:null,gagnant:null,played:false,isBye:!shuffled[i*2+1],isPrelim:false
+        });
+      }
+
+      const labelPremierTour = nomTour(bracketMatchs.length*2);
+      tours.push({nom:labelPremierTour, matchs:bracketMatchs});
+
+      // Tours suivants vides
+      let curN = bracketMatchs.length;
+      let tIdx = 1;
+      while(curN > 1){
+        curN = Math.ceil(curN/2);
+        const matchs = [];
+        for(let i=0;i<curN;i++){
+          matchs.push({id:'fin_t'+tIdx+'_'+i,j1:null,j2:null,s1:null,s2:null,gagnant:null,played:false,isBye:false,isPrelim:false});
+        }
+        tours.push({nom:nomTour(curN*2), matchs});
+        tIdx++;
+      }
+
+      // Auto-passer les byes
+      bracketMatchs.forEach((m,i) => {
+        if(m.isBye && m.j1){
+          m.played=true; m.gagnant=m.j1.id;
+          const nextM = tours[1]?.matchs[Math.floor(i/2)];
+          if(nextM){ if(!nextM.j1) nextM.j1=m.j1; else nextM.j2=m.j1; }
+        }
+      });
+
       t.tours = tours;
       t.tourActif = 0;
       t.phase = 'finale';
+      showToast('Phase finale lancée ! '+n+' qualifiés');
       renderCoupeDuMonde();
     }
     window.lancerPhaseFinale = lancerPhaseFinale;
@@ -5698,7 +6027,11 @@
         if(toursRef[tourIdx].matchs.every(m=>m.played)){ if(isConsolante) t.consolante.tourActif=tourIdx+1; else t.tourActif=tourIdx+1; showToast('Tour suivant !'); }
       } else {
         t.termine=true;
-        showToast(gagnant.nom+' remporte le tournoi !');
+        t.vainqueur = gagnant;
+        t.dateFin = Date.now();
+        showToast(gagnant.nom+' remporte le tournoi ! 🏆');
+        // Archivage Firebase uniquement si PEP activé (tournoi rattaché à une ligue)
+        if (t.pepOn) archiverTournoi(t, gagnant);
       }
       // Ajouter le perdant à la consolante
       const perdant = s1>s2 ? match.j2 : match.j1;
@@ -6249,6 +6582,11 @@
         window._matches = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         window.renderRecentMatches?.();
         window.renderRanking?.();
+      });
+      // Listener tournois archivés
+      onSnapshot(collection(db, 'ligues', ligueId, 'tournois'), snap => {
+        window._tournois = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+          .sort((a,b) => (b.dateFin||0) - (a.dateFin||0));
       });
     }
     window.startLigueListeners = startLigueListeners;
